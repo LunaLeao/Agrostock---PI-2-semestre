@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.0",
+    "express-handlebars": "^8.0.1",
+    "express-session": "^1.18.0",
+    "handlebars": "^4.7.8",
+    "mysql2": "^3.11.2",
+    "nodemailer": "^6.9.15",
+    "sequelize": "^6.37.3",
+    "sequelizer": "^1.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
