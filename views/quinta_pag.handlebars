@@ -224,7 +224,7 @@
                     <button type="submit" class="btn btn-custom2">Gerar Relatório Mensal</button>
                 </div>
                 <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#novoItemModal">Novo +</button>
-                <button class="btn btn-custom" id="editarButton" onclick="openColheitaModal()">Editar</button>
+                <button class="btn btn-custom" id="editarButton" onclick="openVendaModal()">Editar</button>
 
 
             </div>
@@ -247,16 +247,17 @@
                         {{#each vendas}}
                         <tr id="venda-row-{{this.id}}"> <!-- Adicione um ID à linha -->
                             <td><input type="radio" class="radio" name="vendaSelecionada" value="{{this.id}}"></td>
-                            <td>{{comprador.nome}}</td>
+                            <td>{{this.comprador.nome}}</td>
                             <td>{{tipo_produto.nome}}</td>
                             <td>{{quantidade}}</td>
                             <td>{{valor_total}}</td>
                             <td>{{data_venda}}</td>
                             <td>
-                                <button class="btn btn-danger btn-sm" onclick="deleteColheita({{this.id}})">
+                                <button class="btn btn-danger btn-sm" onclick="deleteVenda({{this.id}})">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
+
                         </tr>
                         {{/each}}
                     </tbody>
@@ -264,7 +265,7 @@
             </div>
         </div>
 
-        <!-- Modal para editar informações da colheita -->
+        <!-- Modal para editar informações da venda -->
         <div class="modal fade" id="vendaModal" tabindex="-1" aria-labelledby="vendaModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -315,56 +316,87 @@
             </div>
         </div>
 
-        <!-- Modal Add -->
-        <div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="novoItemModalLabel">Adicionar Nova Venda</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="novoItemModalLabel">Adicionar Nova Venda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/add-vendas" method="POST" id="novoItemForm">
+                    <div class="mb-3">
+                        <label for="compradorId" class="form-label">Comprador</label>
+                        <select class="form-control" id="compradorId" name="compradorId" required>
+                            {{#each compradores}}
+                                <option value="{{this.id}}">{{this.nome}}</option>
+                            {{/each}}
+                        </select>
+                        <!-- Botão para Adicionar Novo Comprador -->
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#novoCompradorModal">Adicionar Novo Comprador</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <form action="/add-venda" method="POST" id="novoItemForm">
-                            <div class="mb-3">
-                                <label for="itemNomeComprador" class="form-label">Nome do Comprador</label>
-                                <input type="text" class="form-control" id="itemNomeComprador" name="comprador"
-                                    placeholder="Digite o nome do comprador" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemItem" class="form-label">Item</label>
-                                <input type="text" class="form-control" id="itemItem" name="tipo_produto"
-                                    placeholder="Digite o item vendido" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemQuantidade" class="form-label">Quantidade</label>
-                                <input type="number" class="form-control" id="itemQuantidade" name="quantidade"
-                                    placeholder="Digite a quantidade" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemValorTotal" class="form-label">Valor da Venda</label>
-                                <input type="number" class="form-control" id="itemValorTotal" name="valor_total"
-                                    placeholder="Digite o valor da venda" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemDataVenda" class="form-label">Data da Venda</label>
-                                <input type="date" class="form-control" id="itemDataVenda" name="data_venda"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemObservacao" class="form-label">Observação</label>
-                                <textarea class="form-control" id="itemObservacao" name="observacao"
-                                    rows="3"></textarea>
-                            </div>
+                    <div class="mb-3">
+                        <label for="itemItem" class="form-label">Item</label>
+                        <input type="text" class="form-control" id="itemItem" name="tipo_produto" placeholder="Digite o item vendido" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemQuantidade" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="itemQuantidade" name="quantidade" placeholder="Digite a quantidade" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemValorTotal" class="form-label">Valor da Venda</label>
+                        <input type="number" class="form-control" id="itemValorTotal" name="valor_total" placeholder="Digite o valor da venda" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemDataVenda" class="form-label">Data da Venda</label>
+                        <input type="date" class="form-control" id="itemDataVenda" name="data_venda" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemObservacao" class="form-label">Observação</label>
+                        <textarea class="form-control" id="itemObservacao" name="observacao" rows="3"></textarea>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                         <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
                     </div>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="modal fade" id="novoCompradorModal" tabindex="-1" aria-labelledby="novoCompradorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="novoCompradorModalLabel">Adicionar Novo Comprador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/add-comprador" method="POST" id="novoCompradorForm">
+                    <div class="mb-3">
+                        <label for="novoCompradorNome" class="form-label">Nome do Comprador</label>
+                        <input type="text" class="form-control" id="novoCompradorNome" name="nome" placeholder="Digite o nome do comprador" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="novoCompradorTelefone" class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" id="novoCompradorTelefone" name="telefone" placeholder="Digite o telefone do comprador" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="novoCompradorEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="novoCompradorEmail" name="email" placeholder="Digite o email do comprador" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-success" id="btnSalvarNovoComprador">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
         <div class="sair-btn">
             <button type="button" class="btn btn-success" style="margin-top: 1rem;">
@@ -372,72 +404,81 @@
             </button>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-        function openVendaModal() {
-            // Obtenha a colheita selecionada
-            const selectedRadio = document.querySelector('input[name="vendaSelecionada"]:checked');
-            
-            if (selectedRadio) {
-                const selectedId = selectedRadio.value;
+<script>
+    function openVendaModal() {
+        // Obtenha a venda selecionada
+        const selectedRadio = document.querySelector('input[name="vendaSelecionada"]:checked');
+        
+        if (selectedRadio) {
+            const selectedId = selectedRadio.value;
 
-                const vendas = [
-                    {{#each vendas}}
-                    { id: "{{this.id}}", comprador: "{{comprador}}", quantidade: {{quantidade}}, tipo_produto: "{{tipo_produto.nome}}", valor_total: "{{valor_total}}", data_colheita: "{{data_colheita}}" },
-                    {{/each}}
-                ];
+            // Obtenha os dados diretamente da tabela para a venda selecionada
+            const compradorNome = document.querySelector(`#venda-row-${selectedId} td:nth-child(2)`).textContent.trim();
+            const tipoProdutoNome = document.querySelector(`#venda-row-${selectedId} td:nth-child(3)`).textContent.trim();
+            const quantidade = document.querySelector(`#venda-row-${selectedId} td:nth-child(4)`).textContent.trim();
+            const valorTotal = document.querySelector(`#venda-row-${selectedId} td:nth-child(5)`).textContent.trim();
+            const dataVenda = document.querySelector(`#venda-row-${selectedId} td:nth-child(6)`).textContent.trim();
 
-                const venda = vendas.find(c => c.id === selectedId);
+            // Preencha os campos do modal
+            document.getElementById('vendaId').value = selectedId;
 
-                // Preencha os campos do modal
-                document.getElementById('vendaId').value = venda.id;
-                document.getElementById('comprador').value = venda.comprador;
-                document.getElementById('quantidade').value = venda.quantidade;
-                document.getElementById('tipo_produto').value = venda.tipo_produto;
-                document.getElementById('valor_total').value = venda.valor_total;
+            // Selecionar o comprador no select de acordo com o nome (ou melhor usar o ID no caso ideal)
+            document.getElementById('comprador').value = compradorNome;
 
-                // Formate a data para o formato 'YYYY-MM-DD' que é esperado pelo input do tipo date
-                const dataFormatada = new Date(venda.data_venda).toISOString().split('T')[0];
-                document.getElementById('data_venda').value = dataFormatada;
+            // Preencher os demais campos
+            document.getElementById('quantidade').value = quantidade;
+            document.getElementById('valor_total').value = valorTotal;
+            document.getElementById('tipo_produto').value = tipoProdutoNome;
 
-                // Abra o modal
-                const modal = new bootstrap.Modal(document.getElementById('vendaModal'));
-                modal.show();
-            } else {
-                alert("Por favor, selecione uma venda para editar.");
-            }
+            // Formatar a data para o formato 'YYYY-MM-DD' que é esperado pelo input do tipo date
+            const dataFormatada = new Date(dataVenda).toISOString().split('T')[0];
+            document.getElementById('data_venda').value = dataFormatada;
+
+            // Abrir o modal
+            const modal = new bootstrap.Modal(document.getElementById('vendaModal'));
+            modal.show();
+        } else {
+            alert("Por favor, selecione uma venda para editar.");
         }
-        </script>   
+    }
+</script>
+ 
         <script>
-            function deleteVenda(id) {
-                if (confirm('Você tem certeza que deseja excluir esta venda?')) {
-                    fetch(`/vendas/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        console.log('Resposta do servidor:', response); // Adicionado para depuração
-                        if (!response.ok) {
-                            return response.text().then(text => {
-                                throw new Error(text || 'Erro ao excluir a venda');
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        const row = document.getElementById(`venda-row-${id}`);
-                        if (row) {
-                            row.remove();
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error.message);
-                        alert(`Ocorreu um erro: ${error.message}`);
+    function deleteVenda(id) {
+        if (confirm('Você tem certeza que deseja excluir esta venda?')) {
+            // Enviar requisição DELETE ao backend
+            fetch(`/vendas/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Resposta do servidor:', response); // Adicionado para depuração
+                if (!response.ok) {
+                    // Se a resposta não for ok, mostrar o erro retornado pelo servidor
+                    return response.text().then(text => {
+                        throw new Error(text || 'Erro ao excluir a venda');
                     });
                 }
-            }
+                return response.json(); // Se a resposta for ok, retornar os dados como JSON
+            })
+            .then(data => {
+                // Remover a linha da venda na tabela, se ela existir
+                const row = document.getElementById(`venda-row-${id}`);
+                if (row) {
+                    row.remove(); // Remove a linha do DOM
+                    alert(data.message); // Exibe mensagem de sucesso
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error.message); // Log de erro no console
+                alert(`Ocorreu um erro: ${error.message}`); // Alerta o usuário sobre o erro
+            });
+        }
+    }
+
+
         </script>
         {{!--
         <script>

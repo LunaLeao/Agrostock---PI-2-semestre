@@ -6,17 +6,12 @@ const bcrypt = require("bcrypt");
 const path = require('path');
 const session = require('express-session');
 
-const { Usuario, Endereco, Colheita, TipoInsumo, Fornecedor, TipoProduto, Insumo, Venda } = require("./models/post");
+const { Usuario, Endereco, Colheita, TipoInsumo, Fornecedor ,TipoProduto, Insumo, Venda, Comprador } = require("./models/post");
 
-// Helper para formatar datas
+
 const formatDate = (date) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(date).toLocaleDateString('pt-BR', options);
-};
-
-// Helper para converter um objeto em JSON
-const jsonHelper = (context) => {
-  return JSON.stringify(context);
 };
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -32,13 +27,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine('handlebars', handlebars({ 
   defaultLayout: 'main',
   helpers: {
-    formatDate: formatDate,
-    json: jsonHelper  // Registrando o helper 'json'
+    formatDate: formatDate
   },
   runtimeOptions: {
-    allowProtoPropertiesByDefault: true,
-    allowProtoMethodsByDefault: true
-  }
+    allowProtoPropertiesByDefault: true, // Adicione esta linha
+    allowProtoMethodsByDefault: true, // E esta linha, se necessário
+}
 }));
 app.set('view engine', 'handlebars');
 
@@ -419,12 +413,12 @@ app.post('/add-colheita', async (req, res) => {
 
 //Atualizar Colheita
 app.post('/atualizar-colheita', async (req, res) => {
-  const { colheitaId, nome_colheita, quantidade, tipo_produtoId, data_colheita } = req.body;
+  const { colheitaId, quantidade, tipo_produtoId, data_colheita } = req.body;
 
   try {
       await Colheita.update(
           {
-              nome_colheita: nome_colheita,
+              colheitaId: colheitaId,
               quantidade: quantidade,
               tipo_produtoId: tipo_produtoId,
               data_colheita: new Date(data_colheita),
@@ -458,7 +452,6 @@ app.delete('/colheitas/:id', async (req, res) => {
   }
 });
 
-//vendas
 app.get('/venda-fornecedor', async (req, res) => {
   try {
       // Verifica se o usuário está logado
@@ -466,58 +459,98 @@ app.get('/venda-fornecedor', async (req, res) => {
           return res.status(403).send('Usuário não autorizado');
       }
 
+      // Busca todas as vendas do usuário logado
       const vendas = await Venda.findAll({
           where: { usuarioId: req.session.userId }, // Filtra pelas vendas do usuário logado
-          include: [{ model: TipoProduto }],
+          include: [
+              { model: TipoProduto },
+              { model: Comprador } // Inclui o modelo de Comprador
+          ],
       });
 
-      // Buscar todos os tipos de produtos
-      const tiposProduto = await TipoProduto.findAll();
+      // Busca todos os compradores do banco de dados
+      const compradores = await Comprador.findAll();
 
       const vendasJson = vendas.map(venda => venda.toJSON());
 
-      res.render('quinta_pag', { vendas: vendasJson, tiposProduto });
+      // Renderiza a página passando as vendas e os compradores
+      res.render('quinta_pag', { vendas: vendasJson, compradores });
   } catch (error) {
       console.error(error);
       res.status(500).send('Erro ao buscar vendas.');
   }
 });
 
-//Cadastrar uma nova colheita
+
+
+//Cadastrar uma nova venda
 app.post('/add-vendas', async (req, res) => {
   try {
-      const { comprador, tipo_produto, valor_total, quantidade, data_venda, observacao } = req.body;
+      // Extrai os dados do corpo da requisição
+      const { compradorId, tipo_produto, valor_total, quantidade, data_venda, observacao } = req.body;
 
       // Verifica se o usuário está logado
       if (!req.session.userId) {
           return res.status(403).json({ message: 'Usuário não autorizado' });
       }
 
-      // Verifica se o tipo de produto já existe
-      const [produtoExistente, created] = await TipoProduto.findOrCreate({
+      // Verifica se o compradorId foi fornecido
+      if (!compradorId) {
+          return res.status(400).json({ message: 'ID do comprador é obrigatório.' });
+      }
+
+      // Verifica se o tipo de produto já existe ou cria um novo
+      const [produtoExistente] = await TipoProduto.findOrCreate({
           where: { nome: tipo_produto },  
           defaults: { nome: tipo_produto } 
       });
 
-      // Cria a nova colheita
-      const novaColheita = await Colheita.create({
-          compradorId: comprador,
+      // Cria a nova venda
+      const novaVenda = await Venda.create({
+          compradorId: compradorId, // Certifique-se de que este valor é o ID do comprador
           tipo_produtoId: produtoExistente.id, 
           valor_total,
           quantidade,
           data_venda,
           observacao,
-          usuarioId: req.session.userId
+          usuarioId: req.session.userId // ID do usuário que está logado
       });
 
-      res.redirect('/vendas');
+      // Redireciona após o sucesso
+      res.redirect('/venda-fornecedor');
   } catch (error) {
       console.error('Erro ao cadastrar a venda:', error);
-      res.status(500).json({ message: 'Erro ao cadastrar a venda' });
+      res.status(500).json({ message: 'Erro ao cadastrar a venda', error: error.message });
   }
 });
 
-//Atualizar Colheita
+
+//comprador
+app.post('/add-comprador', async (req, res) => {
+  try {
+      const { nome, telefone, email } = req.body;
+
+      // Verifica se o comprador já existe pelo email
+      const compradorExistente = await Comprador.findOne({ where: { email } });
+      if (compradorExistente) {
+          return res.status(400).json({ message: 'Comprador já existe com este email.' });
+      }
+
+      // Cria o novo comprador
+      const novoComprador = await Comprador.create({
+          nome,
+          telefone,
+          email
+      });
+
+      res.status(201).json({ message: 'Comprador adicionado com sucesso!', comprador: novoComprador });
+  } catch (error) {
+      console.error('Erro ao cadastrar o comprador:', error);
+      res.status(500).json({ message: 'Erro ao cadastrar o comprador' });
+  }
+});
+
+//Atualizar venda
 app.post('/atualizar-vendas', async (req, res) => {
   const { vendaId, compradorId, quantidade, valor_total, tipo_produtoId, data_venda } = req.body;
 
@@ -535,14 +568,15 @@ app.post('/atualizar-vendas', async (req, res) => {
           }
       );
 
-      res.redirect('/vendas'); // Redirecione para a página de colheitas
+      res.redirect('/venda-fornecedor'); // Redirecione para a página de vendas
   } catch (error) {
       console.error('Erro ao atualizar a venda:', error);
       res.status(500).send('Erro ao atualizar a venda');
   }
 });
 
-//Deletar colheita
+
+// Deletar venda
 app.delete('/vendas/:id', async (req, res) => {
   try {
       const id = req.params.id;
@@ -555,9 +589,10 @@ app.delete('/vendas/:id', async (req, res) => {
       res.status(200).json({ message: 'Venda excluída com sucesso' });
   } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Erro ao excluir a Venda' });
+      res.status(500).json({ message: 'Erro ao excluir a venda' });
   }
 });
+
 
 
 //Insumo
@@ -685,7 +720,7 @@ app.post('/add-insumos', async (req, res) => {
     res.status(500).json({ message: 'Erro ao cadastrar o insumo' });
   }
 });
-//Referente aos botões que estão no modal de insumos
+
 // Endpoint para adicionar um novo tipo de insumo
 
 app.post('/add-tipo-insumo', async (req, res) => {
@@ -778,6 +813,6 @@ app.delete('/insumos/:id', async (req, res) => {
 
 
 // Inicialização do servidor
-app.listen(8081, function () {
+app.listen(8082, function () {
   console.log("Servidor rodando na porta 8081");
 });
