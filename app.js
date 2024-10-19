@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const path = require('path');
 const session = require('express-session');
 
-const { Usuario, Endereco, Colheita, TipoInsumo ,TipoProduto, Insumo, Venda } = require("./models/post");
+const { Usuario, Endereco, Colheita, TipoInsumo, Fornecedor ,TipoProduto, Insumo, Venda } = require("./models/post");
 
 
 const formatDate = (date) => {
@@ -561,15 +561,30 @@ app.get('/insumos', async (req, res) => {
       return res.status(403).send('Usuário não autorizado');
     }
 
+    // Buscar todos os insumos
     const insumos = await Insumo.findAll();
 
+    // Buscar todos os tipos de insumo
+    const tiposInsumo = await TipoInsumo.findAll(); // Supondo que você tenha o modelo `TipoInsumo`
 
+    // Buscar todos os fornecedores
+    const fornecedores = await Fornecedor.findAll(); // Supondo que você tenha o modelo `Fornecedor`
+
+    // Converter os dados para JSON
     const insumosJson = insumos.map(insumo => insumo.toJSON());
+    const tiposInsumoJson = tiposInsumo.map(tipo => tipo.toJSON());
+    const fornecedoresJson = fornecedores.map(fornecedor => fornecedor.toJSON());
 
-    res.render('sexta_pag', { insumos: insumosJson });
+    // Renderizar a página e enviar os dados
+    res.render('sexta_pag', {
+      insumos: insumosJson,
+      tiposInsumo: tiposInsumoJson,
+      fornecedores: fornecedoresJson // Enviar também os fornecedores
+    });
+
   } catch (error) {
-    console.error('Erro ao buscar insumos:', error);
-    res.status(500).send('Erro ao buscar insumos.');
+    console.error('Erro ao buscar dados:', error);
+    res.status(500).send('Erro ao buscar dados.');
   }
 });
 
@@ -579,55 +594,75 @@ app.get('/insumos', async (req, res) => {
 // Cadastrar um novo insumo
 app.post('/add-insumos', async (req, res) => {
   try {
-      const { tipoInsumo, fornecedor, validade, quantidade, novoTipo, novoFornecedorNome, novoFornecedorTelefone } = req.body;
+    const { tipoInsumo, fornecedor, validade, quantidade, novoTipo, novoFornecedorNome, novoFornecedorTelefone } = req.body;
 
-      // Verifica se o usuário está logado
-      if (!req.session.userId) {
-          return res.status(403).json({ message: 'Usuário não autorizado' });
-      }
+    // Verifica se o usuário está logado
+    if (!req.session.userId) {
+      return res.status(403).json({ message: 'Usuário não autorizado' });
+    }
 
-      // Verifica se o tipo de insumo já existe ou cria um novo
-      let tipoInsumoId;
-      if (tipoInsumo) {
-          tipoInsumoId = tipoInsumo;
-      } else if (novoTipo) {
-          const [novoTipoInsumo] = await TipoProduto.findOrCreate({
-              where: { nome: novoTipo },  
-              defaults: { nome: novoTipo } 
-          });
-          tipoInsumoId = novoTipoInsumo.id;
-      }
-
-      // Verifica se o fornecedor já existe ou cria um novo
-      let fornecedorId;
-      if (fornecedor) {
-          fornecedorId = fornecedor;
-      } else if (novoFornecedorNome && novoFornecedorTelefone) {
-          const [novoFornecedor] = await Fornecedor.findOrCreate({
-              where: { nome: novoFornecedorNome },
-              defaults: { nome: novoFornecedorNome, telefone: novoFornecedorTelefone }
-          });
-          fornecedorId = novoFornecedor.id;
-      }
-
-      // Cria o novo insumo
-      const novoInsumo = await Insumo.create({
-          fornecedorId: fornecedorId,
-          tipo_produtoId: tipoInsumoId, 
-          validade,
-          quantidade,
-          usuarioId: req.session.userId
+    // Verifica se o tipo de insumo já existe ou cria um novo
+    let tipoInsumoId;
+    if (tipoInsumo) {
+      tipoInsumoId = tipoInsumo;
+    } else if (novoTipo) {
+      const [novoTipoInsumo] = await TipoProduto.findOrCreate({
+        where: { nome: novoTipo },
+        defaults: { nome: novoTipo }
       });
+      tipoInsumoId = novoTipoInsumo.id;
+    }
 
-      // Resposta JSON em vez de redirecionar
-      res.status(201).json({ message: 'Insumo cadastrado com sucesso!' });
+    // Verifica se o fornecedor já existe ou cria um novo
+    let fornecedorId;
+    if (fornecedor) {
+      fornecedorId = fornecedor;
+    } else if (novoFornecedorNome && novoFornecedorTelefone) {
+      const [novoFornecedor] = await Fornecedor.findOrCreate({
+        where: { nome: novoFornecedorNome },
+        defaults: { nome: novoFornecedorNome, telefone: novoFornecedorTelefone }
+      });
+      fornecedorId = novoFornecedor.id;
+    }
+
+    // Cria o novo insumo
+    const novoInsumo = await Insumo.create({
+      fornecedorId: fornecedorId,
+      tipo_produtoId: tipoInsumoId,
+      validade,
+      quantidade,
+      usuarioId: req.session.userId
+    });
+
+        // Buscar todos os insumos
+        const insumos = await Insumo.findAll();
+
+        // Buscar todos os tipos de insumo
+        const tiposInsumo = await TipoInsumo.findAll(); // Supondo que você tenha o modelo `TipoInsumo`
+    
+        // Buscar todos os fornecedores
+        const fornecedores = await Fornecedor.findAll(); // Supondo que você tenha o modelo `Fornecedor`
+    
+      // Converter os dados para JSON
+      const insumosJson = insumos.map(insumo => insumo.toJSON());
+      const tiposInsumoJson = tiposInsumo.map(tipo => tipo.toJSON());
+      const fornecedoresJson = fornecedores.map(fornecedor => fornecedor.toJSON());
+
+
+      // Renderizar a página e enviar os dados
+      res.render('sexta_pag', {
+        insumos: insumosJson,
+        tiposInsumo: tiposInsumoJson,
+        fornecedores: fornecedoresJson // Enviar também os fornecedores
+      });
   } catch (error) {
-      console.error('Erro ao cadastrar a insumo:', error);
-      res.status(500).json({ message: 'Erro ao cadastrar a insumo' });
+    console.error('Erro ao cadastrar o insumo:', error);
+    res.status(500).json({ message: 'Erro ao cadastrar o insumo' });
   }
 });
 //Referente aos botões que estão no modal de insumos
 // Endpoint para adicionar um novo tipo de insumo
+
 app.post('/add-tipo-insumo', async (req, res) => {
   try {
       const { novoTipo } = req.body;
@@ -650,6 +685,7 @@ app.post('/add-tipo-insumo', async (req, res) => {
 });
 
 
+
 // Endpoint para adicionar um novo fornecedor
 app.post('/add-fornecedor', async (req, res) => {
   const { nome, telefone } = req.body;
@@ -663,27 +699,48 @@ app.post('/add-fornecedor', async (req, res) => {
 });
 
 
+
 //Atualizar Insumo
-app.post('/atualizar-insumos', async (req, res) => {
-  const { tipo_insumoId, quantidade, validade, fornecedorId } = req.body;
+app.post('/atualizar-insumo', async (req, res) => {
+  const { insumoId, tipoInsumo, fornecedor, quantidade, validade } = req.body;
 
   try {
       await Insumo.update(
           {
-              tipo_produtoId: tipo_produtoId,
+              tipo_produtoId: tipoInsumo, // ID do tipo de produto
+              fornecedorId: fornecedor,     // ID do fornecedor
               quantidade: quantidade,
-              validade: new Date(validade),
-              fornecedorId: fornecedorId
+              validade: new Date(validade), // Certifique-se de que a data está no formato correto
           },
           {
-              where: { id: isumoId },
+              where: { id: insumoId },
           }
       );
 
-      res.redirect('/insumos'); // Redirecione para a página de insumos
+      // Buscar todos os insumos
+      const insumos = await Insumo.findAll();
+
+      // Buscar todos os tipos de insumo
+      const tiposInsumo = await TipoInsumo.findAll(); // Supondo que você tenha o modelo `TipoInsumo`
+  
+      // Buscar todos os fornecedores
+      const fornecedores = await Fornecedor.findAll(); // Supondo que você tenha o modelo `Fornecedor`
+  
+    // Converter os dados para JSON
+    const insumosJson = insumos.map(insumo => insumo.toJSON());
+    const tiposInsumoJson = tiposInsumo.map(tipo => tipo.toJSON());
+    const fornecedoresJson = fornecedores.map(fornecedor => fornecedor.toJSON());
+
+
+    // Renderizar a página e enviar os dados
+    res.render('sexta_pag', {
+      insumos: insumosJson,
+      tiposInsumo: tiposInsumoJson,
+      fornecedores: fornecedoresJson // Enviar também os fornecedores
+    });
   } catch (error) {
       console.error('Erro ao atualizar o insumo:', error);
-      res.status(500).send('Erro ao atualizar o insumo');
+      res.status(500).json({ message: 'Erro ao atualizar o insumo' });
   }
 });
 
