@@ -435,5 +435,5 @@ EstoqueColheita.belongsTo(Colheita, { foreignKey: 'colheitaId'});
 
 module.exports = {Usuario,TipoProduto,Colheita,Endereco,TipoInsumo,TipoRelatorio,Relatorios,CalculoLucro,Comprador,Cotacao,EstoqueColheita,EstoqueInsumo,Venda,Fornecedor,Insumo};
 
-// db.sequelize.sync ({force: true}) //mudar pra alter no lugar de force caso queira atualizar apenas
+ //db.sequelize.sync ({force: true}) //mudar pra alter no lugar de force caso queira atualizar apenas
 //db.sequelize.sync({ alter: true })

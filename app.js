@@ -6,12 +6,17 @@ const bcrypt = require("bcrypt");
 const path = require('path');
 const session = require('express-session');
 
-const { Usuario, Endereco, Colheita, TipoInsumo, Fornecedor ,TipoProduto, Insumo, Venda } = require("./models/post");
+const { Usuario, Endereco, Colheita, TipoInsumo, Fornecedor, TipoProduto, Insumo, Venda } = require("./models/post");
 
-
+// Helper para formatar datas
 const formatDate = (date) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(date).toLocaleDateString('pt-BR', options);
+};
+
+// Helper para converter um objeto em JSON
+const jsonHelper = (context) => {
+  return JSON.stringify(context);
 };
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -27,12 +32,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine('handlebars', handlebars({ 
   defaultLayout: 'main',
   helpers: {
-    formatDate: formatDate
+    formatDate: formatDate,
+    json: jsonHelper  // Registrando o helper 'json'
   },
   runtimeOptions: {
-    allowProtoPropertiesByDefault: true, // Adicione esta linha
-    allowProtoMethodsByDefault: true, // E esta linha, se necessário
-}
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true
+  }
 }));
 app.set('view engine', 'handlebars');
 
@@ -561,14 +567,19 @@ app.get('/insumos', async (req, res) => {
       return res.status(403).send('Usuário não autorizado');
     }
 
-    // Buscar todos os insumos
-    const insumos = await Insumo.findAll();
+    // Buscar todos os insumos com o nome do TipoInsumo incluído
+    const insumos = await Insumo.findAll({
+      include: {
+        model: TipoInsumo,
+        attributes: ['nome']  // Carregar o nome do TipoInsumo
+      }
+    });
 
     // Buscar todos os tipos de insumo
-    const tiposInsumo = await TipoInsumo.findAll(); // Supondo que você tenha o modelo `TipoInsumo`
+    const tiposInsumo = await TipoInsumo.findAll();
 
     // Buscar todos os fornecedores
-    const fornecedores = await Fornecedor.findAll(); // Supondo que você tenha o modelo `Fornecedor`
+    const fornecedores = await Fornecedor.findAll();
 
     // Converter os dados para JSON
     const insumosJson = insumos.map(insumo => insumo.toJSON());
@@ -579,7 +590,7 @@ app.get('/insumos', async (req, res) => {
     res.render('sexta_pag', {
       insumos: insumosJson,
       tiposInsumo: tiposInsumoJson,
-      fornecedores: fornecedoresJson // Enviar também os fornecedores
+      fornecedores: fornecedoresJson
     });
 
   } catch (error) {
@@ -588,8 +599,22 @@ app.get('/insumos', async (req, res) => {
   }
 });
 
+// Deletar insumo
+app.delete('/insumos/:id', async (req, res) => {
+  try {
+      const id = req.params.id;
+      const insumo = await Insumo.destroy({ where: { id } });
 
+      if (!insumo) {
+          return res.status(404).json({ message: 'Insumo não encontrado' });
+      }
 
+      res.status(200).json({ message: 'Insumo excluído com sucesso' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Erro ao excluir o insumo' });
+  }
+});
 
 // Cadastrar um novo insumo
 app.post('/add-insumos', async (req, res) => {
@@ -628,7 +653,7 @@ app.post('/add-insumos', async (req, res) => {
     // Cria o novo insumo
     const novoInsumo = await Insumo.create({
       fornecedorId: fornecedorId,
-      tipo_produtoId: tipoInsumoId,
+      tipo_insumoId: tipoInsumoId,
       validade,
       quantidade,
       usuarioId: req.session.userId
@@ -700,44 +725,34 @@ app.post('/add-fornecedor', async (req, res) => {
 
 
 
-//Atualizar Insumo
+// Endpoint para atualizar o insumo
 app.post('/atualizar-insumo', async (req, res) => {
-  const { insumoId, tipoInsumo, fornecedor, quantidade, validade } = req.body;
+  const { insumoId, tipoInsumo, quantidade, validade } = req.body;
+
+  // Log para verificar se os dados estão sendo recebidos corretamente
+  console.log('InsumoId:', insumoId);
+  console.log('TipoInsumo:', tipoInsumo);
+  console.log('Quantidade:', quantidade);
+  console.log('Validade:', validade);
+
+  if (!insumoId) {
+      return res.status(400).json({ message: 'Insumo ID não fornecido' });
+  }
 
   try {
+      // Atualiza o insumo no banco de dados
       await Insumo.update(
           {
-              tipo_produtoId: tipoInsumo, // ID do tipo de produto
-              fornecedorId: fornecedor,     // ID do fornecedor
+              tipo_produtoId: tipoInsumo,  // ID do tipo de produto
               quantidade: quantidade,
               validade: new Date(validade), // Certifique-se de que a data está no formato correto
           },
           {
-              where: { id: insumoId },
+              where: { id: insumoId },  // Onde o insumo tem o ID igual ao fornecido
           }
       );
 
-      // Buscar todos os insumos
-      const insumos = await Insumo.findAll();
-
-      // Buscar todos os tipos de insumo
-      const tiposInsumo = await TipoInsumo.findAll(); // Supondo que você tenha o modelo `TipoInsumo`
-  
-      // Buscar todos os fornecedores
-      const fornecedores = await Fornecedor.findAll(); // Supondo que você tenha o modelo `Fornecedor`
-  
-    // Converter os dados para JSON
-    const insumosJson = insumos.map(insumo => insumo.toJSON());
-    const tiposInsumoJson = tiposInsumo.map(tipo => tipo.toJSON());
-    const fornecedoresJson = fornecedores.map(fornecedor => fornecedor.toJSON());
-
-
-    // Renderizar a página e enviar os dados
-    res.render('sexta_pag', {
-      insumos: insumosJson,
-      tiposInsumo: tiposInsumoJson,
-      fornecedores: fornecedoresJson // Enviar também os fornecedores
-    });
+      res.redirect('/insumos')
   } catch (error) {
       console.error('Erro ao atualizar o insumo:', error);
       res.status(500).json({ message: 'Erro ao atualizar o insumo' });
