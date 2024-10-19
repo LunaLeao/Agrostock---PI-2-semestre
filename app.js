@@ -6,7 +6,8 @@ const bcrypt = require("bcrypt");
 const path = require('path');
 const session = require('express-session');
 
-const { Usuario, Endereco, Colheita, TipoProduto, Insumo, Venda } = require("./models/post");
+const { Usuario, Endereco, Colheita, TipoInsumo ,TipoProduto, Insumo, Venda } = require("./models/post");
+
 
 const formatDate = (date) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -556,58 +557,108 @@ app.delete('/vendas/:id', async (req, res) => {
 //Insumo
 app.get('/insumos', async (req, res) => {
   try {
-      // Verifica se o usuário está logado
-      if (!req.session.userId) {
-          return res.status(403).send('Usuário não autorizado');
-      }
+    if (!req.session.userId) {
+      return res.status(403).send('Usuário não autorizado');
+    }
 
-      const insumos = await Insumo.findAll({
-          where: { usuarioId: req.session.userId }, // Filtra pelas colheitas do usuário logado
-          include: [{ model: TipoProduto }],
-      });
+    const insumos = await Insumo.findAll();
 
-      // Buscar todos os tipos de insumos
-      const tiposProduto = await TipoProduto.findAll();
 
-      const insumosJson = insumos.map(insumos => insumos.toJSON());
+    const insumosJson = insumos.map(insumo => insumo.toJSON());
 
-      res.render('sexta_pag', { insumos: insumosJson, tiposProduto });
-    } catch (error) {
-      console.error('Erro ao buscar insumos:', error);
-      res.status(500).send('Erro ao buscar insumos.');    
+    res.render('sexta_pag', { insumos: insumosJson });
+  } catch (error) {
+    console.error('Erro ao buscar insumos:', error);
+    res.status(500).send('Erro ao buscar insumos.');
   }
 });
 
-//Cadastrar um novo insumo
+
+
+
+// Cadastrar um novo insumo
 app.post('/add-insumos', async (req, res) => {
   try {
-      const { insumo, fornecedor, validade, quantidade } = req.body;
+      const { tipoInsumo, fornecedor, validade, quantidade, novoTipo, novoFornecedorNome, novoFornecedorTelefone } = req.body;
 
       // Verifica se o usuário está logado
       if (!req.session.userId) {
           return res.status(403).json({ message: 'Usuário não autorizado' });
       }
 
-      // Verifica se o tipo de produto já existe
-      const [produtoExistente, created] = await TipoProduto.findOrCreate({
-          where: { nome: tipo_produto },  
-          defaults: { nome: tipo_produto } 
-      });
+      // Verifica se o tipo de insumo já existe ou cria um novo
+      let tipoInsumoId;
+      if (tipoInsumo) {
+          tipoInsumoId = tipoInsumo;
+      } else if (novoTipo) {
+          const [novoTipoInsumo] = await TipoProduto.findOrCreate({
+              where: { nome: novoTipo },  
+              defaults: { nome: novoTipo } 
+          });
+          tipoInsumoId = novoTipoInsumo.id;
+      }
+
+      // Verifica se o fornecedor já existe ou cria um novo
+      let fornecedorId;
+      if (fornecedor) {
+          fornecedorId = fornecedor;
+      } else if (novoFornecedorNome && novoFornecedorTelefone) {
+          const [novoFornecedor] = await Fornecedor.findOrCreate({
+              where: { nome: novoFornecedorNome },
+              defaults: { nome: novoFornecedorNome, telefone: novoFornecedorTelefone }
+          });
+          fornecedorId = novoFornecedor.id;
+      }
 
       // Cria o novo insumo
       const novoInsumo = await Insumo.create({
-          insumoId: insumo,
-          fornecedorId: fornecedor,
-          tipo_produtoId: produtoExistente.id, 
+          fornecedorId: fornecedorId,
+          tipo_produtoId: tipoInsumoId, 
           validade,
           quantidade,
           usuarioId: req.session.userId
       });
 
-      res.redirect('/insumos');
+      // Resposta JSON em vez de redirecionar
+      res.status(201).json({ message: 'Insumo cadastrado com sucesso!' });
   } catch (error) {
       console.error('Erro ao cadastrar a insumo:', error);
       res.status(500).json({ message: 'Erro ao cadastrar a insumo' });
+  }
+});
+//Referente aos botões que estão no modal de insumos
+// Endpoint para adicionar um novo tipo de insumo
+app.post('/add-tipo-insumo', async (req, res) => {
+  try {
+      const { novoTipo } = req.body;
+
+      // Cria ou encontra um tipo de insumo existente
+      const [tipoInsumo, created] = await TipoInsumo.findOrCreate({
+          where: { nome: novoTipo },
+          defaults: { nome: novoTipo }
+      });
+
+      if (created) {
+          res.status(201).json({ message: 'Tipo de insumo adicionado com sucesso!' });
+      } else {
+          res.status(400).json({ message: 'Tipo de insumo já existe.' });
+      }
+  } catch (error) {
+      console.error('Erro ao adicionar tipo de insumo:', error);
+      res.status(500).json({ message: 'Erro ao adicionar tipo de insumo' });
+  }
+});
+
+
+// Endpoint para adicionar um novo fornecedor
+app.post('/add-fornecedor', async (req, res) => {
+  const { nome, telefone } = req.body;
+  try {
+      const fornecedor = await Fornecedor.create({ nome, telefone });
+      res.status(201).json(fornecedor);
+  } catch (error) {
+      console.error('Erro ao adicionar fornecedor:', error);
+      res.status(500).json({ message: 'Erro ao adicionar fornecedor' });
   }
 });
 

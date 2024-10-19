@@ -236,27 +236,24 @@
                         <tr>
                             <th></th>
                             <th>Nome</th>
-                            <th>Quantidade (Unidade)</th>
-                            <th>Tipo</th>
-                            <th>Valor da Compra</th>
-                            <th>Data da Compra</th>
+                            <th>Quantidade</th>
+                            <th>Validade</th>
                             <th></th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {{#each insumos}}
-                        <tr id="insumo-row-{{this.id}}"> <!-- Adicione um ID à linha -->
-                            <td><input type="radio" class="radio" name="insumoSelecionado" value="{{this.id}}"></td>
-                            <td>{{tipo_insumoId.nome}}</td>
-                            <td>{{tipo_produto.nome}}</td>
-                            <td>{{quantidade}}</td>
-                            <td>{{validade}}</td>
-                            <td>
-                                <button class="btn btn-danger btn-sm" onclick="deleteInsumo({{this.id}})">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        </thead>
+                        <tbody>
+                            {{#each insumos}}
+                            <tr id="insumo-row-{{this.id}}"> <!-- Adicione um ID à linha -->
+                                <td><input type="radio" class="radio" name="insumoSelecionado" value="{{this.id}}"></td>
+                                <td>{{../tipoinsumos.[this.tipo_insumoId].nome}}</td> <!-- Acesse o nome do tipo de insumo -->
+                                <td>{{quantidade}}</td>
+                                <td>{{validade}}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteInsumo({{this.id}})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
                         {{/each}}
                     </tbody>
                 </table>
@@ -314,155 +311,138 @@
             </div>
         </div>
 
-        <!-- Modal Add -->
-        <div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="novoItemModalLabel">Adicionar Novo Insumo</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal Add -->
+<div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="novoItemModalLabel">Adicionar Novo Insumo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/add-insumos" method="POST" id="novoItemForm">
+                    <div class="mb-3">
+                        <label for="selectTipoInsumo" class="form-label">Tipo de Insumo</label>
+                        <select class="form-select" id="selectTipoInsumo" name="tipoInsumo" required>
+                            <option value="">Selecione um tipo de insumo</option>
+                            {{#each tiposInsumo}}
+                            <option value="{{this.id}}">{{this.nome}}</option>
+                            {{/each}}
+                        </select>
+                        <div class="mt-2">
+                            <input type="text" class="form-control" id="novoTipoInsumo" placeholder="Adicionar novo tipo de insumo" />
+                            <button type="button" class="btn btn-primary mt-1" id="btnAddTipoInsumo">Adicionar</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <form action="/add-insumo" method="POST" id="novoItemForm">
-                            <div class="mb-3">
-                                <label for="itemNomeFornecedor" class="form-label">Nome do Fornecedor</label>
-                                <input type="text" class="form-control" id="itemNomeFornecedor" name="fornecedor"
-                                    placeholder="Digite o nome do fornecedor" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemItem" class="form-label">Item</label>
-                                <input type="text" class="form-control" id="itemItem" name="tipo_produto"
-                                    placeholder="Digite o item comprado" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemQuantidade" class="form-label">Quantidade</label>
-                                <input type="number" class="form-control" id="itemQuantidade" name="quantidade"
-                                    placeholder="Digite a quantidade" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemValorTotal" class="form-label">Valor da Compra</label>
-                                <input type="number" class="form-control" id="itemValorTotal" name="valor_total"
-                                    placeholder="Digite o valor da compra" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemDataCompra" class="form-label">Data da Compra</label>
-                                <input type="date" class="form-control" id="itemDataCompra" name="data_compra"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemObservacao" class="form-label">Observação</label>
-                                <textarea class="form-control" id="itemObservacao" name="observacao"
-                                    rows="3"></textarea>
-                            </div>
+                    <div class="mb-3">
+                        <label for="selectFornecedor" class="form-label">Fornecedor</label>
+                        <select class="form-select" id="selectFornecedor" name="fornecedor" required>
+                            <option value="">Selecione um fornecedor</option>
+                            {{#each fornecedores}}
+                            <option value="{{this.id}}">{{this.nome}}</option>
+                            {{/each}}
+                        </select>
+                        <div class="mt-2">
+                            <input type="text" class="form-control" id="novoFornecedorNome" placeholder="Nome do fornecedor" />
+                            <input type="tel" class="form-control mt-1" id="novoFornecedorTelefone" placeholder="Telefone do fornecedor" />
+                            <button type="button" class="btn btn-primary mt-1" id="btnAddFornecedor">Adicionar</button>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
+                    <div class="mb-3">
+                        <label for="itemQuantidade" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="itemQuantidade" name="quantidade" placeholder="Digite a quantidade" required>
                     </div>
-                    </form>
-                </div>
+                    <div class="mb-3">
+                        <label for="itemValidade" class="form-label">Validade</label>
+                        <input type="date" class="form-control" id="itemValidade" name="validade" required>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
+            </div>
+                </form>
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="sair-btn">
-            <button type="button" class="btn btn-success" style="margin-top: 1rem;">
-                <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
-            </button>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-        function openInsumoModal() {
-            // Obtenha a colheita selecionada
-            const selectedRadio = document.querySelector('input[name="insumoSelecionado"]:checked');
-            
-            if (selectedRadio) {
-                const selectedId = selectedRadio.value;
+<div class="sair-btn">
+    <button type="button" class="btn btn-success" style="margin-top: 1rem;">
+        <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
+    </button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                const insumos = [
-                    {{#each insumos}}
-                    { id: "{{this.id}}", fornecedor: "{{fornecedor}}", quantidade: {{quantidade}}, tipo_produto: "{{tipo_produto.nome}}", valor_total: "{{valor_total}}", data_colheita: "{{data_colheita}}" },
-                    {{/each}}
-                ];
+<script>
+document.getElementById('btnAddTipoInsumo').addEventListener('click', async () => {
+    const novoTipo = document.getElementById('novoTipoInsumo').value;
 
-                const insumo = insumos.find(c => c.id === selectedId);
+    try {
+        const response = await fetch('/add-tipo-insumo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ novoTipo })
+        });
 
-                // Preencha os campos do modal
-                document.getElementById('insumoId').value = insumo.id;
-                document.getElementById('fornecedor').value = insumo.fornecedor;
-                document.getElementById('quantidade').value = insumo.quantidade;
-                document.getElementById('tipo_produto').value = insumo.tipo_produto;
-                document.getElementById('valor_total').value = insumo.valor_total;
+        const data = await response.json();
 
-                // Formate a data para o formato 'YYYY-MM-DD' que é esperado pelo input do tipo date
-                const dataFormatada = new Date(compra.data_compra).toISOString().split('T')[0];
-                document.getElementById('data_compra').value = dataFormatada;
-
-                // Abra o modal
-                const modal = new bootstrap.Modal(document.getElementById('insumoModal'));
-                modal.show();
-            } else {
-                alert("Por favor, selecione um insumo para editar.");
-            }
+        if (response.ok) {
+            alert(data.message); // Mostra a mensagem de sucesso
+            // Aqui você pode adicionar o novo tipo de insumo ao <select> se necessário
+        } else {
+            throw new Error(data.message); // Lança erro para o catch
         }
-        </script>   
-        <script>
-            function deleteInsumo(id) {
-                if (confirm('Você tem certeza que deseja excluir este insumo?')) {
-                    fetch(`/insumos/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        console.log('Resposta do servidor:', response); // Adicionado para depuração
-                        if (!response.ok) {
-                            return response.text().then(text => {
-                                throw new Error(text || 'Erro ao excluir o insumo');
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        const row = document.getElementById(`insumo-row-${id}`);
-                        if (row) {
-                            row.remove();
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error.message);
-                        alert(`Ocorreu um erro: ${error.message}`);
-                    });
-                }
-            }
-        </script>
-        {{!--
-        <script>
-            document.getElementById('saveButton').addEventListener('click', function () {
-                const nome = document.getElementById('nome').value;
-                const quantidade = document.getElementById('quantidade').value;
-                const tipo = document.getElementById('tipo').value;
-                const observacao = document.getElementById('observacao').value;
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao adicionar tipo de insumo');
+    }
+});
 
-                fetch('/adicionar-item', {
+
+    document.getElementById('btnAddFornecedor').addEventListener('click', async () => {
+        const nome = document.getElementById('novoFornecedorNome').value;
+        const telefone = document.getElementById('novoFornecedorTelefone').value;
+
+        if (nome && telefone) {
+            try {
+                const response = await fetch('/add-fornecedor', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ nome, quantidade, tipo, observacao }),
-                })
-                    .then(response => response.text())
-                    .then(data => {
-                        alert(data); // Exibir uma mensagem de sucesso
-                        // Fechar o modal ou atualizar a tabela, se necessário
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                    });
-            });
-        </script> --}}
+                    body: JSON.stringify({ nome, telefone }),
+                });
+
+                if (response.ok) {
+                    alert('Fornecedor adicionado com sucesso!');
+                    // Adicione lógica para atualizar o <select> de fornecedores
+                    const fornecedorSelect = document.getElementById('fornecedor');
+                    const option = document.createElement('option');
+                    option.value = nome; // ou o id retornado do servidor
+                    option.textContent = nome;
+                    fornecedorSelect.appendChild(option);
+                    document.getElementById('novoFornecedorNome').value = ''; // Limpa o campo
+                    document.getElementById('novoFornecedorTelefone').value = ''; // Limpa o campo
+                } else {
+                    const errorData = await response.json();
+                    alert(`Erro: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error('Erro ao adicionar fornecedor:', error);
+                alert('Erro ao adicionar fornecedor');
+            }
+        } else {
+            alert('Por favor, preencha todos os campos do fornecedor.');
+        }
+    });
+</script>
+
+
+
+
 </body>
 
 </html>
