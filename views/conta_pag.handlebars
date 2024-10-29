@@ -1,0 +1,421 @@
+<title>Conta do Usuário</title>
+<link rel="stylesheet" href="/css/menu-style.css">
+<style>
+  body {
+    display: flex;
+    overflow-x: hidden;
+  }
+
+  .container {
+    display: flex;
+  }
+
+  #main-content {
+    width: 90%;
+  }
+
+  .user-photo {
+    font-size: 9rem;
+    color: #bdbdbd;
+    margin-right: 40px;
+  }
+
+  .d-flex {
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+
+  .img-fluid {
+    height: 15rem;
+    max-height: 140px;
+  }
+
+  .config-icon {
+    position: relative;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #6c757d;
+  }
+
+  .info-section {
+    background-color: #f3f2f2;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+
+  .info-section h3 {
+    color: green;
+  }
+
+  h1,
+  h3 {
+    color: green;
+  }
+
+  p {
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    #main-content {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    #menu_lateral {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column-reverse;
+    }
+  }
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <section id="menu_lateral" style=" position: fixed; z-index: 1; width: 100%">
+      <nav class="menu-lateral">
+        <div class="btn-expandir" id="btn-exp">
+          <i class="bi bi-list"></i>
+        </div>
+
+        <ul>
+          <li class="item-menu" id="menu-dashboard">
+            <a href="/dashboard">
+              <span class="icon-menu">
+                <i class="bi bi-columns-gap"></i>
+              </span>
+              <span class="txt-menu">Dashboard</span>
+            </a>
+          </li>
+
+          <li class="item-menu" id="menu-colheitas">
+            <a href="/colheitas">
+              <span class="icon-menu">
+                <i class="bi bi-tree"></i>
+              </span>
+              <span class="txt-menu">Colheitas</span>
+            </a>
+          </li>
+
+          <li class="item-menu" id="menu-insumos">
+            <a href="/insumos">
+              <span class="icon-menu">
+                <i class="bi bi-droplet"></i>
+              </span>
+              <span class="txt-menu">Insumos</span>
+            </a>
+          </li>
+
+          <li class="item-menu" id="menu-venda-fornecedor">
+            <a href="/venda-fornecedor">
+              <span class="icon-menu">
+                <i class="bi bi-bag"></i>
+              </span>
+              <span class="txt-menu">Vendas/Fornecedores</span>
+            </a>
+          </li>
+
+          <li class="item-menu" id="menu-conta">
+            <a href="/conta">
+              <span class="icon-menu">
+                <i class="bi bi-person-circle"></i>
+              </span>
+              <span class="txt-menu">Sua conta</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+
+    <section id="main-content">
+      <div class="container-fluid">
+        <div class="position-absolute top-0 end-0" style="margin-right: 20px">
+          <button type="button" class="btn btn-success" style="margin-top: 1rem;">
+            <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
+          </button>
+          <button type="button" class="btn btn-success" class="btn btn-primary" data-bs-toggle="modal"
+            data-bs-target="#changePasswordModal" style="margin-top: 1rem;">
+            Mudar Senha
+          </button>
+
+          <!-- Modal de troca de senha -->
+          <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="changePasswordModalLabel">Mudar Senha</h5>
+                  <button type="button" class="btn-close justify-content-md-end" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                <div class="modal-body">
+                  <form action="/mudar-senha" method="POST">
+                    <div class="mb-3">
+                      <label for="currentPassword" class="form-label">Senha Atual</label>
+                      <input type="password" class="form-control" id="currentPassword" name="senhaAtual" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="newPassword" class="form-label">Nova Senha</label>
+                      <input type="password" class="form-control" id="newPassword" name="novaSenha" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="confirmPassword" class="form-label">Confirmar Nova Senha</label>
+                      <input type="password" class="form-control" id="confirmPassword" name="confirmarSenha" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal de sucesso -->
+          <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="successModalLabel">Senha Alterada</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Sua senha foi alterada com sucesso.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal de erro -->
+          <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="errorModalLabel">Erro ao Alterar a Senha</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Ocorreu um erro ao tentar alterar a senha. Verifique suas informações e tente novamente.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal de senha inválida -->
+          <div class="modal fade" id="invalidPasswordModal" tabindex="-1" aria-labelledby="invalidPasswordModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="invalidPasswordModalLabel">Senha Inválida</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  A nova senha deve conter pelo menos um número e um caractere especial.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="row align-items-center" style="margin-left: -50px;">
+          <div class="col-md-6 d-flex align-items-center">
+            <i class="bi bi-person-circle user-photo"></i>
+            <div>
+              <h1>Bem-vindo(a), {{usuario.nome}}</h1>
+              <p>Email: {{usuario.email}}</p>
+              <p>Telefone Celular: {{usuario.telefone_celular}}</p>
+              <p>Propriedade: {{usuario.nome_propriedade}}</p>
+            </div>
+          </div>
+          <div class="col-md-6 text-end">
+            <img src="{{logoImage}}" alt="Logo" class="img-fluid" style="margin-top: 20%">
+          </div>
+        </div>
+      </div>
+
+      <div class="text-end mt-2">
+        <!-- Ícone de configuração para abrir o modal -->
+        <i class="bi bi-gear config-icon" data-bs-toggle="modal" data-bs-target="#configModal"></i>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="info-section">
+            <h3>Última venda</h3>
+            <p>Nome do Comprador:</p>
+            <p>Item:</p>
+            <p>Quantidade (saco):</p>
+            <p>Valor Unitário:</p>
+            <p>Valor da Venda:</p>
+            <p>Data da Venda:</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="info-section">
+            <h3>Último item Adicionado no Estoque</h3>
+            <p>Item:</p>
+            <p>Quantidade (saco):</p>
+            <p>Tipo:</p>
+            <p>Data do Registro:</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal para editar e excluir informações -->
+  <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="configModalLabel">Editar Informações do Usuário</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Formulário de edição -->
+          <form action="/atualizar-conta" method="POST">
+            <div class="mb-3">
+              <label for="nome" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="nome" name="nome" required value="{{usuario.nome}}">
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" required value="{{usuario.email}}">
+            </div>
+            <div class="mb-3">
+              <label for="telefone-celular" class="form-label">Telefone Celular</label>
+              <input type="text" class="form-control" id="telefone_celular" required name="telefone_celular"
+                value="{{usuario.telefone_celular}}">
+            </div>
+            <div class="mb-3">
+              <label for="telefone-residencial" class="form-label">Telefone Residencial</label>
+              <input type="text" class="form-control" id="telefone_residencial" name="telefone_residencial"
+                value="{{usuario.telefone_residencial}}">
+            </div>
+            <div class="mb-3">
+              <h3> Endereço: </h3>
+              <label for="cep" class="form-label">CEP</label>
+              <input type="text" class="form-control" id="cep" name="cep" required value="{{endereco.cep}}">
+            </div>
+            <div class="mb-3">
+              <label for="logradouro">Logradouro</label>
+              <input type="text" class="form-control" id="logradouro" name="logradouro" required
+                value="{{endereco.logradouro}}" />
+            </div>
+            <div class="mb-3">
+              <label for="numero">Número</label>
+              <input type="text" class="form-control" id="numero" name="numero" required value="{{endereco.numero}}" />
+            </div>
+            <div class="mb-3">
+              <label for="complemento">Complemento</label>
+              <input type="text" class="form-control" id="complemento" name="complemento"
+                value="{{endereco.complemento}}" />
+            </div>
+            <div class="mb-3">
+              <label for="bairro">Bairro</label>
+              <input type="text" class="form-control" id="bairro" name="bairro" required value="{{endereco.bairro}}" />
+            </div>
+            <div class="mb-3">
+              <label for="cidade">Cidade</label>
+              <input type="text" class="form-control" id="cidade" name="cidade" required value="{{endereco.cidade}}" />
+            </div>
+            <div class="mb-3">
+              <label for="uf">UF</label>
+              <input type="text" class="form-control" id="uf" name="uf" required value="{{endereco.uf}}" />
+            </div>
+            <div class="mb-3">
+              <label for="propriedade">Propriedade Rural</label>
+              <input type="text" class="form-control" id="propriedade" name="nome_propriedade"
+                value="{{endereco.nome_propriedade}}" />
+            </div>
+            <div class="mb-3">
+              <!-- Botões de salvar e deletar -->
+              <button type="submit" class="btn btn-success">Salvar</button>
+
+          </form>
+          <button type="submit" class="btn btn-danger" onclick="deletarUsuario()">Excluir Conta</button>
+          <form id="deleteForm" action="/excluir-conta" method="POST" style="display: none;">
+            <input type="hidden" name="_method" value="DELETE">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function deletarUsuario() {
+      if (confirm("Tem certeza que deseja excluir sua conta?")) {
+        document.getElementById('deleteForm').submit(); // Submete o formulário de exclusão via POST
+      }
+    }
+  </script>
+  <script>
+    document.getElementById("cep").addEventListener("blur", function () {
+      var cep = this.value.replace(/\D/g, "");
+      if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.erro) {
+              document.getElementById("logradouro").value = data.logradouro;
+              document.getElementById("bairro").value = data.bairro;
+              document.getElementById("cidade").value = data.localidade;
+              document.getElementById("uf").value = data.uf;
+            } else {
+              alert("CEP não encontrado.");
+            }
+          })
+          .catch((error) => console.error("Erro ao buscar CEP:", error));
+      } else {
+        alert("CEP inválido.");
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      Inputmask({ mask: '(99) 99999-9999' }).mask('#telefone_celular');
+      Inputmask({ mask: '(99) 9999-9999' }).mask('#telefone_residencial');
+      Inputmask({ mask: '999.999.999-99' }).mask('#cpf');
+    });
+
+    function handlePhone(event) {
+      var input = event.target;
+      var value = input.value.replace(/\D/g, '');
+      if (input.id === 'telefone-celular') {
+        input.value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      } else if (input.id === 'telefone-residencial') {
+        input.value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+      }
+    }
+
+    function showModal(modalId) {
+      var modal = new bootstrap.Modal(document.getElementById(modalId));
+      modal.show();
+    }
+
+    // Verifica os parâmetros da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success')) {
+      showModal('successModal');
+    } else if (urlParams.has('error')) {
+      showModal('errorModal');
+    } else if (urlParams.has('invalid_password')) {
+      showModal('invalidPasswordModal');
+    }
+  </script>
+</body>
+</html>
