@@ -24,7 +24,13 @@ exports.renderizarVenda = async function (req, res) {
       const vendasJson = vendas.map(venda => venda.toJSON());
   
       // Renderiza a página passando as vendas e os compradores
-      res.render('venda_pag', { vendas: vendasJson, compradores, tiposProduto });
+      res.render('venda_pag', { 
+        vendas: vendasJson,
+        compradores,
+        tiposProduto,
+        isVendasPage: true,  
+        isFornecedoresPage: false 
+      });
     } catch (error) {
       console.error(error);
       res.status(500).send('Erro ao buscar vendas.');

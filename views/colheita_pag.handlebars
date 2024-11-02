@@ -305,52 +305,6 @@
             </div>
         </div>
 
-        {{!-- <!-- Modal Add -->
-        <div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="novoItemModalLabel">Adicionar Nova Colheita</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/add-colheita" method="POST" id="novoItemForm">
-                            <div class="mb-3">
-                                <label for="itemNomeColheita" class="form-label">Nome do Item</label>
-                                <input type="text" class="form-control" id="itemNomeColheita" name="nome_colheita"
-                                    placeholder="Digite o nome da colheita (ex: batata)" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemTipoProduto" class="form-label">Tipo</label>
-                                <input type="text" class="form-control" id="itemTipoProduto" name="tipo_produto"
-                                    placeholder="Digite o tipo do produto" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemQuantidade" class="form-label">Quantidade</label>
-                                <input type="number" class="form-control" id="itemQuantidade" name="quantidade"
-                                    placeholder="Digite a quantidade" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemDataColheita" class="form-label">Data da Colheita</label>
-                                <input type="date" class="form-control" id="itemDataColheita" name="data_colheita"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="itemObservacao" class="form-label">Observação</label>
-                                <textarea class="form-control" id="itemObservacao" name="observacao"
-                                    rows="3"></textarea>
-                            </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div> --}}
-
 <!-- Modal Add -->
 <div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -370,7 +324,7 @@
                         <label for="selectTipoProduto" class="form-label">Tipo</label>
                         <select class="form-select" id="selectTipoProduto" name="tipo_produto" required>
                             <option value="">Selecione um tipo de produto</option>
-                            {{#each tiposProduto}} <!-- Aqui você precisa ter a lista de tipos de produto -->
+                            {{#each tiposProduto}} 
                             <option value="{{this.id}}">{{this.nome}}</option>
                             {{/each}}
                         </select>

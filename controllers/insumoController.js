@@ -137,18 +137,6 @@ exports.adicionarTipoInsumo = async function (req, res) {
   }
 };
 
-exports.adicionarFornecedor = async function (req, res) {
-  const { nome, telefone, cnpj } = req.body;
-  try {
-    await Fornecedor.create({ nome, telefone, cnpj });
-    console.log('Cadastrado com sucesso!')
-    res.redirect('/insumos');
-  } catch (error) {
-    console.error('Erro ao adicionar fornecedor:', error);
-    res.status(500).json({ message: 'Erro ao adicionar fornecedor' });
-  }
-};
-
 exports.atualizarInsumo = async function (req, res) {
   const { insumoId, tipoInsumo, fornecedor, quantidade, validade } = req.body;
 

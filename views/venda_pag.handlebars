@@ -225,10 +225,17 @@
                 </div>
                 <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#novoItemModal">Novo +</button>
                 <button class="btn btn-custom" id="editarButton" onclick="openVendaModal()">Editar</button>
-
-
             </div>
             
+            <ul class="nav nav-tabs mt-3">
+                <li class="nav-item me-2"> <!-- Classe me-2 adiciona um espaçamento entre as abas -->
+                    <a class="nav-link {{#if isVendasPage}}active{{/if}}" href="/venda-fornecedor" style="background-color: #00b80f; color: white;">Vendas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{#if isFornecedoresPage}}active{{/if}}" href="/fornecedores" style="background-color: #00b80f; color: white;">Fornecedores</a>
+                </li>
+            </ul>
+
             <!-- Tabela -->
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">

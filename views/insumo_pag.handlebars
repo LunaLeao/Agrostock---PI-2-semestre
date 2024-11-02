@@ -356,9 +356,6 @@
                             <option value="{{this.id}}">{{this.nome}}</option>
                             {{/each}}
                         </select>
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-primary" id="openNovoFornecedorModal">Adicionar Fornecedor</button>
-                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="itemQuantidade" class="form-label">Quantidade</label>
@@ -371,38 +368,6 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                         <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para adicionar informações de fornecedor (Segundo Modal) -->
-<div class="modal fade" id="novoFornecedorModal" aria-hidden="true" aria-labelledby="novoFornecedorModalLabel" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="novoFornecedorModalLabel">Adicionar Novo Fornecedor</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/add-fornecedor" method="POST" id="novoFornecedorForm">
-                    <div class="mb-3">
-                        <label for="novoFornecedorNome" class="form-label">Nome do Fornecedor</label>
-                        <input type="text" class="form-control" id="novoFornecedorNome" name="nome" placeholder="Digite o nome do fornecedor" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="novoFornecedorTelefone" class="form-label">Telefone</label>
-                        <input type="tel" class="form-control" id="novoFornecedorTelefone" name="telefone" placeholder="Digite o telefone do fornecedor" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="novoFornecedorCNPJ" class="form-label">CNPJ</label>
-                        <input type="text" class="form-control" id="novoFornecedorCNPJ" name="cnpj" placeholder="Digite o CNPJ do fornecedor" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="backToNovoItemModal">Fechar</button>
-                        <button type="submit" class="btn btn-success" id="btnSalvarNovoFornecedor">Salvar</button>
                     </div>
                 </form>
             </div>
@@ -483,46 +448,6 @@
                     } catch (error) {
                         console.error('Erro:', error);
                         alert('Erro ao adicionar tipo de insumo');
-                    }
-                });
-
-
-                document.getElementById('btnAddFornecedor').addEventListener('click', async () => {
-                    const nome = document.getElementById('novoFornecedorNome').value;
-                    const telefone = document.getElementById('novoFornecedorTelefone').value;
-                    const cnpj = document.getElementById('novoFornecedorCNPJ').value;
-
-                    if (nome && telefone && cnpj) {
-                        try {
-                            const response = await fetch('/add-fornecedor', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ nome, telefone, cnpj }),
-                            });
-
-                            if (response.ok) {
-                                alert('Fornecedor adicionado com sucesso!');
-                                // Adicione lógica para atualizar o <select> de fornecedores
-                                const fornecedorSelect = document.getElementById('fornecedor');
-                                const option = document.createElement('option');
-                                option.value = nome; // ou o id retornado do servidor
-                                option.textContent = nome;
-                                fornecedorSelect.appendChild(option);
-                                document.getElementById('novoFornecedorNome').value = ''; // Limpa o campo
-                                document.getElementById('novoFornecedorTelefone').value = ''; // Limpa o campo
-                                document.getElementById('novoFornecedorCNPJ').value = '';
-                            } else {
-                                const errorData = await response.json();
-                                alert(`Erro: ${errorData.message}`);
-                            }
-                        } catch (error) {
-                            console.error('Erro ao adicionar fornecedor:', error);
-                            alert('Erro ao adicionar fornecedor');
-                        }
-                    } else {
-                        alert('Por favor, preencha todos os campos do fornecedor.');
                     }
                 });
             </script>

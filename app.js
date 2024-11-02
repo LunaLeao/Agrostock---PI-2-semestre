@@ -51,6 +51,9 @@ app.use("/", rotaVenda);
 const insumoRota = require("./routes/insumoRouter");
 app.use("/", insumoRota);
 
+const rotaFornecedor = require("./routes/fornecedorRouter")
+app.use('/', rotaFornecedor);
+
 // Página inicial
 app.get("/", function (req, res) {
   res.render("login_pag", {
