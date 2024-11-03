@@ -195,14 +195,16 @@ const Fornecedor = db.sequelize.define("fornecedor",{
         type: db.Sequelize.STRING,
         allowNull: false
     },
-    tipo_produtoId: {
+    cnpj: {
+        type: db.Sequelize.STRING
+    },
+    enderecoId: { 
         type: db.Sequelize.INTEGER,
+        allowNull: true, 
         references: {
-            model: 'TipoProduto',
-            key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+            model: 'Endereco', 
+            key: 'id' 
+        }
     }
 }, {
     tableName: 'Fornecedor'
@@ -385,6 +387,39 @@ const CalculoLucro = db.sequelize.define("calculo_lucro",{
     tableName: 'CalculoLucro'
 })
 
+const Compra = db.sequelize.define("compra", {
+    fornecedorId: {
+        type: db.Sequelize.INTEGER,
+        references: {
+            model: 'Fornecedor',
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+    },
+    insumoId: {
+        type: db.Sequelize.INTEGER,
+        references: {
+          model: 'Insumo',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+    },
+    valor_compra: {
+        type: db.Sequelize.FLOAT,
+        allowNull: false
+    },
+    data_registro: {
+        type: db.Sequelize.DATE,
+        allowNull: false,
+        defaultValue: db.Sequelize.NOW
+    }
+}, {
+    tableName: 'Compra'
+});
+
+
 Usuario.hasMany(Colheita, {foreignKey: 'usuarioId'});
 Colheita.belongsTo(Usuario, {foreignKey: 'usuarioId'});
 
@@ -403,6 +438,14 @@ Insumo.belongsTo(Fornecedor, { foreignKey: 'fornecedorId'});
 TipoInsumo.hasMany(Insumo, { foreignKey: 'tipo_insumoId'});
 Insumo.belongsTo(TipoInsumo, { foreignKey: 'tipo_insumoId'});
 
+Fornecedor.hasMany(Compra, {foreignKey: 'fornecedorId'});
+Compra.belongsTo(Fornecedor, {foreignKey: 'fornecedorId'});
+
+Insumo.hasMany(Compra, { foreignKey: 'insumoId' });
+Compra.belongsTo(Insumo, { foreignKey: 'insumoId' });
+
+Fornecedor.belongsTo(Endereco, {foreignKey:'enderecoId'});
+Endereco.hasMany(Fornecedor, {foreignKey: 'enderecoId'});
 
 Insumo.hasMany(EstoqueInsumo, { foreignKey: 'insumoId'});
 EstoqueInsumo.belongsTo(Insumo, { foreignKey: 'insumoId'});
@@ -435,7 +478,7 @@ Colheita.hasMany(EstoqueColheita, { foreignKey: 'colheitaId'});
 EstoqueColheita.belongsTo(Colheita, { foreignKey: 'colheitaId'});
 
 
-module.exports = {Usuario,TipoProduto,Colheita,Endereco,TipoInsumo,TipoRelatorio,Relatorios,CalculoLucro,Comprador,Cotacao,EstoqueColheita,EstoqueInsumo,Venda,Fornecedor,Insumo};
+module.exports = {Usuario,TipoProduto,Colheita,Endereco,TipoInsumo,TipoRelatorio,Relatorios,CalculoLucro,Comprador,Cotacao,EstoqueColheita,EstoqueInsumo,Venda,Fornecedor,Insumo,Compra};
 
-// db.sequelize.sync ({force: true}) //mudar pra alter no lugar de force caso queira atualizar apenas
+//db.sequelize.sync ({force: true}) //mudar pra alter no lugar de force caso queira atualizar apenas
 //db.sequelize.sync({ alter: true })
