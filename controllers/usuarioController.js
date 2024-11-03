@@ -1,4 +1,4 @@
-const { Usuario, Endereco } = require("../models/post");
+const { Usuario, Endereco, Venda, Colheita, Comprador, TipoProduto } = require("../models/post");
 const bcrypt = require("bcrypt");
 
 
@@ -101,7 +101,6 @@ exports.renderizarCadastro = function (req, res) {
 
 const { Op } = require('sequelize'); // o que fazemos com isso?
 
-// Página "Sua Conta"
 exports.conta = async function (req, res) {
   if (!req.session.userId) {
     return res.redirect("/");
@@ -117,6 +116,34 @@ exports.conta = async function (req, res) {
     if (endereco) {
       nomePropriedade = endereco.nome_propriedade ? endereco.nome_propriedade : " ";
     }
+
+    // Buscar a última venda do usuário
+    const ultimaVenda = await Venda.findOne({
+      where: { usuarioId: req.session.userId },
+      order: [['data_venda', 'DESC']],
+      include: [
+        {
+          model: Comprador, // Incluir comprador
+          attributes: ['nome'] // Substitua pelos atributos que deseja exibir
+        },
+        {
+          model: TipoProduto, // Incluir tipo de produto
+          attributes: ['nome'] // Substitua pelos atributos que deseja exibir
+        }
+      ]
+    });
+
+    // Buscar a última colheita do usuário
+    const ultimaColheita = await Colheita.findOne({
+      where: { usuarioId: req.session.userId },
+      order: [['data_colheita', 'DESC']],
+      include: [
+        {
+          model: TipoProduto, // Incluir tipo de produto
+          attributes: ['nome'] // Substitua pelos atributos que deseja exibir
+        }
+      ]
+    });
 
     res.render("conta_pag", {
       backgroundImage: '/img/Ramos.png',
@@ -137,7 +164,9 @@ exports.conta = async function (req, res) {
         cidade: endereco.cidade,
         uf: endereco.uf,
         propriedade_rural: endereco.nome_propriedade
-      }
+      },
+      ultimaVenda,  // Adiciona a última venda ao contexto da renderização
+      ultimaColheita  // Adiciona a última colheita ao contexto da renderização
     });
   } catch (error) {
     console.error("Erro ao carregar dados do usuário:", error);

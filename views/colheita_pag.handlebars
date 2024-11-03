@@ -356,13 +356,13 @@
     </div>
 </div>
 
-
         <div class="sair-btn">
             <button type="button" class="btn btn-success" style="margin-top: 1rem;">
                 <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
             </button>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
         <script>
         function openColheitaModal() {
             // Obtenha a colheita selecionada
@@ -373,7 +373,7 @@
 
                 const colheitas = [
                     {{#each colheitas}}
-                    { id: "{{this.id}}", nome_colheita: "{{nome_colheita}}", quantidade: {{quantidade}}, tipo_produto: "{{tipo_produto.nome}}", data_colheita: "{{data_colheita}}" },
+                    { id: "{{this.id}}", nome_colheita: "{{nome_colheita}}", quantidade: {{quantidade}}, tipo_produtoId: "{{tipo_produto.id}}", tipo_produto: "{{tipo_produto.nome}}", data_colheita: "{{data_colheita}}" },
                     {{/each}}
                 ];
 
@@ -383,7 +383,10 @@
                 document.getElementById('colheitaId').value = colheita.id;
                 document.getElementById('nome_colheita').value = colheita.nome_colheita;
                 document.getElementById('quantidade').value = colheita.quantidade;
-                document.getElementById('tipo_produto').value = colheita.tipo_produto;
+                
+                // Definir a opção selecionada no select do tipo de produto
+                const tipoProdutoSelect = document.getElementById('tipo_produto');
+                tipoProdutoSelect.value = colheita.tipo_produtoId; // Aqui está a alteração
 
                 // Formate a data para o formato 'YYYY-MM-DD' que é esperado pelo input do tipo date
                 const dataFormatada = new Date(colheita.data_colheita).toISOString().split('T')[0];
@@ -396,7 +399,8 @@
                 alert("Por favor, selecione uma colheita para editar.");
             }
         }
-        </script>   
+        </script>
+
         <script>
             function deleteColheita(id) {
                 if (confirm('Você tem certeza que deseja excluir esta colheita?')) {
@@ -430,49 +434,49 @@
             }
         </script>
         
- <script>
-    document.getElementById('btnAddTipoProduto').addEventListener('click', async () => {
-        const novoTipo = document.getElementById('novoTipoProduto').value;
+        <script>
+            document.getElementById('btnAddTipoProduto').addEventListener('click', async () => {
+                const novoTipo = document.getElementById('novoTipoProduto').value;
 
-        if (!novoTipo) {
-            alert('Por favor, insira um tipo de produto.');
-            return;
-        }
+                if (!novoTipo) {
+                    alert('Por favor, insira um tipo de produto.');
+                    return;
+                }
 
-        try {
-            const response = await fetch('/add-tipo-produto', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ novoTipo })
+                try {
+                    const response = await fetch('/add-tipo-produto', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ novoTipo })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert(data.message); // Mostra a mensagem de sucesso
+
+                        // Adiciona o novo tipo de produto ao select
+                        const selectTipoProduto = document.getElementById('selectTipoProduto');
+                        const newOption = document.createElement('option');
+                        newOption.value = data.tipoProduto.id; // Use o ID que vem da resposta
+                        newOption.textContent = data.tipoProduto.nome; // Use o nome que vem da resposta
+                        selectTipoProduto.appendChild(newOption);
+
+                        // Limpa o campo de entrada após adicionar
+                        document.getElementById('novoTipoProduto').value = '';
+
+                    } else {
+                        throw new Error(data.message); // Lança erro para o catch
+                    }
+
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert('Erro ao adicionar tipo de produto');
+                }
             });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert(data.message); // Mostra a mensagem de sucesso
-
-                // Adiciona o novo tipo de produto ao select
-                const selectTipoProduto = document.getElementById('selectTipoProduto');
-                const newOption = document.createElement('option');
-                newOption.value = data.tipoProduto.id; // Use o ID que vem da resposta
-                newOption.textContent = data.tipoProduto.nome; // Use o nome que vem da resposta
-                selectTipoProduto.appendChild(newOption);
-
-                // Limpa o campo de entrada após adicionar
-                document.getElementById('novoTipoProduto').value = '';
-
-            } else {
-                throw new Error(data.message); // Lança erro para o catch
-            }
-
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('Erro ao adicionar tipo de produto');
-        }
-    });
-</script>
+        </script>
 
 </body>
 

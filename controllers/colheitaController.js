@@ -24,27 +24,25 @@ exports.renderizarColheita = async function (req, res) {
   }
 };
 
-
 exports.adicionarColheita = async function (req, res) {
   try {
-    const { nome_colheita, tipo_produto, tipo_insumo, quantidade, data_colheita, observacao } = req.body;
+    const { nome_colheita, tipo_produto, quantidade, data_colheita, observacao } = req.body;
 
     // Verifica se o usuário está logado
     if (!req.session.userId) {
       return res.status(403).json({ message: 'Usuário não autorizado' });
     }
 
-    // Verifica se o tipo de produto já existe
-    const [produtoExistente, created] = await TipoProduto.findOrCreate({
-      where: { nome: tipo_produto },
-      defaults: { nome: tipo_produto }
+    // Verifica se o tipo de produto já existe ou cria um novo
+    const [produtoExistente] = await TipoProduto.findOrCreate({
+      where: { id: tipo_produto }, // Alterado para buscar pelo ID
+      defaults: { nome: tipo_produto } // Se você quiser que ele também crie um novo, você pode mantê-lo
     });
 
     // Cria a nova colheita
     const novaColheita = await Colheita.create({
       nome_colheita,
-      tipo_produtoId: produtoExistente.id,
-      tipo_insumoId: tipo_insumo,
+      tipo_produtoId: produtoExistente.id, // Usa o ID do produto existente
       quantidade,
       data_colheita,
       observacao,

@@ -1,4 +1,4 @@
-const { TipoInsumo, Fornecedor, Insumo } = require("../models/post");
+const { TipoInsumo, Fornecedor, Insumo, Compra } = require("../models/post");
 
 exports.renderizarInsumo = async function (req, res) {
   try {
@@ -16,6 +16,11 @@ exports.renderizarInsumo = async function (req, res) {
         {
           model: Fornecedor,
           attributes: ['nome']  // Carregar o nome do Fornecedor
+        },
+        {
+          model: Compra,
+          attributes: ['data_registro', 'valor_compra'],
+          required: false
         }
       ]
     });
@@ -26,16 +31,20 @@ exports.renderizarInsumo = async function (req, res) {
     // Buscar todos os fornecedores
     const fornecedores = await Fornecedor.findAll();
 
+    const compras = await Compra.findAll();
+
     // Converter os dados para JSON
     const insumosJson = insumos.map(insumo => insumo.toJSON());
     const tiposInsumoJson = tiposInsumo.map(tipo => tipo.toJSON());
     const fornecedoresJson = fornecedores.map(fornecedor => fornecedor.toJSON());
+    const comprasJson = compras.map(compra => compra.toJSON());
 
     // Renderizar a página e enviar os dados
     res.render('insumo_pag', {
       insumos: insumosJson,
       tiposInsumo: tiposInsumoJson,
-      fornecedores: fornecedoresJson
+      fornecedores: fornecedoresJson,
+      compras: comprasJson
     });
   } catch (error) {
     console.error('Erro ao buscar dados:', error);
@@ -45,7 +54,7 @@ exports.renderizarInsumo = async function (req, res) {
 
 exports.adicionarInsumo = async function (req, res) {
   try {
-    const { tipoInsumo, fornecedor, validade, quantidade, novoTipo, novoFornecedorNome, novoFornecedorTelefone } = req.body;
+    const { tipoInsumo, fornecedor, validade, quantidade, novoTipo, novoFornecedorNome, novoFornecedorTelefone, data_compra, valor_compra } = req.body;
 
     // Verifica se o usuário está logado
     if (!req.session.userId) {
@@ -57,7 +66,7 @@ exports.adicionarInsumo = async function (req, res) {
     if (tipoInsumo) {
       tipoInsumoId = tipoInsumo;
     } else if (novoTipo) {
-      const [novoTipoInsumo] = await TipoProduto.findOrCreate({
+      const [novoTipoInsumo] = await TipoInsumo.findOrCreate({
         where: { nome: novoTipo },
         defaults: { nome: novoTipo }
       });
@@ -85,20 +94,15 @@ exports.adicionarInsumo = async function (req, res) {
       usuarioId: req.session.userId
     });
 
-    // Buscar todos os insumos
-    const insumos = await Insumo.findAll();
+    // Cria a compra associada ao insumo, usando o id do novo insumo criado
+    await Compra.create({
+      fornecedorId: fornecedorId,
+      insumoId: novoInsumo.id,  // Certifique-se de usar o id do novo insumo aqui
+      valor_compra: valor_compra,
+      data_registro: data_compra
+    });
 
-    // Buscar todos os tipos de insumo
-    const tiposInsumo = await TipoInsumo.findAll(); // Supondo que você tenha o modelo `TipoInsumo`
-
-    // Buscar todos os fornecedores
-    const fornecedores = await Fornecedor.findAll(); // Supondo que você tenha o modelo `Fornecedor`
-
-    // Converter os dados para JSON
-    const insumosJson = insumos.map(insumo => insumo.toJSON());
-    const tiposInsumoJson = tiposInsumo.map(tipo => tipo.toJSON());
-    const fornecedoresJson = fornecedores.map(fornecedor => fornecedor.toJSON());
-
+    // Redireciona para a página de insumos
     res.redirect('/insumos');
   } catch (error) {
     console.error('Erro ao cadastrar o insumo:', error);

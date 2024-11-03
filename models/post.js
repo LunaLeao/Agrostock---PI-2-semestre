@@ -397,18 +397,14 @@ const Compra = db.sequelize.define("compra", {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
-    tipo_insumoId: {
+    insumoId: {
         type: db.Sequelize.INTEGER,
         references: {
-            model: 'TipoInsumo',
-            key: 'id'
+          model: 'Insumo',
+          key: 'id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
-    },
-    quantidade: {
-        type: db.Sequelize.INTEGER,
-        allowNull: false
     },
     valor_compra: {
         type: db.Sequelize.FLOAT,
@@ -445,8 +441,8 @@ Insumo.belongsTo(TipoInsumo, { foreignKey: 'tipo_insumoId'});
 Fornecedor.hasMany(Compra, {foreignKey: 'fornecedorId'});
 Compra.belongsTo(Fornecedor, {foreignKey: 'fornecedorId'});
 
-TipoInsumo.hasMany(Compra, {foreignKey: 'tipo_insumoId'});
-Compra.belongsTo(TipoInsumo, {foreignKey: 'tipo_insumoId'});
+Insumo.hasMany(Compra, { foreignKey: 'insumoId' });
+Compra.belongsTo(Insumo, { foreignKey: 'insumoId' });
 
 Fornecedor.belongsTo(Endereco, {foreignKey:'enderecoId'});
 Endereco.hasMany(Fornecedor, {foreignKey: 'enderecoId'});

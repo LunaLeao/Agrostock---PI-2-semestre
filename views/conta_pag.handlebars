@@ -254,28 +254,27 @@
         <i class="bi bi-gear config-icon" data-bs-toggle="modal" data-bs-target="#configModal"></i>
       </div>
 
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <div class="info-section">
-            <h3>Última venda</h3>
-            <p>Nome do Comprador:</p>
-            <p>Item:</p>
-            <p>Quantidade (saco):</p>
-            <p>Valor Unitário:</p>
-            <p>Valor da Venda:</p>
-            <p>Data da Venda:</p>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="info-section">
-            <h3>Último item Adicionado no Estoque</h3>
-            <p>Item:</p>
-            <p>Quantidade (saco):</p>
-            <p>Tipo:</p>
-            <p>Data do Registro:</p>
-          </div>
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="info-section">
+          <h3>Última venda</h3>
+          <p>Nome do Comprador: {{ultimaVenda.comprador.nome}}</p>
+          <p>Tipo de Produto: {{ultimaVenda.tipo_produto.nome}}</p>
+          <p>Quantidade: {{ultimaVenda.quantidade}}</p>
+          <p>Valor Total: R$ {{ultimaVenda.valor_total}}</p>
+          <p>Data da Venda: {{ultimaVenda.data_venda}}</p>
         </div>
       </div>
+      <div class="col-md-6">
+        <div class="info-section">
+          <h3>Último item Adicionado no Estoque</h3>
+          <p>Item: {{ultimaColheita.nome_colheita}}</p>
+          <p>Quantidade: {{ultimaColheita.quantidade}}</p>
+          <p>Tipo: {{ultimaColheita.tipo_produto.nome}}</p>
+          <p>Data do Registro: {{ultimaColheita.data_colheita}}</p>
+        </div>
+      </div>
+    </div>
     </section>
   </div>
 

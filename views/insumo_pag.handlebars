@@ -236,6 +236,8 @@
                             <th>Tipo de Insumo</th>
                             <th>Quantidade</th>
                             <th>Fornecedor</th>
+                            <th>Valor da Compra</th>
+                            <th>Data de Compra</th>
                             <th>Validade</th>
                             <th></th>
                         </tr>
@@ -250,6 +252,8 @@
                             <td>{{this.tipo_insumo.nome}}</td>
                             <td>{{this.quantidade}}</td>
                             <td>{{this.fornecedor.nome}}</td>
+                            <td>{{#if this.compras.length}}{{formatCurrency this.compras.[0].valor_compra}}{{else}}N/A{{/if}}</td>
+                            <td>{{#if this.compras.length}}{{this.compras.[0].data_registro}}{{else}}N/A{{/if}}</td>
                             <td>{{this.validade}}</td>
                             <td>
                                 <button class="btn btn-danger btn-sm" onclick="deleteInsumo({{this.id}})">
@@ -325,55 +329,78 @@
                 </div>
             </div>
 
-<!-- Modal para adicionar informações de Insumos (Primeiro Modal) -->
-<div class="modal fade" id="novoItemModal" aria-hidden="true" aria-labelledby="novoItemModalLabel" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="novoItemModalLabel">Adicionar Novo Insumo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/add-insumos" method="POST" id="novoItemForm">
-                    <div class="mb-3">
-                        <label for="selectTipoInsumo" class="form-label">Tipo de Insumo</label>
-                        <select class="form-select" id="selectTipoInsumo" name="tipoInsumo" required>
-                            <option value="">Selecione um tipo de insumo</option>
-                            {{#each tiposInsumo}}
-                            <option value="{{this.id}}">{{this.nome}}</option>
-                            {{/each}}
-                        </select>
-                        <div class="mt-2">
-                            <input type="text" class="form-control" id="novoTipoInsumo" placeholder="Adicionar novo tipo de insumo" />
-                            <button type="button" class="btn btn-primary mt-1" id="btnAddTipoInsumo">Adicionar</button>
+            <!-- Modal para adicionar informações de Insumos -->
+            <div class="modal fade" id="novoItemModal" aria-hidden="true" aria-labelledby="novoItemModalLabel"
+                tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="novoItemModalLabel">Adicionar Novo Insumo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/add-insumos" method="POST" id="novoItemForm">
+                                <div class="mb-3">
+                                    <label for="selectTipoInsumo" class="form-label">Tipo de Insumo</label>
+                                    <select class="form-select" id="selectTipoInsumo" name="tipoInsumo" required>
+                                        <option value="">Selecione um tipo de insumo</option>
+                                        {{#each tiposInsumo}}
+                                        <option value="{{this.id}}">{{this.nome}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <div class="mt-2">
+                                        <input type="text" class="form-control" id="novoTipoInsumo"
+                                            placeholder="Adicionar novo tipo de insumo" />
+                                        <button type="button" class="btn btn-primary mt-1"
+                                            id="btnAddTipoInsumo">Adicionar</button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="selectFornecedor" class="form-label">Fornecedor</label>
+                                    <select class="form-select" id="selectFornecedor" name="fornecedor" required>
+                                        <option value="">Selecione um fornecedor</option>
+                                        {{#each fornecedores}}
+                                        <option value="{{this.id}}">{{this.nome}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="itemQuantidade" class="form-label">Quantidade</label>
+                                    <input type="number" class="form-control" id="itemQuantidade" name="quantidade"
+                                        placeholder="Digite a quantidade" required>
+                                </div>
+
+                                <div class="mb-3">
+                                <label for="valor_compra" class="form-label">Valor da Compra</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">R$</span>
+                                        <input type="text" class="form-control" id="valor_compra" name="valor_compra" placeholder="Digite o valor da compra (ex: 28.50)" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="itemDataCompra" class="form-label">Data de Compra</label>
+                                    <input type="date" class="form-control" id="itemDataCompra" name="data_compra"
+                                        required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="itemValidade" class="form-label">Validade</label>
+                                    <input type="date" class="form-control" id="itemValidade" name="validade" required>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Fechar</button>
+                                    <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="selectFornecedor" class="form-label">Fornecedor</label>
-                        <select class="form-select" id="selectFornecedor" name="fornecedor" required>
-                            <option value="">Selecione um fornecedor</option>
-                            {{#each fornecedores}}
-                            <option value="{{this.id}}">{{this.nome}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemQuantidade" class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" id="itemQuantidade" name="quantidade" placeholder="Digite a quantidade" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemValidade" class="form-label">Validade</label>
-                        <input type="date" class="form-control" id="itemValidade" name="validade" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
             <div class="sair-btn">
                 <button type="button" class="btn btn-success" style="margin-top: 1rem;">
@@ -484,32 +511,6 @@
                     }
                 }
             </script>
-<script>
-    document.getElementById("openNovoFornecedorModal").addEventListener("click", function() {
-        // Fecha o modal de Insumos e abre o modal de Fornecedor
-        var novoItemModal = bootstrap.Modal.getInstance(document.getElementById("novoItemModal"));
-        novoItemModal.hide();
-        
-        var novoFornecedorModal = new bootstrap.Modal(document.getElementById("novoFornecedorModal"));
-        novoFornecedorModal.show();
-    });
-
-    document.getElementById("backToNovoItemModal").addEventListener("click", function() {
-        // Fecha o modal de Fornecedor e abre o modal de Insumos
-        var novoFornecedorModal = bootstrap.Modal.getInstance(document.getElementById("novoFornecedorModal"));
-        novoFornecedorModal.hide();
-        
-        var novoItemModal = new bootstrap.Modal(document.getElementById("novoItemModal"));
-        novoItemModal.show();
-    });
-
-    document.getElementById("novoFornecedorModal").addEventListener("hidden.bs.modal", function() {
-        // Ao fechar completamente o modal de fornecedor, abre o modal de insumos
-        var novoItemModal = new bootstrap.Modal(document.getElementById("novoItemModal"));
-        novoItemModal.show();
-    });
-
-</script>
 
 </body>
 
