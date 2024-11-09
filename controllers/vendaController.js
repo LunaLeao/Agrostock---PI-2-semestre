@@ -1,5 +1,6 @@
-const{TipoProduto, Venda, Comprador} = require("../models/post");
-
+const{TipoProduto, Venda, Comprador, Colheita} = require("../models/post");
+const { Op } = require('sequelize');
+const db = require('../models'); 
 
 exports.renderizarVenda = async function (req, res) {
     try {
@@ -138,3 +139,36 @@ exports.deletarVenda = async function (req, res){
       res.status(500).json({ message: 'Erro ao excluir a venda' });
     }
   };
+
+  //Pesquisar vendas
+exports.pesquisarVenda = async (req, res) => {
+    try {
+        const { termo, campo } = req.query;
+        let whereClause = {};
+
+        if (campo === 'compradorId') {
+            whereClause['$comprador.nome$'] = { [Op.like]: `%${termo}%` };
+        } else if (campo === 'tipo_produto') {
+            whereClause['$colheita.nome_colheita$'] = { [Op.like]: `%${termo}%` };
+        } else if (campo === 'quantidade') {
+            whereClause['quantidade'] = { [Op.like]: `%${termo}%` };
+        }
+
+        const vendas = await Venda.findAll({
+            where: whereClause,
+            include: [
+                { model: Comprador, required: true },
+                { model: Colheita, as: 'colheita', required: true}
+            ]
+        });
+
+        if (vendas.length > 0) {
+            res.render('venda_pag', { vendas });
+        } else {
+            res.render('venda_pag', { vendas: [], mensagem: 'Nenhuma venda encontrada' });
+        }
+    } catch (error) {
+        console.error('Erro ao buscar vendas:', error);
+        res.status(500).send({ error: 'Erro ao buscar vendas' });
+    }
+};

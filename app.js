@@ -1,12 +1,14 @@
 const express = require("express");
 const app = express();
-const handlebars = require("express-handlebars").engine;
+const { engine } = require("express-handlebars");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const path = require('path');
 const session = require('express-session');
 const Handlebars = require("handlebars");
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 const formatDate = (date) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -23,7 +25,7 @@ app.use(session({
 
 app.set('views', path.join(__dirname, 'views'));
 
-app.engine('handlebars', handlebars({
+app.engine('handlebars', engine ({
   defaultLayout: 'main',
   helpers: {
     formatDate: formatDate
@@ -34,6 +36,7 @@ app.engine('handlebars', handlebars({
   }
 }));
 app.set('view engine', 'handlebars');
+//app.engine('handlebars', exphbs());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -48,8 +51,8 @@ app.use("/", rotaColheita);
 const rotaVenda = require("./routes/vendaRouter");
 app.use("/", rotaVenda);
 
-const insumoRota = require("./routes/insumoRouter");
-app.use("/", insumoRota);
+const insumoRouter = require('./routes/insumoRouter');
+app.use('/', insumoRouter);
 
 const rotaFornecedor = require("./routes/fornecedorRouter")
 app.use('/', rotaFornecedor);

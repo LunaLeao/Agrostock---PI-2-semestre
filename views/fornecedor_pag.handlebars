@@ -205,10 +205,14 @@
             </nav>
         </section>
 
-        <!-- Barra de pesquisa -->
-        <form class="d-flex2" role="search">
+        <!-- Barra de pesquisa com dropdown -->
+        <form class="d-flex2" role="search" action="/pesquisarFornecedor" method="get">
             <div class="search-bar">
-                <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Search">
+                <input class="form-control me-2" type="search" name="termo" placeholder="Pesquisar" aria-label="Search">
+                <select name="campo" class="form-select me-2">
+                    <option value="nome">Fornecedor</option>
+                    <option value="cnpj">CNPJ</option>
+                </select>
                 <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
             </div>
         </form>
@@ -554,7 +558,49 @@
     }
 
 </script>
+<script>
+document.getElementById('searchForm').addEventListener('submit', async function (e) {
+    e.preventDefault();  // Evita que o formulário faça um redirecionamento
 
+    const termo = document.getElementById('searchTerm').value;  // Termo de pesquisa
+    const campo = document.getElementById('searchField').value;  // Campo de pesquisa (nome ou cnpj)
+
+    // Fazendo a requisição para o servidor com os parâmetros de pesquisa
+    const response = await fetch(`/pesquisarFornecedor?termo=${termo}&campo=${campo}`, {
+        method: 'GET',
+    });
+
+    if (response.ok) {
+        const data = await response.json();  // Recebe os dados do servidor (fornecedores)
+        
+        let resultadosHTML = '';  // Variável para armazenar os resultados
+        if (data.fornecedores && data.fornecedores.length > 0) {
+            // Loop para gerar HTML dos fornecedores
+            data.fornecedores.forEach(fornecedor => {
+                resultadosHTML += `
+                    <div class="fornecedor-item">
+                        <p><strong>Nome:</strong> ${fornecedor.nome}</p>
+                        <p><strong>CNPJ:</strong> ${fornecedor.cnpj}</p>
+                        <p><strong>Telefone:</strong> ${fornecedor.telefone}</p>
+                        <p><strong>Endereço:</strong> ${fornecedor.endereco ? 
+                            fornecedor.endereco.rua + ', ' + fornecedor.endereco.cidade + ' - ' + fornecedor.endereco.estado : 'Sem endereço'}</p>
+                    </div>
+                    <hr>`;
+            });
+        } else {
+            // Caso nenhum fornecedor seja encontrado
+            resultadosHTML = `<p>Nenhum fornecedor encontrado.</p>`;
+        }
+        
+        // Exibe os resultados na página
+        document.getElementById('resultados').innerHTML = resultadosHTML;
+    } else {
+        // Caso haja erro na requisição
+        console.error('Erro ao buscar fornecedores');
+        document.getElementById('resultados').innerHTML = '<p>Erro ao buscar fornecedores.</p>';
+    }
+});
+</script>
 </body>
 
 </html>

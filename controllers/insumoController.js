@@ -1,4 +1,6 @@
-const { TipoInsumo, Fornecedor, Insumo, Compra } = require("../models/post");
+const { TipoInsumo, Fornecedor, Insumo, Compra} = require("../models/post");
+const { Op } = require('sequelize');
+const db = require('../models'); 
 
 exports.renderizarInsumo = async function (req, res) {
   try {
@@ -175,3 +177,46 @@ exports.atualizarInsumo = async function (req, res) {
     res.status(500).json({ message: 'Erro ao atualizar o insumo' });
   }
 };
+
+//Pesquisa insumos
+exports.pesquisar = async (req, res) => {
+  
+  try {
+  const { termo, campo } = req.query;  // Captura o termo de pesquisa e o campo selecionado
+    // Condição de busca dinâmica
+    let whereClause = {};
+    if (campo === 'tipo_insumo') {
+      whereClause['$tipo_insumo.nome$'] = { [Op.like]: `%${termo}%` };
+    } else if (campo === 'fornecedor') {
+      whereClause['$fornecedor.nome$'] = { [Op.like]: `%${termo}%` };
+    } else if (campo === 'quantidade') {
+      whereClause['quantidade'] = { [Op.like]: `%${termo}%` };
+    }
+
+    // Realizando a consulta no banco com a condição de filtro
+    const insumos = await Insumo.findAll({
+      where: whereClause,
+      include: [
+        { model: TipoInsumo, required: true },
+        { model: Fornecedor, required: true },
+        { model: Compra,
+          attributes: ['data_registro', 'valor_compra'],
+          required: false}
+      ]
+    });
+
+    // Verifique se algum insumo foi encontrado
+    if (insumos.length > 0) {
+      // Passa os dados filtrados para a view
+      res.render('insumo_pag', { insumos });
+    } else {
+      // Caso não haja resultados, renderize uma mensagem ou redirecione
+      res.render('insumo_pag', { insumos: [], mensagem: 'Nenhum insumo encontrado' });
+    }
+  } catch (error) {
+    console.error('Erro ao buscar insumos:', error);
+    res.status(500).send({ error: 'Erro ao buscar insumos' });
+  }
+};
+
+

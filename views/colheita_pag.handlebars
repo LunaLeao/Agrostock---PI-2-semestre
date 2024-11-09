@@ -205,10 +205,15 @@
             </nav>
         </section>
 
-        <!-- Barra de pesquisa -->
-        <form class="d-flex2" role="search">
+        <!-- Barra de pesquisa com dropdown -->
+        <form class="d-flex2" role="search" action="/pesquisarColheita" method="get">
             <div class="search-bar">
-                <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Search">
+                <input class="form-control me-2" type="search" name="termo" placeholder="Pesquisar" aria-label="Search">
+                <select name="campo" class="form-select me-2">
+                    <option value="nome_colheita">Nome</option>
+                    <option value="tipo_produto">Tipo</option>
+                    <option value="quantidade">Quantidade</option>
+                </select>
                 <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
             </div>
         </form>
@@ -477,6 +482,44 @@
                 }
             });
         </script>
+        <script>
+    document.getElementById('searchForm').addEventListener('submit', async function (e) {
+        e.preventDefault();  // Evita que o formulário faça um redirecionamento
+
+        const termo = document.getElementById('searchTerm').value;
+        const campo = document.getElementById('searchField').value;
+
+        const response = await fetch(`/pesquisar?termo=${termo}&campo=${campo}`, {
+            method: 'GET',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            // Atualiza a página com os resultados
+            let resultadosHTML = '';
+            if (data.colheitas && data.colheitas.length > 0) {
+                data.colheitas.forEach(colheita => {
+                    resultadosHTML += `
+                        <div class="colheita-item">
+                            <p><strong>Nome da Colheita:</strong> ${colheita.nome_colheita}</p>
+                            <p><strong>Tipo de Colheita:</strong> ${colheita.TipoColheita ? colheita.TipoColheita.nome : 'N/A'}</p>
+                            <p><strong>Tipo de Produto:</strong> ${colheita.TipoProduto ? colheita.TipoProduto.nome : 'N/A'}</p>
+                            <p><strong>Quantidade:</strong> ${colheita.quantidade}</p>
+                            <p><strong>Data da Colheita:</strong> ${new Date(colheita.data_colheita).toLocaleDateString('pt-BR')}</p>
+                        </div>
+                        <hr>`;
+                });
+            } else {
+                resultadosHTML = `<p>Nenhuma colheita encontrada.</p>`;
+            }
+            document.getElementById('resultados').innerHTML = resultadosHTML;
+        } else {
+            console.error('Erro ao buscar colheitas');
+            document.getElementById('resultados').innerHTML = '<p>Erro ao buscar colheitas.</p>';
+        }
+    });
+</script>
+
 
 </body>
 

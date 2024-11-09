@@ -1,4 +1,6 @@
 const { Fornecedor, Endereco } = require("../models/post"); // Importa o modelo Fornecedor
+const { Op } = require('sequelize');
+const db = require('../models'); 
 
 exports.renderizarFornecedor = async function (req, res) {
   try {
@@ -110,5 +112,47 @@ exports.deletarFornecedor = async function (req, res){
     res.status(500).json({ message: 'Erro ao excluir o Fornecedor' });
   }
 };
+//Pesquisar fornecedor
+exports.pesquisarFornecedor = async (req, res) => {
+  try {
+    const { termo, campo } = req.query;  // Captura o termo de pesquisa e o campo selecionado
+    console.log('Pesquisando por:', campo, 'com termo:', termo);  // Debug para verificar
 
+    // Condição de busca dinâmica
+    let whereClause = {};
+    
+    // Aqui verificamos explicitamente o campo que foi escolhido para a pesquisa
+    if (campo === 'nome') {
+      whereClause['nome'] = { [Op.like]: `%${termo}%` };  // Filtrando pelo nome do fornecedor
+    } else if (campo === 'cnpj') {
+      whereClause['cnpj'] = { [Op.like]: `%${termo}%` };  // Filtrando pelo CNPJ
+    }
+
+    console.log('whereClause:', whereClause);  // Debug para verificar a query gerada
+
+    // Verifique se o whereClause foi corretamente preenchido
+    if (Object.keys(whereClause).length === 0) {
+      return res.status(400).json({ error: 'Campo inválido ou termo de pesquisa ausente' });
+    }
+
+    // Realizando a consulta no banco com a condição de filtro
+    const fornecedores = await Fornecedor.findAll({
+      where: whereClause,
+      include: [
+        { model: Endereco, as: 'endereco' }  // Incluindo o Endereço
+      ]
+    });
+
+
+      // Renderiza a página de fornecedores, passando os fornecedores como dados
+      if (fornecedores.length > 0) {
+        res.render('fornecedor_pag', { fornecedores });  // Passa os dados filtrados para a view
+      } else {
+        res.render('fornecedor_pag', { fornecedores: [], mensagem: 'Nenhum fornecedor encontrado' });
+      }
+    } catch (error) {
+      console.error('Erro ao buscar fornecedores:', error);
+      res.status(500).send({ error: 'Erro ao buscar fornecedores' });
+    }
+};
   

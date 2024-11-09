@@ -1,4 +1,6 @@
 const { Colheita, TipoProduto } = require("../models/post");
+const { Op } = require('sequelize');
+const db = require('../models'); 
 
 exports.renderizarColheita = async function (req, res) {
   try {
@@ -106,5 +108,32 @@ exports.adicionarTipoProduto = async function (req, res) {
       console.error('Erro ao adicionar tipo de produto:', error);
       // Retorna uma mensagem de erro em caso de falha
       res.status(500).json({ message: 'Erro ao adicionar tipo de produto' });
+  }
+};
+// Pesquisar colheitas
+exports.pesquisarColheita = async (req, res) => {
+  try {
+    const { termo, campo } = req.query;
+    let whereClause = {};
+
+    if (campo === 'nome_colheita') {
+      whereClause['nome_colheita'] = { [Op.like]: `%${termo}%` };
+    } else if (campo === 'tipo_produto') {
+      whereClause['$tipo_produto.nome$'] = { [Op.like]: `%${termo}%` };
+    } else if (campo === 'quantidade') {
+      whereClause['quantidade'] = { [Op.like]: `%${termo}%` };
+    }
+
+    const colheitas = await Colheita.findAll({
+      where: whereClause,
+      include: [
+        { model: TipoProduto, as: 'tipo_produto', required: true }
+      ],
+    });
+
+    res.render('colheita_pag', colheitas.length > 0 ? { colheitas } : { colheitas: [], mensagem: 'Nenhuma colheita encontrada' });
+  } catch (error) {
+    console.error('Erro ao buscar colheitas:', error);
+    res.status(500).send({ error: 'Erro ao buscar colheitas' });
   }
 };

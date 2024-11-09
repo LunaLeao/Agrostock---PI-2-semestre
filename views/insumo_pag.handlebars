@@ -205,13 +205,20 @@
             </nav>
         </section>
 
-        <!-- Barra de pesquisa -->
-        <form class="d-flex2" role="search">
+        <!-- Barra de pesquisa com dropdown -->
+        <form class="d-flex2" role="search" action="/pesquisar" method="get">
             <div class="search-bar">
-                <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Search">
+                <input class="form-control me-2" type="search" name="termo" placeholder="Pesquisar" aria-label="Search">
+                <select name="campo" class="form-select me-2">
+                    <option value="tipo_insumo">Tipo de Insumo</option>
+                    <option value="fornecedor">Fornecedor</option>
+                    <option value="quantidade">Quantidade</option>
+                </select>
                 <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
             </div>
         </form>
+
+        <div id="resultados"></div>
 
         <div class="header">
             Estoque de Insumos
@@ -252,7 +259,8 @@
                             <td>{{this.tipo_insumo.nome}}</td>
                             <td>{{this.quantidade}}</td>
                             <td>{{this.fornecedor.nome}}</td>
-                            <td>{{#if this.compras.length}}{{formatCurrency this.compras.[0].valor_compra}}{{else}}N/A{{/if}}</td>
+                            <td>{{#if this.compras.length}}{{formatCurrency
+                                this.compras.[0].valor_compra}}{{else}}N/A{{/if}}</td>
                             <td>{{#if this.compras.length}}{{this.compras.[0].data_registro}}{{else}}N/A{{/if}}</td>
                             <td>{{this.validade}}</td>
                             <td>
@@ -373,10 +381,11 @@
                                 </div>
 
                                 <div class="mb-3">
-                                <label for="valor_compra" class="form-label">Valor da Compra</label>
+                                    <label for="valor_compra" class="form-label">Valor da Compra</label>
                                     <div class="input-group">
                                         <span class="input-group-text">R$</span>
-                                        <input type="text" class="form-control" id="valor_compra" name="valor_compra" placeholder="Digite o valor da compra (ex: 28.50)" required>
+                                        <input type="text" class="form-control" id="valor_compra" name="valor_compra"
+                                            placeholder="Digite o valor da compra (ex: 28.50)" required>
                                     </div>
                                 </div>
 
@@ -510,7 +519,45 @@
                             });
                     }
                 }
+
             </script>
+            <script>
+                document.getElementById('searchForm').addEventListener('submit', async function (e) {
+                    e.preventDefault();  // Evita que o formulário faça um redirecionamento
+
+                    const termo = document.getElementById('searchTerm').value;
+                    const campo = document.getElementById('searchField').value;
+
+                    const response = await fetch(`/pesquisar?termo=${termo}&campo=${campo}`, {
+                        method: 'GET',
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Atualiza a página com os resultados
+                        let resultadosHTML = '';
+                        if (data.insumos && data.insumos.length > 0) {
+                            data.insumos.forEach(insumo => {
+                                resultadosHTML += `
+                    <div class="insumo-item">
+                        <p><strong>Tipo de Insumo:</strong> ${insumo.tipo_insumo.nome}</p>
+                        <p><strong>Quantidade:</strong> ${insumo.quantidade}</p>
+                        <p><strong>Validade:</strong> ${new Date(insumo.validade).toLocaleDateString('pt-BR')}</p>
+                        <p><strong>Fornecedor:</strong> ${insumo.fornecedor.nome}</p>
+                    </div>
+                    <hr>`;
+                            });
+                        } else {
+                            resultadosHTML = `<p>Nenhum insumo encontrado.</p>`;
+                        }
+                        document.getElementById('resultados').innerHTML = resultadosHTML;
+                    } else {
+                        console.error('Erro ao buscar insumos');
+                        document.getElementById('resultados').innerHTML = '<p>Erro ao buscar insumos.</p>';
+                    }
+                });
+            </script>
+
 
 </body>
 

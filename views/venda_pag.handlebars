@@ -206,9 +206,15 @@
         </section>
 
         <!-- Barra de pesquisa -->
-        <form class="d-flex2" role="search">
+        <!-- Barra de pesquisa com dropdown -->
+        <form class="d-flex2" role="search" action="/pesquisarVenda" method="get">
             <div class="search-bar">
-                <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Search">
+                <input class="form-control me-2" type="search" name="termo" placeholder="Pesquisar" aria-label="Search">
+                <select name="campo" class="form-select me-2">
+                    <option value="compradorId">Cliente</option>
+                    <option value="tipo_produto">Item</option>
+                    <option value="quantidade">Quantidade</option>
+                </select>
                 <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
             </div>
         </form>
@@ -520,6 +526,44 @@
         novoItemModal.show();
     });
 </script>
+
+<script>
+    document.getElementById('searchForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const termo = document.getElementById('searchTerm').value;
+        const campo = document.getElementById('searchField').value;
+
+        const response = await fetch(`/pesquisarVenda?termo=${termo}&campo=${campo}`, {
+            method: 'GET',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            let resultadosHTML = '';
+            if (data.vendas && data.vendas.length > 0) {
+                data.vendas.forEach(venda => {
+                    resultadosHTML += `
+            <div class="venda-item">
+                <p><strong>Cliente:</strong> ${venda.comprador.nome}</p>
+                <p><strong>Item:</strong> ${venda.colheita.nome_colheita}</p>
+                <p><strong>Quantidade:</strong> ${venda.quantidade}</p>
+                <p><strong>Valor Total:</strong> ${venda.valor_total}</p>
+                <p><strong>Data da Venda:</strong> ${new Date(venda.data_venda).toLocaleDateString('pt-BR')}</p>
+            </div>
+            <hr>`;
+                });
+            } else {
+                resultadosHTML = `<p>Nenhuma venda encontrada.</p>`;
+            }
+            document.getElementById('resultados').innerHTML = resultadosHTML;
+        } else {
+            console.error('Erro ao buscar vendas');
+            document.getElementById('resultados').innerHTML = '<p>Erro ao buscar vendas.</p>';
+        }
+    });
+</script>
+
 
 </body>
 

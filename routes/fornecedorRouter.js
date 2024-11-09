@@ -9,5 +9,6 @@ router.get('/fornecedores', fornecedorController.renderizarFornecedor );
 router.post('/add-fornecedor', fornecedorController.adicionarFornecedor);
 router.post('/atualizar-fornecedor', fornecedorController.atualizarFornecedor);
 router.delete('/fornecedor/:id', fornecedorController.deletarFornecedor);
+router.get('/pesquisarFornecedor', fornecedorController.pesquisarFornecedor);
  
 module.exports = router;
