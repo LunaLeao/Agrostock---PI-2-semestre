@@ -57,7 +57,7 @@
     font-weight: bold;
   }
 
-  @media (max-width: 768px) {
+  @media (min-width: 400px) and (max-width: 768px) {
     #main-content {
       margin-left: 0;
       width: 100%;
@@ -74,6 +74,36 @@
       flex-wrap: wrap;
       flex-direction: column-reverse;
     }
+  }
+
+  @media (max-width: 400px){
+    #main-content {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    #menu_lateral {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column-reverse;
+    }
+
+    .bi.bi-person-circle.user-photo{
+      font-size: 120px;
+      margin: 0px;
+    }
+
+    .info-section{
+      align-items: center;
+      justify-content: center;
+    }
+
   }
 </style>
 </head>
@@ -262,7 +292,7 @@
           <p>Tipo de Produto: {{ultimaVenda.tipo_produto.nome}}</p>
           <p>Quantidade: {{ultimaVenda.quantidade}}</p>
           <p>Valor Total: R$ {{ultimaVenda.valor_total}}</p>
-          <p>Data da Venda: {{ultimaVenda.data_venda}}</p>
+          <p>Data da Venda: {{formatDate ultimaVenda.data_venda}}</p>
         </div>
       </div>
       <div class="col-md-6">
@@ -271,7 +301,7 @@
           <p>Item: {{ultimaColheita.nome_colheita}}</p>
           <p>Quantidade: {{ultimaColheita.quantidade}}</p>
           <p>Tipo: {{ultimaColheita.tipo_produto.nome}}</p>
-          <p>Data do Registro: {{ultimaColheita.data_colheita}}</p>
+          <p>Data do Registro: {{formatDate ultimaColheita.data_colheita}}</p>
         </div>
       </div>
     </div>

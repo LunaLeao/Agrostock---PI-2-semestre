@@ -11,9 +11,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const formatDate = (date) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return new Date(date).toLocaleDateString('pt-BR', options);
 };
+
+Handlebars.registerHelper('formatDate', function(date) {
+  if (date) {
+    const d = new Date(date);
+    const day = String(d.getDate() + 1).padStart(2, '0'); // Garante que o dia tenha 2 dígitos
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // Garante que o mês tenha 2 dígitos
+    const year = d.getFullYear(); // Obtém o ano completo
+    
+    return `${day}/${month}/${year}`; // Retorna a data no formato "dd/mm/yyyy"
+  }
+  return '01/01/1970'; // Caso a data seja inválida ou nula
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -56,6 +68,9 @@ app.use('/', insumoRouter);
 
 const rotaFornecedor = require("./routes/fornecedorRouter")
 app.use('/', rotaFornecedor);
+
+const rotaDashboard = require("./routes/dashboardRouter");
+app.use("/", rotaDashboard);
 
 // Página inicial
 app.get("/", function (req, res) {

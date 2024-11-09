@@ -102,7 +102,7 @@
     }
 
     /* Responsividade */
-    @media (max-width: 768px) {
+    @media (min-width: 400px) and (max-width: 768px) {
         .search-bar {
             width: 100%;
             margin-bottom: 10px;
@@ -133,17 +133,72 @@
         }
     }
 
-    /* Tabela responsiva */
-    .table-responsive {
-        overflow-x: auto;
-        /* Permite rolar horizontalmente */
-        -webkit-overflow-scrolling: touch;
-        /* Melhor experiência de scroll em iOS */
-    }
+    @media  (max-width: 400px) {
+        .search-bar {
+            padding-left: 0%;
+            width: 80%;
+            margin-bottom: 10px;
+        }
 
-    table {
-        width: 100%;
-        /* Garantir que a tabela ocupe 100% da área disponível */
+        .menu_lateral{
+            width: 20px;
+        }
+
+        .btn{
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            height: 40px;
+            margin: 0px;
+        }
+
+        .btn-success {
+            margin: 0px;
+            width: 50px;
+            justify-content: center;
+        }
+
+        .d-flex{
+            align-items: unset;
+        }
+
+
+        .d-flex2{
+            padding-left: 10px;
+        }
+
+        .form-control{
+            height: 40px;
+            max-width: 130px;
+        }
+
+        .btn-outline-success{
+            width: 50px;
+            height: 40px;
+        }
+
+        /* Tabela responsiva */
+        .table-responsive {
+            overflow-x: auto;
+            /* Permite rolar horizontalmente */
+            -webkit-overflow-scrolling: touch;
+            /* Melhor experiência de scroll em iOS */
+
+
+        }
+
+        table {
+            font-size: 10px;
+            /* Garantir que a tabela ocupe 100% da área disponível */
+        }
+
+        
+        
+        .bi-trash{
+            position: relative;
+            width: 10px;
+        }
+        
     }
 </style>
 </head>
@@ -264,7 +319,7 @@
                             <td>{{tipo_produto.nome}}</td>
                             <td>{{quantidade}}</td>
                             <td>{{formatCurrency valor_total}}</td>
-                            <td>{{data_venda}}</td>
+                            <td>{{formatDate data_venda}}</td>
                             <td>
                                 <button class="btn btn-danger btn-sm" onclick="deleteVenda({{this.id}})">
                                     <i class="bi bi-trash"></i>

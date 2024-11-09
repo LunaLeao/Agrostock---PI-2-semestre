@@ -102,7 +102,7 @@
     }
 
     /* Responsividade */
-    @media (max-width: 768px) {
+    @media (min-width: 400px) and (max-width: 768px) {
         .search-bar {
             width: 100%;
             margin-bottom: 10px;
@@ -121,7 +121,7 @@
         .d-flex {
             flex-direction: row;
             margin-left: 4%;
-            gap: 1px;
+            
         }
 
         .sair-btn {
@@ -133,18 +133,85 @@
         }
     }
 
-    /* Tabela responsiva */
-    .table-responsive {
-        overflow-x: auto;
-        /* Permite rolar horizontalmente */
-        -webkit-overflow-scrolling: touch;
-        /* Melhor experiência de scroll em iOS */
-    }
+    @media  (max-width: 400px) {
+        .search-bar {
+            padding-left: 0%;
+            width: 80%;
+            margin-bottom: 10px;
+        }
 
-    table {
-        width: 100%;
-        /* Garantir que a tabela ocupe 100% da área disponível */
+        .menu_lateral{
+            width: fit-content;
+        }
+
+        .btn{
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            height: 40px;
+            margin: 0px;
+        }
+
+        .btn-success {
+            margin: 0px;
+            width: 50px;
+            justify-content: center;
+        }
+
+        .d-flex{
+            align-items: unset;
+        }
+
+        .d-flex2{
+            padding-left: 10px;
+        }
+
+        .btn.btn-success{
+            margin-top: 7px;
+        }
+
+        .form-control{
+            height: 40px;
+            max-width: 130px;
+        }
+
+        .btn-outline-success{
+            width: 50px;
+            height: 40px;
+        }
+
+        /* Tabela responsiva */
+        .table-responsive {
+            overflow-x: auto;
+            /* Permite rolar horizontalmente */
+            -webkit-overflow-scrolling: touch;
+            /* Melhor experiência de scroll em iOS */
+
+
+        }
+
+        table {
+            font-size: 10px;
+            /* Garantir que a tabela ocupe 100% da área disponível */
+        }
+
+        .button.i.bi.bi-trash{
+            position: relative;
+            
+        }
+
+        .btn-sm{
+            width: 10px;
+            height: 10px;
+        }
+
+        .radio{
+            width: 10px;
+        }
+        
     }
+    
+
 </style>
 </head>
 
@@ -254,7 +321,7 @@
                             <td>{{nome_colheita}}</td>
                             <td>{{quantidade}}</td>
                             <td>{{tipo_produto.nome}}</td>
-                            <td>{{data_colheita}}</td>
+                            <td>{{formatDate data_colheita}}</td>
                             <td>
                                 <button class="btn btn-danger btn-sm" onclick="deleteColheita({{this.id}})">
                                     <i class="bi bi-trash"></i>
@@ -362,7 +429,7 @@
 </div>
 
         <div class="sair-btn">
-            <button type="button" class="btn btn-success" style="margin-top: 1rem;">
+            <button type="button" class="btn btn-success">
                 <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
             </button>
         </div>
