@@ -59,22 +59,25 @@ exports.adicionarColheita = async function (req, res) {
 };
 
 exports.atualizarColheita = async function (req, res) {
-  const { colheitaId, quantidade, tipo_produtoId, data_colheita } = req.body;
+  const { colheitaId, nome_colheita, quantidade, tipo_produtoId, data_colheita } = req.body;
+
+  console.log('Dados recebidos:', req.body);  // Verifique se os dados estão sendo recebidos corretamente
 
   try {
+    // Atualize todos os campos, incluindo nome_colheita
     await Colheita.update(
       {
-        colheitaId: colheitaId,
+        nome_colheita: nome_colheita,  // Adicione este campo
         quantidade: quantidade,
         tipo_produtoId: tipo_produtoId,
         data_colheita: new Date(data_colheita),
       },
       {
-        where: { id: colheitaId },
+        where: { id: colheitaId }, // Verifique se o ID está correto
       }
     );
 
-    res.redirect('/colheitas'); // Redirecione para a página de colheitas
+    res.redirect('/colheitas'); // Redirecionar para a página de colheitas
   } catch (error) {
     console.error('Erro ao atualizar a colheita:', error);
     res.status(500).send('Erro ao atualizar a colheita');
@@ -110,6 +113,7 @@ exports.adicionarTipoProduto = async function (req, res) {
       res.status(500).json({ message: 'Erro ao adicionar tipo de produto' });
   }
 };
+
 // Pesquisar colheitas
 exports.pesquisarColheita = async (req, res) => {
   try {
