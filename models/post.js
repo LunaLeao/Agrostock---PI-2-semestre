@@ -127,7 +127,6 @@ const Colheita = db.sequelize.define("colheita", {
     tableName: 'Colheita'
 })
 
-
 const TipoInsumo = db.sequelize.define("tipo_insumo",{
     nome: {
         type: db.Sequelize.STRING,
@@ -487,11 +486,11 @@ Colheita.belongsTo(TipoProduto, {foreignKey: 'tipo_produtoId'})
 Colheita.hasMany(EstoqueColheita, { foreignKey: 'colheitaId'});
 EstoqueColheita.belongsTo(Colheita, { foreignKey: 'colheitaId'});
 
-//Venda.belongsTo(Colheita, { foreignKey: 'colheitaId' });
-//Colheita.hasMany(Venda, { foreignKey: 'colheitaId' });
+Venda.belongsTo(Colheita, { foreignKey: 'colheitaId' });
+Colheita.hasMany(Venda, { foreignKey: 'colheitaId' });
 
 
 module.exports = {Usuario,TipoProduto,Colheita,Endereco,TipoInsumo,TipoRelatorio,Relatorios,CalculoLucro,Comprador,Cotacao,EstoqueColheita,EstoqueInsumo,Venda,Fornecedor,Insumo,Compra};
 
 //db.sequelize.sync ({force: true}) //mudar pra alter no lugar de force caso queira atualizar apenas
-db.sequelize.sync({ alter: true })
+// db.sequelize.sync({ alter: true })
