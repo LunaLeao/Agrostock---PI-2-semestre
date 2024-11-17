@@ -206,21 +206,89 @@
             </nav>
         </section>
 
-        <!-- Barra de pesquisa -->
+        {{!-- <!-- Barra de pesquisa -->
         <form class="d-flex2" role="search">
             <div class="search-bar">
                 <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
             </div>
-        </form>
+        </form> --}}
 
         <div class="header">
-            Dashboard de Colheitas
+            Dashboards
         </div>
 
-       
+        <div>
+            <h1>Dashboard de Colheitas</h1>
+            <canvas id="DashboardColheita"></canvas>
+        </div>
 
+        <div>
+            <h1>Dashboard de Vendas</h1>
+            <canvas id="DashboardVendas"></canvas>
+        </div>
 
+        <div class="sair-btn">
+            <button type="button" class="btn btn-success">
+                <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
+            </button>
+        </div>
+
+        <script>
+            const ctx = document.getElementById('DashboardColheita');
+
+                const colheita = {{{nomesColheitas}}};
+                const quantidade = {{{quantidadesColheitas}}};
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                labels: colheita,
+                datasets: [{
+                    label: 'Quantidade da colheita',
+                    data: quantidade,
+                    backgroundColor: 'rgba(0, 128, 0, 0.7)',
+                    borderColor: 'rgba(0, 128, 0, 1)',  
+                    borderWidth: 1
+                }]
+                },
+                options: {
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                }
+                }
+            });
+        </script>
+
+        <script>
+            const ctd = document.getElementById('DashboardVendas');
+
+            const nomesProdutos = {{{nomesProdutos}}}; 
+            const quantidadesVendas = {{{quantidadesVendas}}}; 
+
+            new Chart(ctd, {
+                type: 'bar',
+                data: {
+                labels: nomesProdutos,
+                datasets: [{
+                    label: 'Quantidade Vendida',
+                    data: quantidadesVendas,
+                    backgroundColor: 'rgba(0, 123, 255, 0.7)',  
+                    borderColor: 'rgba(0, 123, 255, 1)', 
+                    borderWidth: 1
+                }]
+                },
+                options: {
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                }
+                }
+            });
+        </script>
 
 </body>
 
