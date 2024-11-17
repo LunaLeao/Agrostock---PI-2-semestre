@@ -260,18 +260,16 @@
                 }
                 }
             });
-        </script>
 
-        <script>
-            const ctd = document.getElementById('DashboardVendas');
+            /*const ctd = document.getElementById('DashboardVendas');
 
-            const nomesProdutos = {{{nomesProdutos}}}; 
+            const Produtos = {{{nomesColheitas}}}; 
             const quantidadesVendas = {{{quantidadesVendas}}}; 
 
             new Chart(ctd, {
                 type: 'bar',
                 data: {
-                labels: nomesProdutos,
+                labels: Produtos,
                 datasets: [{
                     label: 'Quantidade Vendida',
                     data: quantidadesVendas,
@@ -287,7 +285,38 @@
                     }
                 }
                 }
+            });*/
+
+            const ctd = document.getElementById('DashboardVendas');
+
+            const Colheitas = {{{nomesColheitasVendas}}};  // Dados das colheitas para o gráfico
+            const quantidadesVendas = {{{quantidadesVendas}}};  // Quantidades das vendas
+
+            // Log para depuração
+            console.log("Colheitas no gráfico:", Colheitas);
+            console.log("Quantidades no gráfico:", quantidadesVendas);
+
+            new Chart(ctd, {
+                type: 'bar',
+                data: {
+                    labels: Colheitas,  // Labels (nomes das colheitas)
+                    datasets: [{
+                        label: 'Quantidade Vendida',
+                        data: quantidadesVendas,
+                        backgroundColor: 'rgba(0, 123, 255, 0.7)',  
+                        borderColor: 'rgba(0, 123, 255, 1)', 
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
             });
+
         </script>
 
 </body>
