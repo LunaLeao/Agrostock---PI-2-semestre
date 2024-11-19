@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Redefinir Senha</title>
+  <style>
+    body {
+      font-family: "Didact Gothic", sans-serif;
+      background-image: url('/img/Ramos.png');
+      background-size: cover;
+      background-position: center;
+      color: #333;
+    }
+
+    .btn-custom-green {
+      background-color: #2cbd4e;
+      border-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: inline-block;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .btn-custom-green:hover {
+      background-color: #389b4f;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 35rem;
+      padding: 20px;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .form-group {
+      margin-top: 15px;
+    }
+
+    .error {
+      color: red;
+      display: none;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="text-center">
+        <img src="/img/IMG-20240907-WA0006.jpg" alt="Logo" class="img-fluid" style="max-height: 100px" />
+      </div>
+      <h2 class="text-center mt-4">Redefinir Senha</h2>
+      <form id="resetPasswordForm" action="/reset_password" method="POST">
+        <!-- Campo oculto para o token -->
+        <input type="hidden" id="token" name="token" value="{{token}}" />
+
+        <!-- Campo oculto para o email armazenado -->
+        <input type="hidden" id="emailStored" name="emailStored" value="{{email}}" />
+
+        <!-- Campo para o usuário digitar o email -->
+        <div class="form-group">
+          <label for="emailInput">Digite seu email:</label>
+          <input type="email" class="form-control" id="emailInput" name="email"
+            placeholder="Digite o email associado ao token" required />
+          <div id="emailError" class="error">O email digitado não corresponde ao email associado ao token.</div>
+        </div>
+
+        <!-- Campo para a nova senha -->
+        <div class="form-group">
+          <label for="password">Nova Senha:</label>
+          <input type="password" class="form-control" id="password" name="senha" placeholder="Digite sua nova senha"
+            required />
+          <div id="passwordError" class="error">A senha deve conter ao menos um número e um caractere especial.</div>
+        </div>
+
+        <!-- Campo para confirmar a nova senha -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirme a Nova Senha:</label>
+          <input type="password" class="form-control" id="confirmPassword" placeholder="Confirme sua nova senha"
+            required />
+          <div id="confirmPasswordError" class="error">As senhas não coincidem.</div>
+        </div>
+
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-custom-green">Redefinir Senha</button>
+        </div>
+      </form>
+
+      <script>
+        document.getElementById('resetPasswordForm').addEventListener('submit', function (event) {
+          const emailStored = document.getElementById('emailStored').value;
+          const emailInput = document.getElementById('emailInput').value;
+          const password = document.getElementById('password').value;
+          const confirmPassword = document.getElementById('confirmPassword').value;
+
+          // Validação no cliente
+          const emailError = document.getElementById('emailError');
+          const passwordError = document.getElementById('passwordError');
+          const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+          let valid = true;
+
+          // Verificar se o email corresponde
+          if (emailStored !== emailInput) {
+            emailError.style.display = 'block';
+            valid = false;
+          } else {
+            emailError.style.display = 'none';
+          }
+
+          // Verificar se a senha é válida
+          const passwordRegex = /^(?=.*\d)(?=.*[@$!%*#?&])/; // Exige um número e caractere especial.
+          if (!passwordRegex.test(password)) {
+            passwordError.style.display = 'block';
+            valid = false;
+          } else {
+            passwordError.style.display = 'none';
+          }
+
+          // Verificar se as senhas coincidem
+          if (password !== confirmPassword) {
+            confirmPasswordError.style.display = 'block';
+            valid = false;
+          } else {
+            confirmPasswordError.style.display = 'none';
+          }
+
+          if (!valid) {
+            event.preventDefault(); // Impede o envio do formulário se houver erros.
+          }
+        });
+      </script>
+    </div>
+  </div>
+</body>
+
+</html>
