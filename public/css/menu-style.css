@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Didact Gothic', sans-serif;
+}
+body {
+    margin-left: 16%;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+.nav-links a {
+    color: #ffffff;
+}
+.btn_menu {
+    display: flex;
+    align-items: center;
+
+}
+
+.menu {
+    display: flex;
+    gap: 1em;
+    font-size: 18px;
+}
+
+.menu li:hover {
+    background-color: #4c9e9e;
+    border-radius: 5px;
+    transition: 0.3s ease;
+}
+
+.menu li {
+    padding: 5px 14px;
+    
+}
+
+input[type=checkbox] {
+    display: none;
+    
+}
+
+.hamburger {
+    display: flex;
+    font-size: 20px;
+    user-select: none;
+    background-color: #085114;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 3.5px 5px 0px rgba(0, 0, 0, 0.5);
+}
+
+.menu {
+    display: none;
+    position: absolute;
+    width: fit-content;
+    justify-self: flex-end;
+    background-color: #085114;
+    border: 2px solid #00830b;
+    border-radius: 20px;
+    font-family: Montserrat, sans-serif;
+    right: 4rem;
+    text-align: center;
+    padding: 1rem;
+    margin: 1rem;
+}
+
+.menu li:hover {
+    display: inline-block;
+    background-color: #00740a;
+    transition: 0.3s ease;
+}
+
+.menu li+li {
+    margin-top: 20px;
+}
+
+input[type=checkbox]:checked~.menu {
+    display: block;
+}
+
+.select{
+    all: unset;
+    margin-right: 8px;
+}
+
+.hamburger {
+    display: block;
+}
+
+nav.menu-lateral{
+    z-index: 1;
+    width: 70px;
+    height: 100%;
+    padding: 40px 0 40px 1% ;
+    background-color: #067C06;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    transition: .2s;
+}
+
+nav.menu-lateral.expandir{
+    width: 350px;
+    background-color: rgb(0, 104, 17);
+}
+
+.btn-expandir{
+    width: fit-content;
+    margin: 10px;
+    padding: 5px;
+    border-radius: 10px;
+    transition: .3s;
+}
+.btn-expandir:hover{
+    background-color: #00b80f;
+   
+}
+
+.btn-expandir > i{
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+ul{
+    height: 100%;
+}
+
+ul li.item-menu a{
+    font-family: 'Didact Gothic', sans-serif;
+    color: white;
+    font-weight: 600px;
+    font-size: 20px;
+    padding: 20px 15%;
+    display: flex;
+    margin-bottom: 30px;
+    line-height: 40px;
+}
+
+ul li.item-menu:hover{
+    background-color: #085114;
+   
+}
+
+ul li.item-menu{
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    transition: .3s;
+    margin-left: -40px;
+    padding-right: 20px;
+}
+
+ul li.ativo{
+    background-color: #00B704;
+}
+
+ul li.item-menu a .txt-menu{
+    margin-left: 40px;
+    transition: .3s;
+}
+
+nav.menu-lateral.expandir .txt-menu{
+    margin-left: 25px;
+}
+
+.fundacao{
+    display: none;
+}
+
+nav.menu-lateral.expandir .fundacao{
+    display: unset;
+    width: 150px;
+}
+
+ul li.item-menu a .icon-menu > i{
+    font-size: 30px;
+    margin-left: 10px;
+}
+
+@media (min-width:280px) and (max-width:400px){
+    nav.menu-lateral{
+        width: 50px;
+        padding: 20px 0 20px 1% ;
+    }
+
+    ul li.item-menu a .icon-menu > i{
+        font-size: 20px;
+    }
+
+    .btn-expandir{
+        margin: 5px;
+    }
+
+    .btn-expandir > i{
+        font-size: 1.5rem;
+        
+    }
+    #main-content {
+    margin-left: 50%;
+    padding: 20px;
+}
+}

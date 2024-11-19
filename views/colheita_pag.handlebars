@@ -1,0 +1,627 @@
+<title>Estoque de Colheitas</title>
+<link rel="stylesheet" href="/css/menu-style.css">
+<style>
+    input[type="checkbox"] {
+        display: block;
+        margin: 6px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: #f7f7f7;
+        margin-left: 10%;
+        overflow-x: hidden;
+    }
+
+    .table>:not(caption)>*>* {
+        color: var(--bs-table-color-state, var(--bs-table-color-type, #146b12));
+    }
+
+    .header {
+        background-color: #00b80f;
+        color: white;
+        padding: 22px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 24px;
+        width: 111.5%;
+        position: relative;
+        margin-top: 22px;
+        left: -9%;
+    }
+
+    .btn-custom {
+        background-color: #00b80f;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #29702c;
+        /* Verde mais claro no hover */
+        color: rgb(211, 211, 211);
+    }
+
+    .btn-custom2 {
+        background-color: #00b80f;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-custom2:hover {
+        background-color: #29702c;
+        /* Verde mais claro no hover */
+        color: rgb(211, 211, 211);
+    }
+
+    .d-flex2 {
+        width: 100%;
+        max-width: 400px;
+        padding-left: 40px;
+        border: none;
+        margin-left: 1%;
+        margin-top: 15px;
+    }
+
+    .search-bar {
+        display: flex;
+    }
+
+    /* Alinhar botões de forma responsiva */
+    .d-flex {
+        display: flex;
+        margin-bottom: 20px;
+        justify-content: space-evenly;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .input-group {
+        font-family: 'Didact Gothic', sans-serif;
+    }
+
+    .form-select {
+        color: #146b12;
+        font-weight: bold;
+    }
+
+    .sair-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 1rem;
+    }
+
+    /* Responsividade */
+    @media (min-width: 400px) and (max-width: 768px) {
+        .search-bar {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-custom {
+            width: 30%;
+            height: 82px;
+        }
+
+        .btn-custom2 {
+            width: 71%;
+            height: 82px;
+        }
+
+        .d-flex {
+            flex-direction: row;
+            margin-left: 4%;
+            
+        }
+
+        .sair-btn {
+            position: relative;
+            bottom: 2rem;
+            top: 1rem;
+            left: 2rem;
+            right: unset;
+        }
+    }
+
+    @media  (max-width: 400px) {
+        .search-bar {
+            padding-left: 0%;
+            width: 80%;
+            margin-bottom: 10px;
+        }
+
+        .menu_lateral{
+            width: fit-content;
+        }
+
+        .btn{
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            height: 40px;
+            margin: 0px;
+        }
+
+        .btn-success {
+            margin: 0px;
+            width: 50px;
+            justify-content: center;
+        }
+
+        .d-flex{
+            align-items: unset;
+        }
+
+        .d-flex2{
+            padding-left: 10px;
+        }
+
+        .btn.btn-success{
+            margin-top: 7px;
+        }
+
+        .form-control{
+            height: 40px;
+            max-width: 130px;
+        }
+
+        .btn-outline-success{
+            width: 50px;
+            height: 40px;
+        }
+
+        /* Tabela responsiva */
+        .table-responsive {
+            overflow-x: auto;
+            /* Permite rolar horizontalmente */
+            -webkit-overflow-scrolling: touch;
+            /* Melhor experiência de scroll em iOS */
+
+
+        }
+
+        table {
+            font-size: 10px;
+            /* Garantir que a tabela ocupe 100% da área disponível */
+        }
+
+        .button.i.bi.bi-trash{
+            position: relative;
+            
+        }
+
+        .btn-sm{
+            width: 10px;
+            height: 10px;
+        }
+
+        .radio{
+            width: 10px;
+        }
+        
+    }
+    
+
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <section id="menu_lateral" style=" position: fixed; z-index: 1; width: 100%">
+            <nav class="menu-lateral">
+                <div class="btn-expandir" id="btn-exp">
+                    <i class="bi bi-list"></i>
+                </div>
+
+                <ul>
+                    <li class="item-menu" id="menu-dashboard">
+                        <a href="/dashboard">
+                            <span class="icon-menu">
+                                <i class="bi bi-columns-gap"></i>
+                            </span>
+                            <span class="txt-menu">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="item-menu" id="menu-colheitas">
+                        <a href="/colheitas">
+                            <span class="icon-menu">
+                                <i class="bi bi-tree"></i>
+                            </span>
+                            <span class="txt-menu">Colheitas</span>
+                        </a>
+                    </li>
+
+                    <li class="item-menu" id="menu-insumos">
+                        <a href="/insumos">
+                            <span class="icon-menu">
+                                <i class="bi bi-droplet"></i>
+                            </span>
+                            <span class="txt-menu">Insumos</span>
+                        </a>
+                    </li>
+
+                    <li class="item-menu" id="menu-venda-fornecedor">
+                        <a href="/venda-fornecedor">
+                            <span class="icon-menu">
+                                <i class="bi bi-bag"></i>
+                            </span>
+                            <span class="txt-menu">Vendas/Fornecedores</span>
+                        </a>
+                    </li>
+
+                    <li class="item-menu" id="menu-conta">
+                        <a href="/conta">
+                            <span class="icon-menu">
+                                <i class="bi bi-person-circle"></i>
+                            </span>
+                            <span class="txt-menu">Sua conta</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+
+        <!-- Barra de pesquisa com dropdown -->
+        <form class="d-flex2" role="search" action="/pesquisarColheita" method="get">
+            <div class="search-bar">
+                <input class="form-control me-2" type="search" name="termo" placeholder="Pesquisar" aria-label="Search">
+                <select name="campo" class="form-select me-2">
+                    <option value="nome_colheita">Nome</option>
+                    <option value="tipo_produto">Tipo</option>
+                    <option value="quantidade">Quantidade</option>
+                </select>
+                <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+            </div>
+        </form>
+
+        <div class="header">
+            Estoque de Plantações
+        </div>
+
+        <!-- Seção principal -->
+        <div class="container mt-4">
+            <div class="d-flex gap-2 d-md-block">
+                <div class="d-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-custom2">Gerar Relatório Mensal</button>
+                </div>
+                <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#novoItemModal">Novo +</button>
+                <button class="btn btn-custom" id="editarButton" onclick="openColheitaModal()">Editar</button>
+
+
+            </div>
+            
+            <!-- Tabela -->
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-success">
+                        <tr>
+                            <th></th>
+                            <th>Nome</th>
+                            <th>Quantidade</th>
+                            <th>Tipo</th>
+                            <th>Data do Registro</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each colheitas}}
+                        <tr id="colheita-row-{{this.id}}"> <!-- Adicione um ID à linha -->
+                            <td><input type="radio" class="radio" name="colheitaSelecionada" value="{{this.id}}"></td>
+                            <td>{{nome_colheita}}</td>
+                            <td>{{quantidade}}</td>
+                            <td>{{tipo_produto.nome}}</td>
+                            <td>{{formatDate data_colheita}}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteColheita({{this.id}})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal para editar informações da colheita -->
+        <div class="modal fade" id="colheitaModal" tabindex="-1" aria-labelledby="colheitaModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="colheitaModalLabel">Editar Informações da Colheita</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Formulário de edição -->
+                        <form action="/atualizar-colheita" method="POST">
+                            <input type="hidden" id="colheitaId" name="colheitaId" value="">
+
+                            <div class="mb-3">
+                                <label for="nome_colheita" class="form-label">Nome da Colheita</label>
+                                <input type="text" class="form-control" id="nome_colheita" name="nome_colheita" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="quantidade" class="form-label">Quantidade</label>
+                                <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tipo_produto" class="form-label">Tipo de Produto</label>
+                                <select class="form-control" id="tipo_produto" name="tipo_produtoId" required>
+                                    {{#each tiposProduto}}
+                                        <option value="{{this.id}}">{{this.nome}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="data_colheita" class="form-label">Data da Colheita</label>
+                                <input type="date" class="form-control" id="data_colheita" name="data_colheita" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-success">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Modal Add -->
+<div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="novoItemModalLabel">Adicionar Nova Colheita</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/add-colheita" method="POST" id="novoItemForm">
+                    <div class="mb-3">
+                        <label for="itemNomeColheita" class="form-label">Nome do Item</label>
+                        <input type="text" class="form-control" id="itemNomeColheita" name="nome_colheita"
+                            placeholder="Digite o nome da colheita (ex: batata)" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="selectTipoProduto" class="form-label">Tipo</label>
+                        <select class="form-select" id="selectTipoProduto" name="tipo_produto" required>
+                            <option value="">Selecione um tipo de produto</option>
+                            {{#each tiposProduto}} 
+                            <option value="{{this.id}}">{{this.nome}}</option>
+                            {{/each}}
+                        </select>
+                        <div class="mt-2">
+                            <input type="text" class="form-control" id="novoTipoProduto" placeholder="Adicionar novo tipo de produto" />
+                            <button type="button" class="btn btn-primary mt-1" id="btnAddTipoProduto">Adicionar</button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemQuantidade" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="itemQuantidade" name="quantidade" placeholder="Digite a quantidade" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemDataColheita" class="form-label">Data da Colheita</label>
+                        <input type="date" class="form-control" id="itemDataColheita" name="data_colheita" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="itemObservacao" class="form-label">Observação</label>
+                        <textarea class="form-control" id="itemObservacao" name="observacao" rows="3"></textarea>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
+            </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div class="sair-btn">
+            <button type="button" class="btn btn-success">
+                <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
+            </button>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        {{!-- <script>
+            function openColheitaModal() {
+                // Obtenha a colheita selecionada
+                const selectedRadio = document.querySelector('input[name="colheitaSelecionada"]:checked');
+                
+                if (selectedRadio) {
+                    const selectedId = selectedRadio.value;
+
+                    const colheitas = [
+                        {{#each colheitas}}
+                        { id: "{{this.id}}", nome_colheita: "{{nome_colheita}}", quantidade: {{quantidade}}, tipo_produtoId: "{{tipo_produto.id}}", tipo_produto: "{{tipo_produto.nome}}", data_colheita: "{{data_colheita}}" },
+                        {{/each}}
+                    ];
+
+                    const colheita = colheitas.find(c => c.id === selectedId);
+
+                    // Preencha os campos do modal
+                    document.getElementById('colheitaId').value = colheita.id;
+                    document.getElementById('nome_colheita').value = colheita.nome_colheita;
+                    document.getElementById('quantidade').value = colheita.quantidade;
+                    
+                    // Definir a opção selecionada no select do tipo de produto
+                    const tipoProdutoSelect = document.getElementById('tipo_produto');
+                    tipoProdutoSelect.value = colheita.tipo_produtoId; // Aqui está a alteração
+
+                    // Formate a data para o formato 'YYYY-MM-DD' que é esperado pelo input do tipo date
+                    const dataFormatada = new Date(colheita.data_colheita).toISOString().split('T')[0];
+                    document.getElementById('data_colheita').value = dataFormatada;
+
+                    // Abra o modal
+                    const modal = new bootstrap.Modal(document.getElementById('colheitaModal'));
+                    modal.show();
+                } else {
+                    alert("Por favor, selecione uma colheita para editar.");
+                }
+            }
+        </script> --}}
+<script>
+               function openColheitaModal() {
+            // Obtenha a colheita selecionada
+            const selectedRadio = document.querySelector('input[name="colheitaSelecionada"]:checked');
+            
+            if (selectedRadio) {
+                const selectedId = selectedRadio.value;
+
+                const colheitas = [
+                    {{#each colheitas}}
+                    { id: "{{this.id}}", nome_colheita: "{{nome_colheita}}", quantidade: {{quantidade}}, tipo_produtoId: "{{tipo_produto.id}}", tipo_produto: "{{tipo_produto.nome}}", data_colheita: "{{data_colheita}}" },
+                    {{/each}}
+                ];
+
+                const colheita = colheitas.find(c => c.id === selectedId);
+
+                // Preencha os campos do modal
+                document.getElementById('colheitaId').value = colheita.id;
+                document.getElementById('nome_colheita').value = colheita.nome_colheita;
+                document.getElementById('quantidade').value = colheita.quantidade;
+  // Definir a opção selecionada no select do tipo de produto
+                const tipoProdutoSelect = document.getElementById('tipo_produto');
+                tipoProdutoSelect.value = colheita.tipo_produtoId; // Aqui está a alteração
+
+                // Formate a data para o formato 'YYYY-MM-DD' que é esperado pelo input do tipo date
+                const dataFormatada = new Date(colheita.data_colheita).toISOString().split('T')[0];
+                document.getElementById('data_colheita').value = dataFormatada;
+ // Abra o modal
+                const modal = new bootstrap.Modal(document.getElementById('colheitaModal'));
+                modal.show();
+            } else {
+                alert("Por favor, selecione uma colheita para editar.");
+     }
+               }
+</script>
+        <script>
+            function deleteColheita(id) {
+                if (confirm('Você tem certeza que deseja excluir esta colheita?')) {
+                    fetch(`/colheitas/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        console.log('Resposta do servidor:', response); // Adicionado para depuração
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(text || 'Erro ao excluir a colheita');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const row = document.getElementById(`colheita-row-${id}`);
+                        if (row) {
+                            row.remove();
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error.message);
+                        alert(`Ocorreu um erro: ${error.message}`);
+                    });
+                }
+            }
+        </script>
+        
+        <script>
+            document.getElementById('btnAddTipoProduto').addEventListener('click', async () => {
+                const novoTipo = document.getElementById('novoTipoProduto').value;
+
+                if (!novoTipo) {
+                    alert('Por favor, insira um tipo de produto.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/add-tipo-produto', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ novoTipo })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert(data.message); // Mostra a mensagem de sucesso
+
+                        // Adiciona o novo tipo de produto ao select
+                        const selectTipoProduto = document.getElementById('selectTipoProduto');
+                        const newOption = document.createElement('option');
+                        newOption.value = data.tipoProduto.id; // Use o ID que vem da resposta
+                        newOption.textContent = data.tipoProduto.nome; // Use o nome que vem da resposta
+                        selectTipoProduto.appendChild(newOption);
+
+                        // Limpa o campo de entrada após adicionar
+                        document.getElementById('novoTipoProduto').value = '';
+
+                    } else {
+                        throw new Error(data.message); // Lança erro para o catch
+                    }
+
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert('Erro ao adicionar tipo de produto');
+                }
+            });
+        </script>
+        <script>
+    document.getElementById('searchForm').addEventListener('submit', async function (e) {
+        e.preventDefault();  // Evita que o formulário faça um redirecionamento
+
+        const termo = document.getElementById('searchTerm').value;
+        const campo = document.getElementById('searchField').value;
+
+        const response = await fetch(`/pesquisar?termo=${termo}&campo=${campo}`, {
+            method: 'GET',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            // Atualiza a página com os resultados
+            let resultadosHTML = '';
+            if (data.colheitas && data.colheitas.length > 0) {
+                data.colheitas.forEach(colheita => {
+                    resultadosHTML += `
+                        <div class="colheita-item">
+                            <p><strong>Nome da Colheita:</strong> ${colheita.nome_colheita}</p>
+                            <p><strong>Tipo de Colheita:</strong> ${colheita.TipoColheita ? colheita.TipoColheita.nome : 'N/A'}</p>
+                            <p><strong>Tipo de Produto:</strong> ${colheita.TipoProduto ? colheita.TipoProduto.nome : 'N/A'}</p>
+                            <p><strong>Quantidade:</strong> ${colheita.quantidade}</p>
+                            <p><strong>Data da Colheita:</strong> ${new Date(colheita.data_colheita).toLocaleDateString('pt-BR')}</p>
+                        </div>
+                        <hr>`;
+                });
+            } else {
+                resultadosHTML = `<p>Nenhuma colheita encontrada.</p>`;
+            }
+            document.getElementById('resultados').innerHTML = resultadosHTML;
+        } else {
+            console.error('Erro ao buscar colheitas');
+            document.getElementById('resultados').innerHTML = '<p>Erro ao buscar colheitas.</p>';
+        }
+    });
+</script>
+
+
+</body>
+
+</html>
