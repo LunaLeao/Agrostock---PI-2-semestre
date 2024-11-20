@@ -541,6 +541,43 @@
                         alert('Erro ao adicionar tipo de insumo');
                     }
                 });
+
+                document.querySelector('.btn-custom2').addEventListener('click', function() {
+                    const tableRows = document.querySelectorAll('table tbody tr');
+                    const insumos = [];
+
+                    tableRows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        const insumo = {
+                            tipo_insumo: cells[1].innerText,
+                            quantidade: cells[2].innerText,
+                            fornecedor: cells[3].innerText,
+                            valor_compra: cells[4].innerText,
+                            data_compra: cells[5].innerText,
+                            validade: cells[6].innerText
+                        };
+                        insumos.push(insumo);
+                    });
+
+                    // Enviar os dados para o servidor
+                    fetch('/gerar-relatorio-insumos', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ insumos: insumos })
+                    })
+                    .then(response => response.blob())
+                    .then(blob => {
+                        // Criar um link para baixar o PDF gerado
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'relatorio_insumos.pdf';
+                        link.click();
+                    })
+                    .catch(error => console.error('Erro ao gerar o PDF:', error));
+                });
+
             </script>
 
             <script>
