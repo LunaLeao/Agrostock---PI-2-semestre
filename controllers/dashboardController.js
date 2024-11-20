@@ -1,45 +1,5 @@
 const { Colheita, TipoProduto, Venda } = require("../models/post");
 
-// exports.renderizarDashboard = async function (req, res) {
-//   try {
-//     // Verifica se o usuário está logado
-//     if (!req.session.userId) {
-//       return res.status(403).send('Usuário não autorizado');
-//     }
-//       const colheitas = await Colheita.findAll({
-//         attributes: ['nome_colheita', 'quantidade']
-//     });
-
-//     // Buscar dados de vendas
-//     const vendas = await Venda.findAll({
-//       include: [{
-//         model: TipoProduto,
-//         attributes: ['nome']  // Nome do produto
-//       }],
-//       attributes: ['quantidade']
-//     });
-    
-//     // Prepare os dados para o gráfico
-//     const nomesColheitas = colheitas.map(c => c.nome_colheita);
-//     const quantidadesColheitas = colheitas.map(c => c.quantidade);
-
-//     // Prepare os dados de vendas
-//     const nomesProdutos = vendas.map(v => v.tipo_produto.nome); // Nome do produto
-//     const quantidadesVendas = vendas.map(v => v.quantidade);
-
-//     // Renderize a página com os dados
-//     res.render('dashboard_pag', { 
-//         nomesColheitas: JSON.stringify(nomesColheitas),
-//         quantidadesColheitas: JSON.stringify(quantidadesColheitas),
-//         nomesProdutos: JSON.stringify(nomesProdutos),
-//         quantidadesVendas: JSON.stringify(quantidadesVendas)
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Erro ao obter dados de colheitas');
-//   }
-// };
-
 exports.renderizarDashboard = async function (req, res) {
   try {
     // Verifica se o usuário está logado

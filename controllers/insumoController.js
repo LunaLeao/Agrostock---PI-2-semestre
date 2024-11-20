@@ -1,6 +1,8 @@
 const { TipoInsumo, Fornecedor, Insumo, Compra} = require("../models/post");
 const { Op } = require('sequelize');
 const db = require('../models'); 
+const PDFDocument = require('pdfkit');
+const path = require('path');
 
 exports.renderizarInsumo = async function (req, res) {
   try {
@@ -219,4 +221,88 @@ exports.pesquisar = async (req, res) => {
   }
 };
 
+exports.gerarRelatorioInsumos = (req, res) => { 
+  const insumos = req.body.insumos; // Recebe os dados enviados
+  const usuario = req.session.usuario;
 
+  // Criar um novo documento PDF
+  const doc = new PDFDocument({ size: 'A4', margin: 30 });
+  
+  // Definir o cabeçalho da resposta como PDF
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'inline; filename=relatorio_insumos.pdf');
+
+  const imagePath = path.join(__dirname, '../public/img/IMG-20240907-WA0006.jpg'); // Caminho absoluto para a imagem
+  const imageTop = 30; // Posição fixa para a imagem
+  const imageWidth = 100;
+  const imageHeight = 100;
+  doc.image(imagePath, imageTop, imageTop, { width: imageWidth, height: imageHeight });
+  doc.y = imageTop + imageHeight;
+
+  // Pipe o conteúdo do PDF para a resposta HTTP
+  doc.pipe(res);
+
+  // Adicionar título ao PDF
+  doc.fontSize(18).text('Relatório de Estoque de Insumos', { align: 'center' });
+  doc.moveDown();
+
+  // Adicionar informações do usuário (nome, email e telefone)
+  doc.fontSize(10).text(`Nome: ${usuario.nome}`, { align: 'left' });
+  doc.text(`Email: ${usuario.email}`, { align: 'left' });
+  doc.text(`Telefone: ${usuario.telefone_celular}`, { align: 'left' });
+  doc.moveDown(); // Espaçamento antes de iniciar a tabela
+
+  // Definir a largura das colunas
+  const colWidth1 = 80;  // Tipo de Insumo
+  const colWidth2 = 65;   // Quantidade
+  const colWidth3 = 80;  // Fornecedor
+  const colWidth4 = 80;  // Valor de Compra
+  const colWidth5 = 120;  // Data de Compra
+  const colWidth6 = 120;  // Validade
+
+  // Definir a altura das linhas
+  const rowHeight = 15;
+  const tableTop = doc.y;
+
+  // Cabeçalho da tabela
+  doc.fontSize(10).font('Helvetica-Bold');
+  doc.text('Tipo de Insumo', 30, tableTop, { width: colWidth1, align: 'center' });
+  doc.text('Quantidade', 30 + colWidth1, tableTop, { width: colWidth2, align: 'center' });
+  doc.text('Fornecedor', 30 + colWidth1 + colWidth2, tableTop, { width: colWidth3, align: 'center' });
+  doc.text('Valor de Compra', 30 + colWidth1 + colWidth2 + colWidth3, tableTop, { width: colWidth4, align: 'center' });
+  doc.text('Data de Compra', 30 + colWidth1 + colWidth2 + colWidth3 + colWidth4, tableTop, { width: colWidth5, align: 'center' });
+  doc.text('Validade', 30 + colWidth1 + colWidth2 + colWidth3 + colWidth4 + colWidth5, tableTop, { width: colWidth6, align: 'center' });
+
+  // Criar uma linha abaixo do cabeçalho
+  doc.lineWidth(1).moveTo(30, tableTop + rowHeight).lineTo(580, tableTop + rowHeight).stroke();
+  doc.moveDown();
+
+  // Adicionar os dados dos insumos
+  insumos.forEach((insumo, index) => {
+    const yPosition = tableTop + rowHeight * (index + 2); // Posição para cada linha
+
+    // Verificar se há espaço para adicionar a linha, se não, ir para uma nova página
+    if (yPosition > doc.page.height - 80) {
+      doc.addPage(); // Adiciona uma nova página
+    }
+
+    doc.fontSize(10).font('Helvetica');
+    doc.text(insumo.tipo_insumo, 30, yPosition, { width: colWidth1, align: 'center' });
+    doc.text(insumo.quantidade.toString(), 30 + colWidth1, yPosition, { width: colWidth2, align: 'center' });
+    doc.text(insumo.fornecedor, 30 + colWidth1 + colWidth2, yPosition, { width: colWidth3, align: 'center' });
+    doc.text(insumo.valor_compra, 30 + colWidth1 + colWidth2 + colWidth3, yPosition, { width: colWidth4, align: 'center' });
+    doc.text(insumo.data_compra, 30 + colWidth1 + colWidth2 + colWidth3 + colWidth4, yPosition, { width: colWidth5, align: 'center' });
+    doc.text(insumo.validade, 30 + colWidth1 + colWidth2 + colWidth3 + colWidth4 + colWidth5, yPosition, { width: colWidth6, align: 'center' });
+
+    // Adicionar bordas nas células
+    doc.rect(30, yPosition - 3, colWidth1, rowHeight).stroke();
+    doc.rect(30 + colWidth1, yPosition - 3, colWidth2, rowHeight).stroke();
+    doc.rect(30 + colWidth1 + colWidth2, yPosition - 3, colWidth3, rowHeight).stroke();
+    doc.rect(30 + colWidth1 + colWidth2 + colWidth3, yPosition - 3, colWidth4, rowHeight).stroke();
+    doc.rect(30 + colWidth1 + colWidth2 + colWidth3 + colWidth4, yPosition - 3, colWidth5, rowHeight).stroke();
+    doc.rect(30 + colWidth1 + colWidth2 + colWidth3 + colWidth4 + colWidth5, yPosition - 3, colWidth6, rowHeight).stroke();
+  });
+
+  // Finalizar o documento
+  doc.end();
+};
