@@ -1,104 +1,103 @@
 const { Usuario, Endereco, Venda, Colheita, Comprador, TipoProduto } = require("../models/post");
 const bcrypt = require("bcrypt");
-const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 
 exports.login = async function (req, res) {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        const usuario = await Usuario.findOne({ where: { email: email } });
+    const usuario = await Usuario.findOne({ where: { email: email } });
 
-        if (!usuario) {
-            return res.render("login_pag", {
-                backgroundImage: '/img/Ramos.png',
-                logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
-                errorMessage: "Usuário não encontrado."
-            });
-        }
-
-        const senhaValida = await bcrypt.compare(password, usuario.senha);
-
-        if (!senhaValida) {
-            return res.render("login_pag", {
-                backgroundImage: '/img/Ramos.png',
-                logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
-                errorMessage: "Senha incorreta."
-            });
-        }
-
-        req.session.userId = usuario.id;
-        req.session.usuario = usuario; // Set usuario in session
-        req.session.endereco = await usuario.getEndereco(); // Set endereco in session
-
-        res.redirect("/conta");
-    } catch (error) {
-        console.error("Erro ao fazer login:", error);
-        res.status(500).send("Erro ao fazer login.");
+    if (!usuario) {
+      return res.render("login_pag", {
+        backgroundImage: '/img/Ramos.png',
+        logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
+        errorMessage: "Usuário não encontrado."
+      });
     }
+
+    const senhaValida = await bcrypt.compare(password, usuario.senha);
+
+    if (!senhaValida) {
+      return res.render("login_pag", {
+        backgroundImage: '/img/Ramos.png',
+        logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
+        errorMessage: "Senha incorreta."
+      });
+    }
+
+    req.session.userId = usuario.id;
+    req.session.usuario = usuario; // Set usuario in session
+    req.session.endereco = await usuario.getEndereco(); // Set endereco in session
+
+    res.redirect("/conta");
+  } catch (error) {
+    console.error("Erro ao fazer login:", error);
+    res.status(500).send("Erro ao fazer login.");
+  }
 }
 
 exports.cadastrar = async function (req, res) {
-    try {
-        const { email, cpf, nome, telefone_celular, telefone_residencial, senha, cep, rua, numero, complemento, bairro, cidade, uf, nome_propriedade } = req.body;
+  try {
+    const { email, cpf, nome, telefone_celular, telefone_residencial, senha, cep, rua, numero, complemento, bairro, cidade, uf, nome_propriedade } = req.body;
 
-        const usuarioExistente = await Usuario.findOne({
-            where: {
-                [Op.or]: [
-                    { email: email },
-                    { cpf: cpf }
-                ]
-            }
-        });
+    const usuarioExistente = await Usuario.findOne({
+      where: {
+        [Op.or]: [
+          { email: email },
+          { cpf: cpf }
+        ]
+      }
+    });
 
-        if (usuarioExistente) {
-            return res.render("cadastrar_pag", {
-                backgroundImage: '/img/Ramos.png',
-                logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
-                errorMessage: usuarioExistente.email === email ? "E-mail já cadastrado." : "CPF já cadastrado."
-            });
-        }
-
-        const hashedPassword = await bcrypt.hash(senha, 10);
-
-        const endereco = await Endereco.create({
-            cep: cep,
-            nome_rua: rua,
-            numero: numero,
-            complemento: complemento,
-            bairro: bairro,
-            cidade: cidade,
-            uf: uf,
-            nome_propriedade: nome_propriedade
-        });
-
-        const novoUsuario = await Usuario.create({
-            nome: nome,
-            email: email,
-            telefone_celular: telefone_celular,
-            cpf: cpf,
-            telefone_residencial: telefone_residencial,
-            senha: hashedPassword,
-            enderecoId: endereco.id
-        });
-
-        res.redirect("/");
-    } catch (error) {
-        console.error("Erro ao cadastrar dados:", error);
-        res.render("cadastrar_pag", {
-            backgroundImage: '/img/Ramos.png',
-            logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
-            errorMessage: "Erro ao cadastrar dados"
-        });
+    if (usuarioExistente) {
+      return res.render("cadastrar_pag", {
+        backgroundImage: '/img/Ramos.png',
+        logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
+        errorMessage: usuarioExistente.email === email ? "E-mail já cadastrado." : "CPF já cadastrado."
+      });
     }
+
+    const hashedPassword = await bcrypt.hash(senha, 10);
+
+    const endereco = await Endereco.create({
+      cep: cep,
+      nome_rua: rua,
+      numero: numero,
+      complemento: complemento,
+      bairro: bairro,
+      cidade: cidade,
+      uf: uf,
+      nome_propriedade: nome_propriedade
+    });
+
+    const novoUsuario = await Usuario.create({
+      nome: nome,
+      email: email,
+      telefone_celular: telefone_celular,
+      cpf: cpf,
+      telefone_residencial: telefone_residencial,
+      senha: hashedPassword,
+      enderecoId: endereco.id
+    });
+
+    res.redirect("/");
+  } catch (error) {
+    console.error("Erro ao cadastrar dados:", error);
+    res.render("cadastrar_pag", {
+      backgroundImage: '/img/Ramos.png',
+      logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
+      errorMessage: "Erro ao cadastrar dados"
+    });
+  }
 };
 
 exports.renderizarCadastro = function (req, res) {
-    res.render("cadastrar_pag", {
-        backgroundImage: '/img/Ramos.png',
-        logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png'
-    })
+  res.render("cadastrar_pag", {
+    backgroundImage: '/img/Ramos.png',
+    logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png'
+  })
 }
 
 const { Op } = require('sequelize'); // o que fazemos com isso?
@@ -108,29 +107,57 @@ exports.conta = async function (req, res) {
     return res.redirect("/");
   }
 
-  try {
-    const usuario = await Usuario.findByPk(req.session.userId, {
-      include: [{ model: Endereco }] 
-    });
+  if (!req.session.usuario || !req.session.endereco) {
+    return res.status(404).send("Usuário não encontrado.");
+  }
 
-    if (!usuario) {
-      return res.status(404).send("Usuário não encontrado.");
+
+  try {
+    const usuarioAtualizado = await Usuario.findByPk(req.session.userId);
+  if (!usuarioAtualizado) {
+    return res.status(404).send("Usuário não encontrado no banco de dados.");
+  }
+
+  // Atualizar os dados da sessão
+  req.session.usuario = {
+    ...req.session.usuario,
+    foto_perfil: usuarioAtualizado.foto_perfil || "/uploads/profile.png",
+  };
+
+    const usuario = req.session.usuario;
+    const endereco = req.session.endereco;
+
+    let nomePropriedade = "";
+    if (endereco) {
+      nomePropriedade = endereco.nome_propriedade ? endereco.nome_propriedade : " ";
     }
 
+    
+    // Buscar a última venda do usuário
     const ultimaVenda = await Venda.findOne({
       where: { usuarioId: req.session.userId },
       order: [['data_venda', 'DESC']],
       include: [
-        { model: Comprador, attributes: ['nome'] },
-        { model: TipoProduto, attributes: ['nome'] }
+        {
+          model: Comprador, 
+          attributes: ['nome'] 
+        },
+        {
+          model: TipoProduto, 
+          attributes: ['nome'] 
+        }
       ]
     });
 
+    // Buscar a última colheita do usuário
     const ultimaColheita = await Colheita.findOne({
       where: { usuarioId: req.session.userId },
       order: [['data_colheita', 'DESC']],
       include: [
-        { model: TipoProduto, attributes: ['nome'] }
+        {
+          model: TipoProduto, // Incluir tipo de produto
+          attributes: ['nome'] // Substitua pelos atributos que deseja exibir
+        }
       ]
     });
 
@@ -139,26 +166,24 @@ exports.conta = async function (req, res) {
       logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
       usuario: {
         nome: usuario.nome,
+        nome_propriedade: nomePropriedade,
         email: usuario.email,
         telefone_celular: usuario.telefone_celular,
         telefone_residencial: usuario.telefone_residencial,
-        foto_perfil: usuario.foto_perfil || '/uploads/profile.png', 
-        nome_propriedade: usuario.Endereco ? usuario.Endereco.nome_propriedade || '' : ''
+        foto_perfil: usuario.foto_perfil,
       },
-      endereco: usuario.Endereco
-        ? {
-            cep: usuario.Endereco.cep,
-            logradouro: usuario.Endereco.nome_rua,
-            numero: usuario.Endereco.numero,
-            complemento: usuario.Endereco.complemento,
-            bairro: usuario.Endereco.bairro,
-            cidade: usuario.Endereco.cidade,
-            uf: usuario.Endereco.uf,
-            propriedade_rural: usuario.Endereco.nome_propriedade
-          }
-        : null,
+      endereco: {
+        cep: endereco.cep,
+        logradouro: endereco.nome_rua,
+        numero: endereco.numero,
+        complemento: endereco.complemento,
+        bairro: endereco.bairro,
+        cidade: endereco.cidade,
+        uf: endereco.uf,
+        propriedade_rural: endereco.nome_propriedade
+      },
       ultimaVenda,
-      ultimaColheita
+      ultimaColheita,
     });
   } catch (error) {
     console.error("Erro ao carregar dados do usuário:", error);
@@ -281,8 +306,9 @@ exports.excluir_conta = async function (req, res) {
     const usuario = await Usuario.findOne({ where: { id: req.session.userId } });
 
     if (usuario) {
+      // Excluir o usuário
       await usuario.destroy();
-      res.redirect('/'); 
+      res.redirect('/'); // Redireciona para a página inicial após a exclusão
     } else {
       res.status(404).send('Usuário não encontrado.');
     }
@@ -383,3 +409,6 @@ exports.exibirPerfil = async (req, res) => {
     res.status(500).send("Erro ao carregar perfil.");
   }
 };
+
+
+

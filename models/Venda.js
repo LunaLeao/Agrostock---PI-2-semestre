@@ -29,13 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         tableName: 'Venda'
     });
-    Venda.associate = function(models) {
-      Venda.belongsTo(models.Colheita, { foreignKey: 'colheitaId', as: 'colheitum' });
-    };
-  
-    Venda.associate = function(models) {
-      Venda.belongsTo(models.Comprador, { foreignKey: 'compradorId', as: 'compradorId' });
-    };
+
   
     return Venda;
 };

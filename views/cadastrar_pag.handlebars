@@ -17,9 +17,11 @@
   .error-message {
     color: red;
   }
+
   #font-controls {
     display: none;
   }
+
   .contrast-icon {
     font-size: 24px;
     color: #000;
@@ -30,45 +32,44 @@
     z-index: 1000;
     transition: color 0.3s ease;
   }
+
   body.contrast-mode {
     background-color: #131313;
     color: #fff;
-}
+  }
 
-body.contrast-mode .card {
+  body.contrast-mode .card {
     background-color: #424242;
     color: #fff;
     border: 1px solid #fff;
-}
+  }
 
-body.contrast-mode .form-control {
+  body.contrast-mode .form-control {
     background-color: #555;
     color: #fff;
     border: 1px solid #fff;
-}
+  }
 
-body.contrast-mode .form-control::placeholder {
+  body.contrast-mode .form-control::placeholder {
     color: #ddd;
-}
+  }
 
-body.contrast-mode label {
+  body.contrast-mode label {
     color: #fff;
-}
+  }
 
-body.contrast-mode a {
+  body.contrast-mode a {
     color: #4caf50;
-}
+  }
 
-body.contrast-mode .btn {
+  body.contrast-mode .btn {
     background-color: #4caf50;
     border-color: #4caf50;
-}
+  }
 
-body.contrast-mode .btn:hover {
+  body.contrast-mode .btn:hover {
     background-color: #3e8e41;
-}
-
-
+  }
 </style>
 </head>
 
@@ -157,7 +158,7 @@ body.contrast-mode .btn:hover {
           <div class="mb-3">
             <label for="propriedade">Nome da Propriedade Rural (Opcional):</label>
             <input type="text" class="form-control" id="propriedade"
-              placeholder="Insira o nome da propriedade ou fazenda" name="nome_fazenda" />
+              placeholder="Insira o nome da propriedade" name="nome_propriedade" />
           </div>
 
           {{#if errorMessage}}
@@ -247,4 +248,5 @@ body.contrast-mode .btn:hover {
     }); 
   </script>
 </body>
+
 </html>

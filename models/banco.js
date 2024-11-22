@@ -2,9 +2,9 @@ const Sequelize = require("sequelize")
 const sequelize = new Sequelize("PI", "root", "", {
     host: "localhost",
     dialect: "mysql",
-    // dialectOptions: {
-    //     connectTimeout: 10000,
-    // },
+    dialectOptions: {
+        connectTimeout: 10000,
+    },
 })
 
 const db = {};

@@ -34,10 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'Colheita'
     });
 
-    Colheita.associate = function(models) {
-        Colheita.hasMany(models.Venda, { foreignKey: 'colheitaId' });
-    };
-    
+
     return Colheita;
 };
 

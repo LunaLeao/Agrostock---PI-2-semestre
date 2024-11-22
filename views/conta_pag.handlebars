@@ -68,35 +68,36 @@
   }
 
   .perfil-container {
-  text-align: center;
-}
+    text-align: center;
+  }
 
-.foto-perfil {
-  position: relative;
-  display: inline-block;
-}
+  .foto-perfil {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+  }
 
-.foto-perfil img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-}
+  .foto-perfil img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 
-.editar-foto {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 5px;
-  border-radius: 50%;
-  cursor: pointer;
-}
+  .editar-foto {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
 
-.editar-foto i {
-  font-size: 20px;
-}
+  .editar-foto i {
+    font-size: 20px;
+  }
 
 
 
@@ -308,65 +309,67 @@
         </div>
         <div class="row align-items-center" style="margin-left: -50px;">
           <div class="col-md-6 d-flex align-items-center">
-                <!-- Imagem de perfil -->
- <div class="perfil-container">
-  <!-- Exibição da foto do perfil -->
-  <div class="foto-perfil">
-    <img id="imagemPerfil" src="{{#if usuario.foto_perfil}}{{usuario.foto_perfil}}{{else}}/uploads/profile.png{{/if}}" alt="Foto de Perfil">
-    <!-- Ícone de edição -->
-    <div class="editar-foto" onclick="editarFoto()">
-      <i class="bi bi-pencil"></i>
-    </div>
-  </div>
-  
-  <!-- Formulário para alteração de foto -->
-  <form id="formEditarFoto" action="/editar-perfil" method="POST" enctype="multipart/form-data" style="display:none;">
-    <input type="file" name="foto" id="inputFoto" accept="image/*" 
-    style="display: none;">
-  </form>
-  
-</div>
-
-
-                <div class="adjustable-font">
-                  <h1>Bem-vindo(a), {{usuario.nome}}</h1>
-                  <p>Email: {{usuario.email}}</p>
-                  <p>Telefone Celular: {{usuario.telefone_celular}}</p>
-                  <p>Propriedade: {{usuario.nome_propriedade}}</p>
+            <!-- Imagem de perfil -->
+            <div class="perfil-container">
+              <!-- Exibição da foto do perfil -->
+              <div class="foto-perfil">
+                <img id="imagemPerfil"
+                  src="{{#if usuario.foto_perfil}}{{usuario.foto_perfil}}{{else}}/uploads/profile.png{{/if}}"
+                  alt="Foto de Perfil">
+                <!-- Ícone de edição -->
+                <div class="editar-foto" onclick="editarFoto()">
+                  <i class="bi bi-pencil"></i>
                 </div>
               </div>
-              <div class="col-md-6 text-end">
-                <img src="{{logoImage}}" alt="Logo" class="img-fluid" style="margin-top: 20%">
-              </div>
-            </div>
-          </div>
 
-          <div class="text-end mt-2">
-            <!-- Ícone de configuração para abrir o modal -->
-            <i class="bi bi-gear config-icon" data-bs-toggle="modal" data-bs-target="#configModal"></i>
-          </div>
+              <!-- Formulário para alteração de foto -->
+              <form id="formEditarFoto" action="/editar-perfil" method="POST" enctype="multipart/form-data"
+                style="display:none;">
+                <input type="file" name="foto" id="inputFoto" accept="image/*" style="display: none;">
+              </form>
 
-          <div class="row mt-4">
-            <div class="col-md-6 adjustable-font">
-              <div class="info-section">
-                <h3>Última venda</h3>
-                <p>Nome do Comprador: {{ultimaVenda.comprador.nome}}</p>
-                <p>Tipo de Produto: {{ultimaVenda.tipo_produto.nome}}</p>
-                <p>Quantidade: {{ultimaVenda.quantidade}}</p>
-                <p>Valor Total: R$ {{ultimaVenda.valor_total}}</p>
-                <p>Data da Venda: {{formatDate ultimaVenda.data_venda}}</p>
-              </div>
             </div>
-            <div class="col-md-6 adjustable-font">
-              <div class="info-section">
-                <h3>Último item Adicionado no Estoque</h3>
-                <p>Item: {{ultimaColheita.nome_colheita}}</p>
-                <p>Quantidade: {{ultimaColheita.quantidade}}</p>
-                <p>Tipo: {{ultimaColheita.tipo_produto.nome}}</p>
-                <p>Data do Registro: {{formatDate ultimaColheita.data_colheita}}</p>
-              </div>
+
+
+            <div class="adjustable-font">
+              <h1>Bem-vindo(a), {{usuario.nome}}</h1>
+              <p>Email: {{usuario.email}}</p>
+              <p>Telefone Celular: {{usuario.telefone_celular}}</p>
+              <p>Propriedade: {{usuario.nome_propriedade}}</p>
             </div>
           </div>
+          <div class="col-md-6 text-end">
+            <img src="{{logoImage}}" alt="Logo" class="img-fluid" style="margin-top: 20%">
+          </div>
+        </div>
+      </div>
+
+      <div class="text-end mt-2">
+        <!-- Ícone de configuração para abrir o modal -->
+        <i class="bi bi-gear config-icon" data-bs-toggle="modal" data-bs-target="#configModal"></i>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6 adjustable-font">
+          <div class="info-section">
+            <h3>Última venda</h3>
+            <p>Nome do Comprador: {{ultimaVenda.comprador.nome}}</p>
+            <p>Tipo de Produto: {{ultimaVenda.tipo_produto.nome}}</p>
+            <p>Quantidade: {{ultimaVenda.quantidade}}</p>
+            <p>Valor Total: R$ {{ultimaVenda.valor_total}}</p>
+            <p>Data da Venda: {{formatDate ultimaVenda.data_venda}}</p>
+          </div>
+        </div>
+        <div class="col-md-6 adjustable-font">
+          <div class="info-section">
+            <h3>Último item Adicionado no Estoque</h3>
+            <p>Item: {{ultimaColheita.nome_colheita}}</p>
+            <p>Quantidade: {{ultimaColheita.quantidade}}</p>
+            <p>Tipo: {{ultimaColheita.tipo_produto.nome}}</p>
+            <p>Data do Registro: {{formatDate ultimaColheita.data_colheita}}</p>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -433,7 +436,7 @@
             <div class="mb-3">
               <label for="propriedade">Propriedade Rural</label>
               <input type="text" class="form-control" id="propriedade" name="nome_propriedade"
-                value="{{endereco.nome_propriedade}}" />
+                value="{{usuario.nome_propriedade}}" />
             </div>
             <div class="mb-3">
               <!-- Botões de salvar e deletar -->
@@ -509,27 +512,26 @@
       showModal('invalidPasswordModal');
     }
   </script>
-<script>
-  // Exibir o seletor de arquivos
-  function editarFoto() {
-    const inputFoto = document.getElementById("inputFoto");
-    if (inputFoto) {
-      inputFoto.click(); // Simula o clique no input de arquivo
-    } else {
-      console.error("Elemento inputFoto não encontrado!");
+  <script>
+    // Exibir o seletor de arquivos
+    function editarFoto() {
+      const inputFoto = document.getElementById("inputFoto");
+      if (inputFoto) {
+        inputFoto.click();
+      } else {
+        console.error("Elemento inputFoto não encontrado!");
+      }
     }
-  }
 
-  // Submeter formulário ao selecionar arquivo
-  document.getElementById("inputFoto").addEventListener("change", function () {
-    const formEditarFoto = document.getElementById("formEditarFoto");
-    if (formEditarFoto) {
-      formEditarFoto.submit(); // Submete o formulário
-    } else {
-      console.error("Formulário formEditarFoto não encontrado!");
-    }
-  });
-</script>
+    document.getElementById("inputFoto").addEventListener("change", function () {
+      const formEditarFoto = document.getElementById("formEditarFoto");
+      if (formEditarFoto) {
+        formEditarFoto.submit();
+      } else {
+        console.error("Formulário formEditarFoto não encontrado!");
+      }
+    });
+  </script>
 
 </body>
 

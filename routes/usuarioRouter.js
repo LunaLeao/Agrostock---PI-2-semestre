@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const usuarioController = require("../controllers/usuarioController");
 const multer = require('multer');
 
+const usuarioController = require("../controllers/usuarioController");
 
+// Login
 router.post("/login", usuarioController.login);
+
 router.get("/cadastro", usuarioController.renderizarCadastro);
 router.post("/cadastrar", usuarioController.cadastrar);
+
 router.get("/conta", usuarioController.conta);
 router.post("/editar-conta", usuarioController.editar_conta);
 router.post("/atualizar-conta", usuarioController.atualizar_conta);
@@ -29,6 +32,5 @@ const storage = multer.diskStorage({
   });
   
   router.post('/editar-perfil', upload.single('foto'), usuarioController.editarFoto);
-  
 
 module.exports = router;

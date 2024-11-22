@@ -259,13 +259,15 @@
                 </ul>
             </nav>
         </section>
+
+        <!-- Barra de pesquisa -->
         <!-- Barra de pesquisa com dropdown -->
         <form class="d-flex2" role="search" action="/pesquisarVenda" method="get">
             <div class="search-bar">
                 <input class="form-control me-2" type="search" name="termo" placeholder="Pesquisar" aria-label="Search">
                 <select name="campo" class="form-select me-2">
                     <option value="compradorId">Cliente</option>
-                    <option value="nome_colheita">Item</option>
+                    <option value="tipo_produto">Item</option>
                     <option value="quantidade">Quantidade</option>
                 </select>
                 <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
@@ -295,41 +297,6 @@
                 </li>
             </ul>
 
-            {{!-- <!-- Tabela -->
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered">
-                    <thead class="table-success">
-                        <tr>
-                            <th></th>
-                            <th>Cliente</th>
-                            <th>Item</th>
-                            <th>Quantidade</th>
-                            <th>Valor da Venda</th>
-                            <th>Data da Venda</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each vendas}}
-                        <tr id="venda-row-{{this.id}}">
-                            <td><input type="radio" class="radio" name="vendaSelecionada" value="{{this.id}}" data-comprador = "{{this.compradorId}}" data-produto = "{{this.tipo_produtoId}}"></td>
-                            <td>{{this.comprador.nome}}</td>
-                            <td>{{tipo_produto.nome}}</td>
-                            <td>{{quantidade}}</td>
-                            <td>{{formatCurrency valor_total}}</td>
-                            <td>{{formatDate data_venda}}</td>
-                            <td>
-                                <button class="btn btn-danger btn-sm" onclick="deleteVenda({{this.id}})">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
-        </div> --}}
         <!-- Tabela -->
         <div class="table-responsive adjustable-font">
             <table class="table table-striped table-bordered">
@@ -352,7 +319,7 @@
                         <td>{{this.colheitum.nome_colheita}}</td>
                         <td>{{quantidade}}</td>
                         <td>{{formatCurrency valor_total}}</td>
-                        <td>{{formatDate data_venda}}</td>
+                        <td>{{data_venda}}</td>
                         <td>
                             <button class="btn btn-danger btn-sm" onclick="deleteVenda({{this.id}})">
                                 <i class="bi bi-trash"></i>
@@ -363,71 +330,6 @@
                 </tbody>
             </table>
         </div>
-
-        {{!-- <!-- Modal para editar informações da venda -->
-        <div class="modal fade" id="vendaModal" tabindex="-1" aria-labelledby="vendaModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="vendaModalLabel">Editar Informações da Venda</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="/atualizar-vendas" method="POST">
-                            <input type="hidden" id="vendaId" name="vendaId" value="">
-
-                            <!-- Comprador -->
-                            <div class="mb-3">
-                                <label for="editarSelectComprador" class="form-label">Comprador</label>
-                                <select class="form-control" id="editarSelectComprador" name="compradorId" required>
-                                    <option value="">Selecione o Comprador</option>
-                                    {{#each compradores}}
-                                        <option value="{{this.id}}">{{this.nome}}</option>
-                                    {{/each}}
-                                </select>
-                            </div>
-
-                            <!-- Produto -->
-                            <div class="mb-3">
-                                <label for="editarSelectTipoProduto" class="form-label">Item</label>
-                                <select class="form-control" id="editarSelectTipoProduto" name="tipo_produtoId" required>
-                                    <option value="">Selecione um tipo de Produto</option>                                   
-                                    {{#each tiposProduto}}
-                                        <option value="{{this.id}}">{{this.nome}}</option>
-                                    {{/each}}
-                                </select>
-                            </div>
-
-                            <!-- Quantidade -->
-                            <div class="mb-3">
-                                <label for="quantidade" class="form-label">Quantidade</label>
-                                <input type="number" class="form-control" id="quantidade" name="quantidade" required>
-                            </div>
-
-                             <!-- Valor -->
-                            <div class="mb-3">
-                                <label for="valor_total" class="form-label">Valor da Venda</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    <input type="text" class="form-control" id="itemValorTotal" name="valor_total" placeholder="Digite o valor da venda"
-                                        required>
-                                </div>
-                            </div>
-
-                             <!-- Data -->
-                            <div class="mb-3">
-                                <label for="data_venda" class="form-label">Data da Venda</label>
-                                <input type="date" class="form-control" id="data_venda" name="data_venda" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <button type="submit" class="btn btn-success">Salvar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
 
 <!-- Modal para editar informações da venda -->
 <div class="modal fade" id="vendaModal" tabindex="-1" aria-labelledby="vendaModalLabel" aria-hidden="true">
@@ -492,67 +394,6 @@
         </div>
     </div>
 </div>
-
-{{!-- <!-- Modal para adicionar informações da venda -->
-<div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="novoItemModalLabel">Adicionar Nova Venda</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/add-vendas" method="POST" id="novoItemForm">
-                    <div class="mb-3">
-                        <label for="compradorId" class="form-label">Comprador</label>
-                        <select class="form-select" id="compradorId" name="compradorId" required>
-                            <option value="">Selecione um comprador</option>
-                            {{#each compradores}}
-                                <option value="{{this.id}}">{{this.nome}}</option>
-                            {{/each}}
-                        </select>
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#novoCompradorModal">Adicionar Novo Comprador</button>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tipo_produto" class="form-label">Item</label>
-                        <select class="form-select" id="tipo_produto" name="tipo_produto" required>
-                            <option value="">Selecione um Produto</option>
-                            {{#each tiposProduto}}
-                                <option value="{{this.id}}">{{this.nome}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemQuantidade" class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" id="itemQuantidade" name="quantidade" placeholder="Digite a quantidade" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemValorTotal" class="form-label">Valor da Venda</label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <input type="text" class="form-control" id="itemValorTotal" name="valor_total" placeholder="Digite o valor da venda (ex: 28.50)"
-                                required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemDataVenda" class="form-label">Data da Venda</label>
-                        <input type="date" class="form-control" id="itemDataVenda" name="data_venda" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemObservacao" class="form-label">Observação</label>
-                        <textarea class="form-control" id="itemObservacao" name="observacao" rows="3"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> --}}
 
 <!-- Modal para adicionar informações da venda -->
 <div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel" aria-hidden="true">
@@ -651,47 +492,7 @@
                 <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
             </button>
         </div>
-
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-{{!-- <script>
-    function openVendaModal() {
-        // Obtenha a venda selecionada
-        const selectedRadio = document.querySelector('input[name="vendaSelecionada"]:checked');
-        
-        if (selectedRadio) {
-            const selectedId = selectedRadio.value;
-
-            // Obtenha os dados diretamente da tabela para a venda selecionada
-            const compradorNome = document.querySelector(`#venda-row-${selectedId} td:nth-child(2)`).textContent.trim();
-            const tipoProdutoNome = document.querySelector(`#venda-row-${selectedId} td:nth-child(3)`).textContent.trim();
-            const quantidade = document.querySelector(`#venda-row-${selectedId} td:nth-child(4)`).textContent.trim();
-            const valorTotal = document.querySelector(`#venda-row-${selectedId} td:nth-child(5)`).textContent.trim().replace('R$ ', '').replace('.', '').replace(',', '.');
-            const dataVenda = document.querySelector(`#venda-row-${selectedId} td:nth-child(6)`).textContent.trim();
-
-            // Preencha os campos do modal
-            document.getElementById('vendaId').value = selectedId;
-
-            // Selecionar o comprador no select de acordo com o nome (ou melhor usar o ID no caso ideal)
-            //document.getElementById('comprador').value = compradorNome;
-            document.getElementById('editarSelectComprador').value = selectedRadio.getAttribute('data-comprador');
-            document.getElementById('editarSelectTipoProduto').value = selectedRadio.getAttribute('data-produto');
-            // Preencher os demais campos
-            document.getElementById('quantidade').value = quantidade;
-            document.getElementById('itemValorTotal').value = valorTotal;
-
-            // Formatar a data para o formato 'YYYY-MM-DD' que é esperado pelo input do tipo date
-            const dataFormatada = new Date(dataVenda).toISOString().split('T')[0];
-            document.getElementById('data_venda').value = dataFormatada;
-
-            // Abrir o modal
-            const modal = new bootstrap.Modal(document.getElementById('vendaModal'));
-            modal.show();
-        } else {
-            alert("Por favor, selecione uma venda para editar.");
-        }
-    }
-</script> --}}
 
 <script>
     function openVendaModal() {
@@ -761,7 +562,44 @@
         } else {
             alert("Por favor, selecione uma venda para editar.");
         }
-    }
+    };
+
+document.querySelector('.btn.btn-custom2').addEventListener('click', function() {
+    const tableRows = document.querySelectorAll('table tbody tr');
+    const vendas = [];
+
+    tableRows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const venda = {
+            cliente: cells[1].innerText,
+            produto: cells[2].innerText,
+            quantidade: cells[3].innerText,
+            valor_venda: cells[4].innerText,
+            data_venda: cells[5].innerText
+        };
+        vendas.push(venda);
+    });
+
+    // Enviar os dados para o servidor
+    fetch('/gerar-relatorio-vendas', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ vendas: vendas })
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        // Criar um link para baixar o PDF gerado
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'relatorio_vendas.pdf';
+        link.click();
+    })
+    .catch(error => console.error('Erro ao gerar o PDF:', error));
+});
+
+
 </script>
  
 <script>
@@ -828,7 +666,7 @@
                     resultadosHTML += `
             <div class="venda-item">
                 <p><strong>Cliente:</strong> ${venda.comprador.nome}</p>
-                <p><strong>Item:</strong> ${venda.colheitum.nome_colheita}</p>
+                <p><strong>Item:</strong> ${venda.colheita.nome_colheita}</p>
                 <p><strong>Quantidade:</strong> ${venda.quantidade}</p>
                 <p><strong>Valor Total:</strong> ${venda.valor_total}</p>
                 <p><strong>Data da Venda:</strong> ${new Date(venda.data_venda).toLocaleDateString('pt-BR')}</p>
