@@ -133,18 +133,18 @@
         }
     }
 
-    @media  (max-width: 400px) {
+    @media (max-width: 400px) {
         .search-bar {
             padding-left: 0%;
             width: 80%;
             margin-bottom: 10px;
         }
 
-        .menu_lateral{
+        .menu_lateral {
             width: 20px;
         }
 
-        .btn{
+        .btn {
             padding: 10px;
             font-size: 12px;
             font-weight: 600;
@@ -158,21 +158,21 @@
             justify-content: center;
         }
 
-        .d-flex{
+        .d-flex {
             align-items: unset;
         }
 
-        .d-flex2{
+        .d-flex2 {
             padding-left: 10px;
-            
+
         }
 
-        .form-control{
+        .form-control {
             height: 40px;
             max-width: 130px;
         }
 
-        .btn-outline-success{
+        .btn-outline-success {
             width: 50px;
             height: 40px;
         }
@@ -192,13 +192,13 @@
             /* Garantir que a tabela ocupe 100% da área disponível */
         }
 
-        
-        
-        .bi-trash{
+
+
+        .bi-trash {
             position: relative;
             width: 10px;
         }
-        
+
     }
 </style>
 </head>
@@ -259,7 +259,6 @@
                 </ul>
             </nav>
         </section>
-
         <!-- Barra de pesquisa com dropdown -->
         <form class="d-flex2" role="search" action="/pesquisar" method="get">
             <div class="search-bar">
@@ -275,7 +274,7 @@
 
         <div id="resultados"></div>
 
-        <div class="header">
+        <div class="header adjustable-font">
             Estoque de Insumos
         </div>
 
@@ -290,7 +289,7 @@
             </div>
 
             <!-- Tabela -->
-            <div class="table-responsive">
+            <div class="table-responsive adjustable-font">
                 <table class="table table-striped table-bordered">
                     <thead class="table-success">
                         <tr>
@@ -316,7 +315,8 @@
                             <td>{{this.fornecedor.nome}}</td>
                             <td>{{#if this.compras.length}}{{formatCurrency
                                 this.compras.[0].valor_compra}}{{else}}N/A{{/if}}</td>
-                            <td>{{#if this.compras.length}}{{formatDate this.compras.[0].data_registro}}{{else}}N/A{{/if}}</td>
+                            <td>{{#if this.compras.length}}{{formatDate
+                                this.compras.[0].data_registro}}{{else}}N/A{{/if}}</td>
                             <td>{{formatDate this.validade}}</td>
                             <td>
                                 <button class="btn btn-danger btn-sm" onclick="deleteInsumo({{this.id}})">
@@ -471,7 +471,6 @@
                     <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
                 </button>
             </div>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
             <script>
                 function openInsumoModal() {
@@ -541,43 +540,6 @@
                         alert('Erro ao adicionar tipo de insumo');
                     }
                 });
-
-                document.querySelector('.btn-custom2').addEventListener('click', function() {
-                    const tableRows = document.querySelectorAll('table tbody tr');
-                    const insumos = [];
-
-                    tableRows.forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        const insumo = {
-                            tipo_insumo: cells[1].innerText,
-                            quantidade: cells[2].innerText,
-                            fornecedor: cells[3].innerText,
-                            valor_compra: cells[4].innerText,
-                            data_compra: cells[5].innerText,
-                            validade: cells[6].innerText
-                        };
-                        insumos.push(insumo);
-                    });
-
-                    // Enviar os dados para o servidor
-                    fetch('/gerar-relatorio-insumos', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ insumos: insumos })
-                    })
-                    .then(response => response.blob())
-                    .then(blob => {
-                        // Criar um link para baixar o PDF gerado
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(blob);
-                        link.download = 'relatorio_insumos.pdf';
-                        link.click();
-                    })
-                    .catch(error => console.error('Erro ao gerar o PDF:', error));
-                });
-
             </script>
 
             <script>

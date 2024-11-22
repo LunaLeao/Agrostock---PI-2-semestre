@@ -57,6 +57,49 @@
     font-weight: bold;
   }
 
+  #font-controls {
+    right: 230px;
+    top: 15px;
+  }
+
+  .contrast-icon {
+    right: 330px;
+    top: 22px;
+  }
+
+  .perfil-container {
+  text-align: center;
+}
+
+.foto-perfil {
+  position: relative;
+  display: inline-block;
+}
+
+.foto-perfil img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.editar-foto {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.editar-foto i {
+  font-size: 20px;
+}
+
+
+
   @media (min-width: 400px) and (max-width: 768px) {
     #main-content {
       margin-left: 0;
@@ -76,7 +119,8 @@
     }
   }
 
-  @media (max-width: 400px){
+
+  @media (max-width: 400px) {
     #main-content {
       margin-left: 0;
       width: 100%;
@@ -94,16 +138,15 @@
       flex-direction: column-reverse;
     }
 
-    .bi.bi-person-circle.user-photo{
+    .bi.bi-person-circle.user-photo {
       font-size: 120px;
       margin: 0px;
     }
 
-    .info-section{
+    .info-section {
       align-items: center;
       justify-content: center;
     }
-
   }
 </style>
 </head>
@@ -164,7 +207,6 @@
         </ul>
       </nav>
     </section>
-
     <section id="main-content">
       <div class="container-fluid">
         <div class="position-absolute top-0 end-0" style="margin-right: 20px">
@@ -183,8 +225,9 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="changePasswordModalLabel">Mudar Senha</h5>
-                  <button type="button" class="btn-close justify-content-md-end" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
+                  <button type="button" class="btn-close justify-content-md-end" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
                   <form action="/mudar-senha" method="POST">
                     <div class="mb-3">
@@ -265,46 +308,65 @@
         </div>
         <div class="row align-items-center" style="margin-left: -50px;">
           <div class="col-md-6 d-flex align-items-center">
-            <i class="bi bi-person-circle user-photo"></i>
-            <div>
-              <h1>Bem-vindo(a), {{usuario.nome}}</h1>
-              <p>Email: {{usuario.email}}</p>
-              <p>Telefone Celular: {{usuario.telefone_celular}}</p>
-              <p>Propriedade: {{usuario.nome_propriedade}}</p>
+                <!-- Imagem de perfil -->
+ <div class="perfil-container">
+  <!-- Exibição da foto do perfil -->
+  <div class="foto-perfil">
+    <img id="imagemPerfil" src="{{#if usuario.foto_perfil}}{{usuario.foto_perfil}}{{else}}/uploads/profile.png{{/if}}" alt="Foto de Perfil">
+    <!-- Ícone de edição -->
+    <div class="editar-foto" onclick="editarFoto()">
+      <i class="bi bi-pencil"></i>
+    </div>
+  </div>
+  
+  <!-- Formulário para alteração de foto -->
+  <form id="formEditarFoto" action="/editar-perfil" method="POST" enctype="multipart/form-data" style="display:none;">
+    <input type="file" name="foto" id="inputFoto" accept="image/*" 
+    style="display: none;">
+  </form>
+  
+</div>
+
+
+                <div class="adjustable-font">
+                  <h1>Bem-vindo(a), {{usuario.nome}}</h1>
+                  <p>Email: {{usuario.email}}</p>
+                  <p>Telefone Celular: {{usuario.telefone_celular}}</p>
+                  <p>Propriedade: {{usuario.nome_propriedade}}</p>
+                </div>
+              </div>
+              <div class="col-md-6 text-end">
+                <img src="{{logoImage}}" alt="Logo" class="img-fluid" style="margin-top: 20%">
+              </div>
             </div>
           </div>
-          <div class="col-md-6 text-end">
-            <img src="{{logoImage}}" alt="Logo" class="img-fluid" style="margin-top: 20%">
+
+          <div class="text-end mt-2">
+            <!-- Ícone de configuração para abrir o modal -->
+            <i class="bi bi-gear config-icon" data-bs-toggle="modal" data-bs-target="#configModal"></i>
           </div>
-        </div>
-      </div>
 
-      <div class="text-end mt-2">
-        <!-- Ícone de configuração para abrir o modal -->
-        <i class="bi bi-gear config-icon" data-bs-toggle="modal" data-bs-target="#configModal"></i>
-      </div>
-
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <div class="info-section">
-          <h3>Última venda</h3>
-          <p>Nome do Comprador: {{ultimaVenda.comprador.nome}}</p>
-          <p>Tipo de Produto: {{ultimaVenda.tipo_produto.nome}}</p>
-          <p>Quantidade: {{ultimaVenda.quantidade}}</p>
-          <p>Valor Total: R$ {{ultimaVenda.valor_total}}</p>
-          <p>Data da Venda: {{formatDate ultimaVenda.data_venda}}</p>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="info-section">
-          <h3>Último item Adicionado no Estoque</h3>
-          <p>Item: {{ultimaColheita.nome_colheita}}</p>
-          <p>Quantidade: {{ultimaColheita.quantidade}}</p>
-          <p>Tipo: {{ultimaColheita.tipo_produto.nome}}</p>
-          <p>Data do Registro: {{formatDate ultimaColheita.data_colheita}}</p>
-        </div>
-      </div>
-    </div>
+          <div class="row mt-4">
+            <div class="col-md-6 adjustable-font">
+              <div class="info-section">
+                <h3>Última venda</h3>
+                <p>Nome do Comprador: {{ultimaVenda.comprador.nome}}</p>
+                <p>Tipo de Produto: {{ultimaVenda.tipo_produto.nome}}</p>
+                <p>Quantidade: {{ultimaVenda.quantidade}}</p>
+                <p>Valor Total: R$ {{ultimaVenda.valor_total}}</p>
+                <p>Data da Venda: {{formatDate ultimaVenda.data_venda}}</p>
+              </div>
+            </div>
+            <div class="col-md-6 adjustable-font">
+              <div class="info-section">
+                <h3>Último item Adicionado no Estoque</h3>
+                <p>Item: {{ultimaColheita.nome_colheita}}</p>
+                <p>Quantidade: {{ultimaColheita.quantidade}}</p>
+                <p>Tipo: {{ultimaColheita.tipo_produto.nome}}</p>
+                <p>Data do Registro: {{formatDate ultimaColheita.data_colheita}}</p>
+              </div>
+            </div>
+          </div>
     </section>
   </div>
 
@@ -386,6 +448,7 @@
       </div>
     </div>
   </div>
+
   <script>
     function deletarUsuario() {
       if (confirm("Tem certeza que deseja excluir sua conta?")) {
@@ -446,5 +509,28 @@
       showModal('invalidPasswordModal');
     }
   </script>
+<script>
+  // Exibir o seletor de arquivos
+  function editarFoto() {
+    const inputFoto = document.getElementById("inputFoto");
+    if (inputFoto) {
+      inputFoto.click(); // Simula o clique no input de arquivo
+    } else {
+      console.error("Elemento inputFoto não encontrado!");
+    }
+  }
+
+  // Submeter formulário ao selecionar arquivo
+  document.getElementById("inputFoto").addEventListener("change", function () {
+    const formEditarFoto = document.getElementById("formEditarFoto");
+    if (formEditarFoto) {
+      formEditarFoto.submit(); // Submete o formulário
+    } else {
+      console.error("Formulário formEditarFoto não encontrado!");
+    }
+  });
+</script>
+
 </body>
+
 </html>

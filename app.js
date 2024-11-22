@@ -7,6 +7,7 @@ const path = require('path');
 const session = require('express-session');
 const Handlebars = require("handlebars");
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -22,18 +23,20 @@ Handlebars.registerHelper('formatDate', function(date) {
     const month = String(d.getMonth() + 1).padStart(2, '0'); // Garante que o mês tenha 2 dígitos
     const year = d.getFullYear(); // Obtém o ano completo
     
-    return `${day}/${month}/${year}`; // Retorna a data no formato "dd/mm/yyyy"
+    return `${day}/${month}/${year}`; 
   }
-  return '01/01/1970'; // Caso a data seja inválida ou nula
+  return '01/01/1970'; 
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
-  secret: 'chave123@',
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    secret: 'chave123@', 
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, 
+  })
+);
 
 app.set('views', path.join(__dirname, 'views'));
 
@@ -48,14 +51,14 @@ app.engine('handlebars', engine ({
   }
 }));
 app.set('view engine', 'handlebars');
-//app.engine('handlebars', exphbs());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 const rotaUsuario = require("./routes/usuarioRouter");
-
 app.use("/", rotaUsuario);
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
+
 
 const rotaColheita = require("./routes/colheitaRouter");
 app.use("/", rotaColheita);

@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
 
+
 *{
     margin: 0;
     padding: 0;
@@ -8,6 +9,123 @@
 }
 body {
     margin-left: 16%;
+}
+
+#font-controls {
+    position: fixed;
+    top: 20px;
+    right: 100px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#font-controls button {
+    padding: 10px;
+    border: 2px solid rgb(158, 202, 162);
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    font-weight: bolder;
+    color: white;
+    background-color: rgb(6, 150, 13);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.contrast-icon {
+    font-size: 24px;
+    color: #000;
+    cursor: pointer;
+    position: fixed;
+    top: 29px;
+    right: 220px;
+    z-index: 1000;
+    transition: color 0.3s ease;
+}
+body.contrast-mode {
+    background-color: #000;
+    color: #fff;
+}
+
+body.contrast-mode a {
+    color: #00ff00;
+}
+
+body.contrast-mode .contrast-icon {
+    color: #fff;
+}
+
+body.contrast-mode .btn-success {
+    background-color: #006400;
+    color: #fff;
+}
+
+body.contrast-mode .modal-content {
+    background-color: #333;
+    color: #fff;
+}
+body.contrast-mode .info-section {
+    background-color: #333;
+    color: #fff;
+}
+/* Estilo do cabeçalho */
+body.contrast-mode .table thead th {
+    background-color: rgb(27, 27, 27); 
+    color: #fff; 
+}
+
+/* Estilo das células do corpo */
+body.contrast-mode .table tbody td {
+    background-color: rgb(60, 60, 60); 
+    color: #fff; 
+    border-color: #555; 
+}
+
+/* Estilo das linhas do corpo */
+body.contrast-mode .table tbody tr:nth-child(odd) {
+    background-color: rgb(26, 26, 26); 
+}
+body.contrast-mode .table tbody tr:nth-child(even) {
+    background-color: rgb(60, 60, 60); 
+}
+body.contrast-mode .header {
+    background-color: #003607;
+}
+
+body.contrast-mode .search-bar {
+    background-color: rgb(48, 48, 48); 
+    padding: 10px;
+    border-radius: 5px; 
+}
+
+/* Estilo para os campos de entrada */
+body.contrast-mode .search-bar .form-control {
+    background-color: rgb(60, 60, 60); 
+    color: #fff; 
+    border: 1px solid #555; 
+}
+
+body.contrast-mode .search-bar .form-control::placeholder {
+    color: #ccc; 
+}
+
+/* Estilo para o seletor */
+body.contrast-mode .search-bar .form-select {
+    background-color: rgb(60, 60, 60); 
+    color: #fff; 
+    border: 1px solid #555; 
+}
+
+/* Estilo para o botão */
+body.contrast-mode .search-bar .btn {
+    background-color: rgb(80, 80, 80); 
+    color: #fff; 
+    border: 1px solid #555;
+}
+
+body.contrast-mode .search-bar .btn:hover {
+    background-color: rgb(100, 100, 100); 
+    border-color: #777; 
 }
 
 a {
