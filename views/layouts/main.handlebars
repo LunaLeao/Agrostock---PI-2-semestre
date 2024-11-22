@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
@@ -25,8 +25,62 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
+    <!-- Acessibilidade -->
+    <div vw class="enabled">
+                <div vw-access-button class="active"></div>
+                <div vw-plugin-wrapper>
+                    <div class="vw-plugin-top-wrapper"></div>
+                </div>
+            </div>
+            <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+            <script>
+                new window.VLibras.Widget('https://vlibras.gov.br/app');
+            </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div id="font-controls">
+    <button id="increase-font">A+</button>
+    <button id="decrease-font">A-</button>
+</div>
+<i id="toggle-contrast" class="fa-solid fa-adjust contrast-icon"></i>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const increaseFontButton = document.getElementById('increase-font');
+    const decreaseFontButton = document.getElementById('decrease-font');
+    const adjustableElements = document.querySelectorAll('.adjustable-font');
+
+    let fontSize = 16; // Tamanho base em pixels
+
+    const adjustFontSize = (change) => {
+        fontSize += change;
+        adjustableElements.forEach(element => {
+            element.style.fontSize = `${fontSize}px`;
+        });
+    };
+
+    increaseFontButton.addEventListener('click', () => adjustFontSize(2)); // Aumenta em 2px
+    decreaseFontButton.addEventListener('click', () => adjustFontSize(-2)); // Diminui em 2px
+});
+</script>
+
+<script>
+    document.getElementById('toggle-contrast').addEventListener('click', function () {
+        document.body.classList.toggle('contrast-mode');
+        const isContrastActive = document.body.classList.contains('contrast-mode');
+        localStorage.setItem('contrastMode', isContrastActive ? 'enabled' : 'disabled');
+    });
+
+    window.addEventListener('load', function () {
+        if (localStorage.getItem('contrastMode') === 'enabled') {
+            document.body.classList.add('contrast-mode');
+        }
+    });
+</script>
+
     {{{body}}}
 </body>
 </html>

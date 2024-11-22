@@ -19,10 +19,11 @@ Fornecedor.hasMany(Insumo, { foreignKey: 'fornecedorId' });
 Insumo.belongsTo(TipoInsumo, { foreignKey: 'tipo_insumoId' });
 Insumo.belongsTo(Fornecedor, { foreignKey: 'fornecedorId' });
 
-TipoProduto.hasMany(Colheita, { foreignKey: 'tipo_produtoId', as: 'Colheitas' });
-Colheita.belongsTo(TipoProduto, { foreignKey: 'tipo_produtoId', as: 'tipo_produto' });
-
 Venda.belongsTo(Comprador, { foreignKey: 'compradorId' });
+Comprador.hasMany(Venda, {foreignKey: 'compradorId'})
+Venda.belongsTo(Colheita, { foreignKey: 'colheitaId'});
+Colheita.hasMany(Venda, { foreignKey: 'colheitaId' });
+
 
 module.exports = { 
     TipoInsumo, 

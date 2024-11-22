@@ -1,6 +1,8 @@
 const { Usuario, Endereco, Venda, Colheita, Comprador, TipoProduto } = require("../models/post");
 const bcrypt = require("bcrypt");
-
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
 
 exports.login = async function (req, res) {
     try {
@@ -105,43 +107,30 @@ exports.conta = async function (req, res) {
   if (!req.session.userId) {
     return res.redirect("/");
   }
-  if (!req.session.usuario || !req.session.endereco) {
-    return res.status(404).send("Usuário não encontrado.");
-  }
-  try {
-    const usuario = req.session.usuario;
-    const endereco = req.session.endereco;
 
-    let nomePropriedade = "";
-    if (endereco) {
-      nomePropriedade = endereco.nome_propriedade ? endereco.nome_propriedade : " ";
+  try {
+    const usuario = await Usuario.findByPk(req.session.userId, {
+      include: [{ model: Endereco }] 
+    });
+
+    if (!usuario) {
+      return res.status(404).send("Usuário não encontrado.");
     }
 
-    // Buscar a última venda do usuário
     const ultimaVenda = await Venda.findOne({
       where: { usuarioId: req.session.userId },
       order: [['data_venda', 'DESC']],
       include: [
-        {
-          model: Comprador, // Incluir comprador
-          attributes: ['nome'] // Substitua pelos atributos que deseja exibir
-        },
-        {
-          model: TipoProduto, // Incluir tipo de produto
-          attributes: ['nome'] // Substitua pelos atributos que deseja exibir
-        }
+        { model: Comprador, attributes: ['nome'] },
+        { model: TipoProduto, attributes: ['nome'] }
       ]
     });
 
-    // Buscar a última colheita do usuário
     const ultimaColheita = await Colheita.findOne({
       where: { usuarioId: req.session.userId },
       order: [['data_colheita', 'DESC']],
       include: [
-        {
-          model: TipoProduto, // Incluir tipo de produto
-          attributes: ['nome'] // Substitua pelos atributos que deseja exibir
-        }
+        { model: TipoProduto, attributes: ['nome'] }
       ]
     });
 
@@ -150,29 +139,33 @@ exports.conta = async function (req, res) {
       logoImage: '/img/IMG-20240907-WA0006-removebg-preview.png',
       usuario: {
         nome: usuario.nome,
-        nome_propriedade: nomePropriedade,
         email: usuario.email,
         telefone_celular: usuario.telefone_celular,
         telefone_residencial: usuario.telefone_residencial,
+        foto_perfil: usuario.foto_perfil || '/uploads/profile.png', 
+        nome_propriedade: usuario.Endereco ? usuario.Endereco.nome_propriedade || '' : ''
       },
-      endereco: {
-        cep: endereco.cep,
-        logradouro: endereco.nome_rua,
-        numero: endereco.numero,
-        complemento: endereco.complemento,
-        bairro: endereco.bairro,
-        cidade: endereco.cidade,
-        uf: endereco.uf,
-        propriedade_rural: endereco.nome_propriedade
-      },
-      ultimaVenda,  // Adiciona a última venda ao contexto da renderização
-      ultimaColheita  // Adiciona a última colheita ao contexto da renderização
+      endereco: usuario.Endereco
+        ? {
+            cep: usuario.Endereco.cep,
+            logradouro: usuario.Endereco.nome_rua,
+            numero: usuario.Endereco.numero,
+            complemento: usuario.Endereco.complemento,
+            bairro: usuario.Endereco.bairro,
+            cidade: usuario.Endereco.cidade,
+            uf: usuario.Endereco.uf,
+            propriedade_rural: usuario.Endereco.nome_propriedade
+          }
+        : null,
+      ultimaVenda,
+      ultimaColheita
     });
   } catch (error) {
     console.error("Erro ao carregar dados do usuário:", error);
     res.status(500).send("Erro ao carregar dados do usuário.");
   }
 };
+
 
 // Página de edição de conta
 exports.editar_conta = async function (req, res) {
@@ -288,9 +281,8 @@ exports.excluir_conta = async function (req, res) {
     const usuario = await Usuario.findOne({ where: { id: req.session.userId } });
 
     if (usuario) {
-      // Excluir o usuário
       await usuario.destroy();
-      res.redirect('/'); // Redireciona para a página inicial após a exclusão
+      res.redirect('/'); 
     } else {
       res.status(404).send('Usuário não encontrado.');
     }
@@ -348,3 +340,46 @@ exports.mudar_senha = async function (req, res) {
   }
 };
 
+// Atualizar a foto de perfil
+exports.editarFoto = async (req, res) => {
+  try {
+    // Verifica se o arquivo foi recebido
+    if (!req.file) {
+      console.error("Nenhum arquivo foi enviado.");
+      return res.status(400).send("Nenhum arquivo foi enviado.");
+    }
+
+    // Verifica se o usuário está logado
+    if (!req.session.userId) {
+      console.error("Usuário não autenticado.");
+      return res.status(401).send("Usuário não autenticado.");
+    }
+
+    const fotoPath = '/uploads/' + req.file.filename; // Caminho do arquivo salvo
+    console.log("Foto salva em:", fotoPath);
+
+    // Atualiza a foto no banco de dados
+    await Usuario.update(
+      { foto_perfil: fotoPath },
+      { where: { id: req.session.userId } }
+    );
+
+    res.redirect('/conta');
+  } catch (error) {
+    console.error("Erro ao atualizar a foto de perfil:", error);
+    res.status(500).send("Erro ao atualizar a foto de perfil.");
+  }
+};
+
+exports.exibirPerfil = async (req, res) => {
+  try {
+    const usuario = await Usuario.findByPk(req.session.userId);
+    if (!usuario) {
+      return res.status(404).send("Usuário não encontrado.");
+    }
+    res.render('conta_pag', { usuario });
+  } catch (error) {
+    console.error("Erro ao carregar perfil:", error);
+    res.status(500).send("Erro ao carregar perfil.");
+  }
+};

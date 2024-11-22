@@ -39,6 +39,10 @@ const Usuario = db.sequelize.define("usuario", {
         type: db.Sequelize.STRING,
         allowNull: false
     },
+    foto_perfil: {
+        type: db.Sequelize.STRING,
+        defaultValue: '/uploads/profile.png' 
+      },
     email: {
         type: db.Sequelize.STRING,
         unique: true
@@ -493,4 +497,4 @@ Colheita.hasMany(Venda, { foreignKey: 'colheitaId' });
 module.exports = {Usuario,TipoProduto,Colheita,Endereco,TipoInsumo,TipoRelatorio,Relatorios,CalculoLucro,Comprador,Cotacao,EstoqueColheita,EstoqueInsumo,Venda,Fornecedor,Insumo,Compra};
 
 //db.sequelize.sync ({force: true}) //mudar pra alter no lugar de force caso queira atualizar apenas
-// db.sequelize.sync({ alter: true })
+db.sequelize.sync({ alter: true })

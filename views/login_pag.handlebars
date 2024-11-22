@@ -20,6 +20,71 @@
     border: 1px solid black;
     display: none;
   }
+  #font-controls {
+    display: none;
+  }
+  .contrast-icon {
+    font-size: 24px;
+    color: #000;
+    cursor: pointer;
+    position: fixed;
+    top: 29px;
+    right: 220px;
+    z-index: 1000;
+    transition: color 0.3s ease;
+  }
+body.contrast-mode {
+    background-color: rgb(24, 24, 24); 
+    color: #fff; 
+}
+
+body.contrast-mode .card {
+    background-color: rgb(60, 60, 60); 
+    border: 1px solid rgb(80, 80, 80); /
+    color: #fff; 
+}
+
+body.contrast-mode .form-control {
+    background-color: rgb(80, 80, 80); 
+    color: #fff; 
+    border: 1px solid #aaa; 
+}
+
+body.contrast-mode .form-control::placeholder {
+    color: #ccc;
+}
+
+body.contrast-mode .btn-custom-green {
+    background-color: rgb(100, 100, 100); 
+    border: 1px solid #aaa;
+}
+
+body.contrast-mode .btn-custom-green:hover {
+    background-color: rgb(120, 120, 120); 
+}
+
+body.contrast-mode a {
+    color: #1e90ff;
+}
+
+body.contrast-mode a:hover {
+    color: #87cefa; 
+}
+
+body.contrast-mode .card-title {
+    color: #fff; 
+}
+
+body.contrast-mode .form-group label {
+    color: #fff; 
+}
+
+body.contrast-mode p {
+    color: #fff; 
+}
+
+
+
 </style>
 </head>
 
@@ -65,5 +130,6 @@
       }
     });
   </script>
+
 </body>
 </html>

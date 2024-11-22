@@ -1,8 +1,6 @@
 const { Colheita, TipoProduto } = require("../models/post");
 const { Op } = require('sequelize');
 const db = require('../models'); 
-const PDFDocument = require('pdfkit');
-const path = require('path');
 
 exports.renderizarColheita = async function (req, res) {
   try {
@@ -142,75 +140,4 @@ exports.pesquisarColheita = async (req, res) => {
     console.error('Erro ao buscar colheitas:', error);
     res.status(500).send({ error: 'Erro ao buscar colheitas' });
   }
-};
-
-exports.gerarRelatorio = (req, res) => {
-  const colheitas = req.body.colheitas; // Recebe os dados enviados
-  const usuario = req.session.usuario;
-
-  // Criar um novo documento PDF
-  const doc = new PDFDocument();
-  
-
-  // Definir o cabeçalho da resposta como PDF
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'inline; filename=relatorio_mensal.pdf');
-
-  const imagePath = path.join(__dirname, '../public/img/IMG-20240907-WA0006.jpg'); // Caminho absoluto para a imagem
-  doc.image(imagePath, 30, 30, { width: 100, height: 100 });
-  doc.moveDown(); // Desce após a imagem para não sobrepor os textos
-
-  // Pipe o conteúdo do PDF para a resposta HTTP
-  doc.pipe(res);
-
-  // Adicionar título ao PDF
-  doc.fontSize(20).text('Relatório de Estoque de Colheitas', { align: 'center' });
-  doc.moveDown();
-
-  // Adicionar informações do usuário (nome, email e telefone)
-  doc.fontSize(12).text(`Nome: ${usuario.nome}`, { align: 'left' });
-  doc.text(`Email: ${usuario.email}`, { align: 'left' });
-  doc.text(`Telefone: ${usuario.telefone_celular}`, { align: 'left' });
-  doc.moveDown(); // Espaçamento antes de iniciar a tabela
-
-  // Definir a largura das colunas
-  const colWidth1 = 140;  // Nome da Colheita
-  const colWidth2 = 100;  // Tipo
-  const colWidth3 = 80;  // Quantidade
-  const colWidth4 = 200;  // Data de Registro
-
-  // Definir a altura das linhas
-  const rowHeight = 20;
-  const tableTop = doc.y;
-
-  // Cabeçalho da tabela
-  doc.fontSize(12).font('Helvetica-Bold');
-  doc.text('Nome da Colheita', 30, tableTop, { width: colWidth1, align: 'center' });
-  doc.text('Tipo', 30 + colWidth1, tableTop, { width: colWidth2, align: 'center' });
-  doc.text('Quantidade', 30 + colWidth1 + colWidth2, tableTop, { width: colWidth3, align: 'center' });
-  doc.text('Data de Registro', 30 + colWidth1 + colWidth2 + colWidth3, tableTop, { width: colWidth4, align: 'center' });
-
-  // Criar uma linha abaixo do cabeçalho
-  doc.lineWidth(1).moveTo(30, tableTop + rowHeight).lineTo(580, tableTop + rowHeight).stroke();
-  doc.moveDown();
-
-  // Adicionar os dados das colheitas
-  colheitas.forEach((colheita, index) => {
-    const yPosition = tableTop + rowHeight * (index + 2); // Posição para cada linha
-
-    doc.fontSize(12).font('Helvetica');
-    doc.text(colheita.nome_colheita, 30, yPosition, { width: colWidth1, align: 'center' });
-    doc.text(colheita.tipo_produto, 30 + colWidth1, yPosition, { width: colWidth2, align: 'center' });
-    doc.text(colheita.quantidade.toString(), 30 + colWidth1 + colWidth2, yPosition, { width: colWidth3, align: 'center' });
-    doc.text(colheita.data_colheita, 30 + colWidth1 + colWidth2 + colWidth3, yPosition, { align: 'center' });
-
-    // Adicionar bordas nas células
-    doc.rect(30, yPosition - 3, colWidth1, rowHeight).stroke();
-    doc.rect(30 + colWidth1, yPosition - 3, colWidth2, rowHeight).stroke();
-    doc.rect(30 + colWidth1 + colWidth2, yPosition - 3, colWidth3, rowHeight).stroke();
-    doc.rect(30 + colWidth1 + colWidth2 + colWidth3, yPosition - 3, colWidth4, rowHeight).stroke();
-  });
-
-  // Finalizar o documento
-  doc.end();
 };
