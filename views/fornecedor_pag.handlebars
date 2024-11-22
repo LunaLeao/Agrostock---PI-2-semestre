@@ -1,0 +1,672 @@
+<title>Registro dos Fornecedores</title>
+<link rel="stylesheet" href="/css/menu-style.css">
+<style>
+    input[type="checkbox"] {
+        display: block;
+        margin: 6px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: #f7f7f7;
+        margin-left: 10%;
+        overflow-x: hidden;
+    }
+
+    .table>:not(caption)>*>* {
+        color: var(--bs-table-color-state, var(--bs-table-color-type, #146b12));
+    }
+
+    .header {
+        background-color: #00b80f;
+        color: white;
+        padding: 22px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 24px;
+        width: 111.5%;
+        position: relative;
+        margin-top: 22px;
+        left: -9%;
+    }
+
+    .btn-custom {
+        background-color: #00b80f;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: #29702c;
+        /* Verde mais claro no hover */
+        color: rgb(211, 211, 211);
+    }
+
+    .btn-custom2 {
+        background-color: #00b80f;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-custom2:hover {
+        background-color: #29702c;
+        /* Verde mais claro no hover */
+        color: rgb(211, 211, 211);
+    }
+
+    .d-flex2 {
+        width: 100%;
+        max-width: 400px;
+        padding-left: 40px;
+        border: none;
+        margin-left: 1%;
+        margin-top: 15px;
+    }
+
+    .search-bar {
+        display: flex;
+    }
+
+    /* Alinhar botões de forma responsiva */
+    .d-flex {
+        display: flex;
+        margin-bottom: 20px;
+        justify-content: space-evenly;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .input-group {
+        font-family: 'Didact Gothic', sans-serif;
+    }
+
+    .form-select {
+        color: #146b12;
+        font-weight: bold;
+    }
+
+    .sair-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 1rem;
+    }
+
+    /* Responsividade */
+    @media (min-width: 400px) and (max-width: 768px) {
+        .search-bar {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-custom {
+            width: 30%;
+            height: 82px;
+        }
+
+        .btn-custom2 {
+            width: 71%;
+            height: 82px;
+        }
+
+        .d-flex {
+            flex-direction: row;
+            margin-left: 4%;
+            gap: 1px;
+        }
+
+        .sair-btn {
+            position: relative;
+            bottom: 2rem;
+            top: 1rem;
+            left: 2rem;
+            right: unset;
+        }
+    }
+
+    @media  (max-width: 400px) {
+        .search-bar {
+            padding-left: 0%;
+            width: 80%;
+            margin-bottom: 10px;
+        }
+
+        .menu_lateral{
+            width: 20px;
+        }
+
+        .btn{
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            height: 40px;
+            margin: 0px;
+        }
+
+        .btn-success {
+            margin: 0px;
+            width: 50px;
+            justify-content: center;
+        }
+
+        .d-flex{
+            align-items: unset;
+        }
+
+        .d-flex2{
+            padding-left: 10px;
+        }
+
+        .form-control{
+            height: 40px;
+            max-width: 130px;
+        }
+
+        .btn-outline-success{
+            width: 50px;
+            height: 40px;
+        }
+
+        /* Tabela responsiva */
+        .table-responsive {
+            overflow-x: auto;
+            /* Permite rolar horizontalmente */
+            -webkit-overflow-scrolling: touch;
+            /* Melhor experiência de scroll em iOS */
+
+
+        }
+
+        table {
+            font-size: 10px;
+            /* Garantir que a tabela ocupe 100% da área disponível */
+        }
+
+        
+        
+        .bi-trash{
+            position: relative;
+            width: 10px;
+        }
+        
+    }
+
+    /* Tabela responsiva */
+    .table-responsive {
+        overflow-x: auto;
+        /* Permite rolar horizontalmente */
+        -webkit-overflow-scrolling: touch;
+        /* Melhor experiência de scroll em iOS */
+    }
+
+    table {
+        width: 100%;
+        /* Garantir que a tabela ocupe 100% da área disponível */
+    }
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <section id="menu_lateral" style=" position: fixed; z-index: 1; width: 100%">
+            <nav class="menu-lateral">
+                <div class="btn-expandir" id="btn-exp">
+                    <i class="bi bi-list"></i>
+                </div>
+
+                <ul>
+                    <li class="item-menu" id="menu-dashboard">
+                        <a href="/dashboard">
+                            <span class="icon-menu">
+                                <i class="bi bi-columns-gap"></i>
+                            </span>
+                            <span class="txt-menu">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="item-menu" id="menu-colheitas">
+                        <a href="/colheitas">
+                            <span class="icon-menu">
+                                <i class="bi bi-tree"></i>
+                            </span>
+                            <span class="txt-menu">Colheitas</span>
+                        </a>
+                    </li>
+
+                    <li class="item-menu" id="menu-insumos">
+                        <a href="/insumos">
+                            <span class="icon-menu">
+                                <i class="bi bi-droplet"></i>
+                            </span>
+                            <span class="txt-menu">Insumos</span>
+                        </a>
+                    </li>
+
+                    <li class="item-menu {{#if isFornecedoresPage}}active{{/if}}" id="menu-venda-fornecedor">
+                        <a href="/fornecedores">
+                            <span class="icon-menu">
+                                <i class="bi bi-bag"></i>
+                            </span>
+                            <span class="txt-menu">Vendas/Fornecedores</span>
+                        </a>
+                    </li>
+
+                    <li class="item-menu" id="menu-conta">
+                        <a href="/conta">
+                            <span class="icon-menu">
+                                <i class="bi bi-person-circle"></i>
+                            </span>
+                            <span class="txt-menu">Sua conta</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+
+        <!-- Barra de pesquisa com dropdown -->
+        <form class="d-flex2" role="search" action="/pesquisarFornecedor" method="get">
+            <div class="search-bar">
+                <input class="form-control me-2" type="search" name="termo" placeholder="Pesquisar" aria-label="Search">
+                <select name="campo" class="form-select me-2">
+                    <option value="nome">Fornecedor</option>
+                    <option value="cnpj">CNPJ</option>
+                </select>
+                <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+            </div>
+        </form>
+
+        <div class="header adjustable-font">
+            Registro de Fornecedores
+        </div>
+
+<!-- Seção principal -->
+<div class="container mt-4">
+    <div class="d-flex gap-2 d-md-block">
+        <div class="d-flex justify-content-md-end">
+            <button type="submit" class="btn btn-custom2">Gerar Relatório Mensal</button>
+        </div>
+        <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#novoFornecedorModal">Novo Fornecedor +</button>
+        <button class="btn btn-custom" id="editarButton" onclick="openFornecedorModal()">Editar</button>
+    </div>
+    
+    <ul class="nav nav-tabs mt-3">
+        <li class="nav-item me-2">
+            <a class="nav-link {{#if isVendasPage}}active{{/if}}" href="/venda-fornecedor" style="background-color: #00b80f; color: white;">Vendas</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{#if isFornecedoresPage}}active{{/if}}" href="/fornecedores" style="background-color: #00b80f; color: white;">Fornecedores</a>
+        </li>
+    </ul>
+
+<!-- Tabela -->
+<div class="table-responsive adjustable-font">
+    <table class="table table-striped table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th></th>
+                <th>Fornecedor</th>
+                <th>CNPJ</th>
+                <th>Telefone</th>
+                <th>Endereço</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each fornecedores}}
+                <tr id="fornecedor-row-{{this.id}}">
+                    <td>
+                        <input type="radio" class="radio" name="fornecedorSelecionado" value="{{this.id}}">
+                    </td>
+                    <td>{{this.nome}}</td>
+                    <td>{{this.cnpj}}</td>
+                    <td>{{this.telefone}}</td> 
+                    <td>
+                        {{#if this.endereco}} 
+                            {{this.endereco.nome_rua}}, {{this.endereco.numero}} - {{this.endereco.bairro}}, {{this.endereco.cidade}} - {{this.endereco.uf}}
+                        {{else}} 
+                            Sem Endereço 
+                        {{/if}} 
+                    </td> 
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteFornecedor({{this.id}})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal para editar informações do fornecedor -->
+<div class="modal fade" id="editarFornecedorModal" aria-hidden="true" aria-labelledby="editarFornecedorModalLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarFornecedorModalLabel">Editar Informações do Fornecedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/atualizar-fornecedor" method="POST" id="editarFornecedorForm">
+                    <input type="hidden" id="fornecedorId" name="fornecedorId" value="">
+
+                    <div class="mb-3">
+                        <label for="editarFornecedorNome" class="form-label">Nome do Fornecedor</label>
+                        <input type="text" class="form-control" id="editarFornecedorNome" name="nome" placeholder="Digite o nome do fornecedor" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarFornecedorTelefone" class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" id="editarFornecedorTelefone" name="telefone" placeholder="Digite o telefone do fornecedor" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarFornecedorCNPJ" class="form-label">CNPJ</label>
+                        <input type="text" class="form-control" id="editarFornecedorCNPJ" name="cnpj" placeholder="Digite o CNPJ do fornecedor" required>
+                    </div>
+
+                    <!-- Campos de Endereço -->
+                    <div class="mb-3" style="margin-top: 10px">
+                        <label for="editarCep">CEP :</label>
+                        <input type="text" class="form-control" id="editarCep" placeholder="Insira seu CEP" required name="cep" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarNome_rua">Logradouro:</label>
+                        <input type="text" class="form-control" id="editarNome_rua" placeholder="Insira seu logradouro" required name="rua" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="editarNumero">Número:</label>
+                            <input type="text" class="form-control" id="editarNumero" placeholder="Número" name="numero" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="editarComplemento">Complemento (Opcional):</label>
+                            <input type="text" class="form-control" id="editarComplemento" placeholder="Complemento" name="complemento" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="editarBairro">Bairro:</label>
+                            <input type="text" class="form-control" id="editarBairro" placeholder="Bairro" required name="bairro" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="editarCidade">Cidade:</label>
+                            <input type="text" class="form-control" id="editarCidade" placeholder="Cidade" required name="cidade" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="editarUf">UF :</label>
+                            <input type="text" class="form-control" id="editarUf" placeholder="UF" required name="uf" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-success">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para adicionar informações de fornecedor (Segundo Modal) -->
+<div class="modal fade" id="novoFornecedorModal" aria-hidden="true" aria-labelledby="novoFornecedorModalLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="novoFornecedorModalLabel">Adicionar Novo Fornecedor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/add-fornecedor" method="POST" id="novoFornecedorForm">
+                    <div class="mb-3">
+                        <label for="novoFornecedorNome" class="form-label">Nome do Fornecedor</label>
+                        <input type="text" class="form-control" id="novoFornecedorNome" name="nome" placeholder="Digite o nome do fornecedor" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="novoFornecedorTelefone" class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" id="novoFornecedorTelefone" name="telefone" placeholder="Digite o telefone do fornecedor" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="novoFornecedorCNPJ" class="form-label">CNPJ</label>
+                        <input type="text" class="form-control" id="novoFornecedorCNPJ" name="cnpj" placeholder="Digite o CNPJ do fornecedor" required>
+                    </div>
+
+                    <!-- Campos de Endereço -->
+                    <div class="mb-3" style="margin-top: 10px">
+                        <label for="cep">CEP :</label>
+                        <input type="text" class="form-control" id="cep" placeholder="Insira seu CEP" required name="cep" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="logradouro">Logradouro:</label>
+                        <input type="text" class="form-control" id="logradouro" placeholder="Insira seu logradouro" required name="rua" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="numero">Número:</label>
+                            <input type="text" class="form-control" id="numero" placeholder="Número" name="numero" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="complemento">Complemento (Opcional):</label>
+                            <input type="text" class="form-control" id="complemento" placeholder="Complemento" name="complemento" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="bairro">Bairro:</label>
+                            <input type="text" class="form-control" id="bairro" placeholder="Bairro" required name="bairro" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="cidade">Cidade:</label>
+                            <input type="text" class="form-control" id="cidade" placeholder="Cidade" required name="cidade" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="uf">UF :</label>
+                            <input type="text" class="form-control" id="uf" placeholder="UF" required name="uf" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="backToNovoItemModal">Fechar</button>
+                        <button type="submit" class="btn btn-success" id="btnSalvarNovoFornecedor">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div class="sair-btn">
+            <button type="button" class="btn btn-success" style="margin-top: 1rem;">
+                <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
+            </button>
+        </div>
+
+<script>
+    function openFornecedorModal() {
+        // Obtenha o fornecedor selecionado
+        const selectedRadio = document.querySelector('input[name="fornecedorSelecionado"]:checked');
+        
+        if (selectedRadio) {
+            const selectedId = selectedRadio.value;
+
+            // Lista de fornecedores, incluindo a relação com o endereço
+            const fornecedores = [
+                {{#each fornecedores}}
+                {
+                    id: "{{this.id}}",
+                    nome: "{{nome}}",
+                    telefone: "{{telefone}}",
+                    cnpj: "{{cnpj}}",
+                    endereco: {
+                        cep: "{{endereco.cep}}",
+                        nome_rua: "{{endereco.nome_rua}}",
+                        numero: "{{endereco.numero}}",
+                        complemento: "{{endereco.complemento}}",
+                        bairro: "{{endereco.bairro}}",
+                        cidade: "{{endereco.cidade}}",
+                        uf: "{{endereco.uf}}"
+                    }
+                },
+                {{/each}}
+            ];
+
+            const fornecedor = fornecedores.find(f => f.id === selectedId);
+
+            // Preencha os campos do modal com os dados do fornecedor e endereço
+            document.getElementById('fornecedorId').value = fornecedor.id;
+            document.getElementById('editarFornecedorNome').value = fornecedor.nome;
+            document.getElementById('editarFornecedorTelefone').value = fornecedor.telefone;
+            document.getElementById('editarFornecedorCNPJ').value = fornecedor.cnpj;
+            
+            // Preencha os campos de endereço
+            document.getElementById('editarCep').value = fornecedor.endereco.cep;
+            document.getElementById('editarNome_rua').value = fornecedor.endereco.nome_rua;
+            document.getElementById('editarNumero').value = fornecedor.endereco.numero;
+            document.getElementById('editarComplemento').value = fornecedor.endereco.complemento;
+            document.getElementById('editarBairro').value = fornecedor.endereco.bairro;
+            document.getElementById('editarCidade').value = fornecedor.endereco.cidade;
+            document.getElementById('editarUf').value = fornecedor.endereco.uf;
+
+            // Abra o modal
+            const modal = new bootstrap.Modal(document.getElementById('editarFornecedorModal'));
+            modal.show();
+        } else {
+            alert("Por favor, selecione um fornecedor para editar.");
+        }
+    }
+
+    document.getElementById("cep").addEventListener("blur", function () {
+        var cep = this.value.replace(/\D/g, "");
+        if (cep.length === 8) {
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (!data.erro) {
+                        document.getElementById("logradouro").value = data.logradouro;
+                        document.getElementById("bairro").value = data.bairro;
+                        document.getElementById("cidade").value = data.localidade;
+                        document.getElementById("uf").value = data.uf;
+                    } else {
+                        alert("CEP não encontrado.");
+                    }
+                })
+                .catch((error) => console.error("Erro ao buscar CEP:", error));
+        } else {
+            alert("CEP inválido.");
+        }
+    });
+
+    // Script para buscar o endereço pelo CEP ao perder o foco
+    document.getElementById("editarCep").addEventListener("blur", function () {
+        var cep = this.value.replace(/\D/g, "");
+        if (cep.length === 8) {
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (!data.erro) {
+                        document.getElementById("editarNome_rua").value = data.logradouro;
+                        document.getElementById("editarBairro").value = data.bairro;
+                        document.getElementById("editarCidade").value = data.localidade;
+                        document.getElementById("editarUf").value = data.uf;
+                    } else {
+                        alert("CEP não encontrado.");
+                    }
+                })
+                .catch((error) => console.error("Erro ao buscar CEP:", error));
+        } else {
+            alert("CEP inválido.");
+        }
+    });
+
+</script>
+ 
+<script>
+    function deleteFornecedor(id) {
+        if (confirm('Você tem certeza que deseja excluir este fornecedor?')) {
+            // Enviar requisição DELETE ao backend
+            fetch(`/fornecedor/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Resposta do servidor:', response); // Adicionado para depuração
+                if (!response.ok) {
+                    // Se a resposta não for ok, mostrar o erro retornado pelo servidor
+                    return response.text().then(text => {
+                        throw new Error(text || 'Erro ao excluir o fornecedor');
+                    });
+                }
+                return response.json(); // Se a resposta for ok, retornar os dados como JSON
+            })
+            .then(data => {
+                // Remover a linha da venda na tabela, se ela existir
+                const row = document.getElementById(`fornecedor-row-${id}`);
+                if (row) {
+                    row.remove(); // Remove a linha do DOM
+                    alert(data.message); // Exibe mensagem de sucesso
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error.message); // Log de erro no console
+                alert(`Ocorreu um erro: ${error.message}`); // Alerta o usuário sobre o erro
+            });
+        }
+    }
+
+</script>
+<script>
+document.getElementById('searchForm').addEventListener('submit', async function (e) {
+    e.preventDefault();  // Evita que o formulário faça um redirecionamento
+
+    const termo = document.getElementById('searchTerm').value;  // Termo de pesquisa
+    const campo = document.getElementById('searchField').value;  // Campo de pesquisa (nome ou cnpj)
+
+    // Fazendo a requisição para o servidor com os parâmetros de pesquisa
+    const response = await fetch(`/pesquisarFornecedor?termo=${termo}&campo=${campo}`, {
+        method: 'GET',
+    });
+
+    if (response.ok) {
+        const data = await response.json();  // Recebe os dados do servidor (fornecedores)
+        
+        let resultadosHTML = '';  // Variável para armazenar os resultados
+        if (data.fornecedores && data.fornecedores.length > 0) {
+            // Loop para gerar HTML dos fornecedores
+            data.fornecedores.forEach(fornecedor => {
+                resultadosHTML += `
+                    <div class="fornecedor-item">
+                        <p><strong>Nome:</strong> ${fornecedor.nome}</p>
+                        <p><strong>CNPJ:</strong> ${fornecedor.cnpj}</p>
+                        <p><strong>Telefone:</strong> ${fornecedor.telefone}</p>
+                        <p><strong>Endereço:</strong> ${fornecedor.endereco ? 
+                            fornecedor.endereco.rua + ', ' + fornecedor.endereco.cidade + ' - ' + fornecedor.endereco.estado : 'Sem endereço'}</p>
+                    </div>
+                    <hr>`;
+            });
+        } else {
+            // Caso nenhum fornecedor seja encontrado
+            resultadosHTML = `<p>Nenhum fornecedor encontrado.</p>`;
+        }
+        
+        // Exibe os resultados na página
+        document.getElementById('resultados').innerHTML = resultadosHTML;
+    } else {
+        // Caso haja erro na requisição
+        console.error('Erro ao buscar fornecedores');
+        document.getElementById('resultados').innerHTML = '<p>Erro ao buscar fornecedores.</p>';
+    }
+});
+</script>
+</body>
+
+</html>
