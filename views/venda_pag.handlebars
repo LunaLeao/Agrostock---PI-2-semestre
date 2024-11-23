@@ -133,18 +133,18 @@
         }
     }
 
-    @media  (max-width: 400px) {
+    @media (max-width: 400px) {
         .search-bar {
             padding-left: 0%;
             width: 80%;
             margin-bottom: 10px;
         }
 
-        .menu_lateral{
+        .menu_lateral {
             width: 20px;
         }
 
-        .btn{
+        .btn {
             padding: 10px;
             font-size: 12px;
             font-weight: 600;
@@ -158,21 +158,21 @@
             justify-content: center;
         }
 
-        .d-flex{
+        .d-flex {
             align-items: unset;
         }
 
 
-        .d-flex2{
+        .d-flex2 {
             padding-left: 10px;
         }
 
-        .form-control{
+        .form-control {
             height: 40px;
             max-width: 130px;
         }
 
-        .btn-outline-success{
+        .btn-outline-success {
             width: 50px;
             height: 40px;
         }
@@ -192,13 +192,13 @@
             /* Garantir que a tabela ocupe 100% da área disponível */
         }
 
-        
-        
-        .bi-trash{
+
+
+        .bi-trash {
             position: relative;
             width: 10px;
         }
-        
+
     }
 </style>
 </head>
@@ -287,383 +287,392 @@
                 <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#novoItemModal">Novo +</button>
                 <button class="btn btn-custom" id="editarButton" onclick="openVendaModal()">Editar</button>
             </div>
-            
+
             <ul class="nav nav-tabs mt-3">
                 <li class="nav-item me-2"> <!-- Classe me-2 adiciona um espaçamento entre as abas -->
-                    <a class="nav-link {{#if isVendasPage}}active{{/if}}" href="/venda-fornecedor" style="background-color: #00b80f; color: white;">Vendas</a>
+                    <a class="nav-link {{#if isVendasPage}}active{{/if}}" href="/venda-fornecedor"
+                        style="background-color: #00b80f; color: white;">Vendas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{#if isFornecedoresPage}}active{{/if}}" href="/fornecedores" style="background-color: #00b80f; color: white;">Fornecedores</a>
+                    <a class="nav-link {{#if isFornecedoresPage}}active{{/if}}" href="/fornecedores"
+                        style="background-color: #00b80f; color: white;">Fornecedores</a>
                 </li>
             </ul>
 
-        <!-- Tabela -->
-        <div class="table-responsive adjustable-font">
-            <table class="table table-striped table-bordered">
-                <thead class="table-success">
-                    <tr>
-                        <th></th>
-                        <th>Cliente</th>
-                        <th>Produto</th>
-                        <th>Quantidade</th>
-                        <th>Valor da Venda</th>
-                        <th>Data da Venda</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each vendas}}
-                    <tr id="venda-row-{{this.id}}">
-                        <td><input type="radio" class="radio" name="vendaSelecionada" value="{{this.id}}" data-comprador="{{this.compradorId}}" data-produto="{{this.colheitaId}}"></td>
-                        <td>{{this.comprador.nome}}</td>
-                        <td>{{this.colheitum.nome_colheita}}</td>
-                        <td>{{quantidade}}</td>
-                        <td>{{formatCurrency valor_total}}</td>
-                        <td>{{data_venda}}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="deleteVenda({{this.id}})">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        </div>
-
-<!-- Modal para editar informações da venda -->
-<div class="modal fade" id="vendaModal" tabindex="-1" aria-labelledby="vendaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="vendaModalLabel">Editar Informações da Venda</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <!-- Tabela -->
+            <div class="table-responsive adjustable-font">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-success">
+                        <tr>
+                            <th></th>
+                            <th>Cliente</th>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Valor da Venda</th>
+                            <th>Data da Venda</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each vendas}}
+                        <tr id="venda-row-{{this.id}}">
+                            <td><input type="radio" class="radio" name="vendaSelecionada" value="{{this.id}}"
+                                    data-comprador="{{this.compradorId}}" data-produto="{{this.colheitaId}}"
+                                    data-ultima-quantidade="{{this.ultima_quantidade}}"></td>
+                            <td>{{this.comprador.nome}}</td>
+                            <td>{{this.colheitum.nome_colheita}}</td>
+                            <td>{{this.quantidade}}</td>
+                            <td>{{formatCurrency this.valor_total}}</td>
+                            <td>{{this.data_venda}}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteVenda({{this.id}})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
             </div>
-            <div class="modal-body">
-                <form action="/atualizar-vendas" method="POST">
-                    <input type="hidden" id="vendaId" name="vendaId" value="">
 
-                    <!-- Comprador -->
-                    <div class="mb-3">
-                        <label for="editarSelectComprador" class="form-label">Comprador</label>
-                        <select class="form-control" id="editarSelectComprador" name="compradorId" required>
-                            <option value="">Selecione o Comprador</option>
-                            {{#each compradores}}
-                                <option value="{{this.id}}">{{this.nome}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
+            <!-- Modal para editar informações da venda -->
+            <div class="modal fade" id="vendaModal" tabindex="-1" aria-labelledby="vendaModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="vendaModalLabel">Editar Informações da Venda</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/atualizar-vendas" method="POST" id="editarVendaForm">
+                                <input type="hidden" id="vendaId" name="vendaId" value="">
 
-                    <!-- Produto -->
-                    <div class="mb-3">
-                        <label for="editarSelectTipoProduto" class="form-label">Item</label>
-                        <select class="form-control" id="editarSelectTipoProduto" name="colheitaId" required>
-                            <option value="">Selecione uma Colheita</option>                                   
-                            {{#each colheitas}}
-                                <option value="{{this.id}}">{{this.nome_colheita}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
+                                <!-- Campo oculto para armazenar a quantidade anterior -->
+                                <input type="hidden" id="quantidadeAnterior" name="quantidadeAnterior" value="">
 
-                    <!-- Quantidade -->
-                    <div class="mb-3">
-                        <label for="quantidade" class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" id="quantidade" name="quantidade" required>
-                    </div>
 
-                    <!-- Valor -->
-                    <div class="mb-3">
-                        <label for="valor_total" class="form-label">Valor da Venda</label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <input type="text" class="form-control" id="itemValorTotal" name="valor_total" placeholder="Digite o valor da venda" required>
+                                <!-- Comprador -->
+                                <div class="mb-3">
+                                    <label for="editarSelectComprador" class="form-label">Comprador</label>
+                                    <select class="form-control" id="editarSelectComprador" name="compradorId" required>
+                                        <option value="">Selecione o Comprador</option>
+                                        {{#each compradores}}
+                                        <option value="{{this.id}}">{{this.nome}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+
+                                <!-- Produto -->
+                                <div class="mb-3">
+                                    <label for="editarSelectTipoProduto" class="form-label">Item</label>
+                                    <select class="form-control" id="editarSelectTipoProduto" name="colheitaId"
+                                        required>
+                                        <option value="">Selecione uma Colheita</option>
+                                        {{#each colheitas}}
+                                        <option value="{{this.id}}">{{this.nome_colheita}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+
+                                <!-- Quantidade Máxima Disponível (Exibido Desabilitado) -->
+                                <div class="mb-3">
+                                    <label for="ultimaQuantidadeDisplay" class="form-label">Quantidade máxima disponível
+                                        no momento do registro da venda:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="ultimaQuantidadeDisplay"
+                                            name="ultima_quantidade_display" disabled>
+                                    </div>
+                                </div>
+
+                                <!-- Quantidade -->
+                                <div class="mb-3">
+                                    <label for="quantidade" class="form-label">Quantidade</label>
+                                    <input type="number" class="form-control" id="quantidade" name="quantidade"
+                                        required>
+                                    <div id="quantidadeWarning" class="text-danger mt-2" style="display: none;">A
+                                        quantidade excede o estoque disponível ou é inválida.</div>
+                                </div>
+
+                                <!-- Valor -->
+                                <div class="mb-3">
+                                    <label for="valor_total" class="form-label">Valor da Venda</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">R$</span>
+                                        <input type="text" class="form-control" id="itemValorTotal" name="valor_total"
+                                            placeholder="Digite o valor da venda" required>
+                                    </div>
+                                </div>
+
+                                <!-- Data -->
+                                <div class="mb-3">
+                                    <label for="data_venda" class="form-label">Data da Venda</label>
+                                    <input type="date" class="form-control" id="data_venda" name="data_venda" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-success">Salvar</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-
-                    <!-- Data -->
-                    <div class="mb-3">
-                        <label for="data_venda" class="form-label">Data da Venda</label>
-                        <input type="date" class="form-control" id="data_venda" name="data_venda" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <button type="submit" class="btn btn-success">Salvar</button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Modal para adicionar informações da venda -->
-<div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="novoItemModalLabel">Adicionar Nova Venda</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/add-vendas" method="POST" id="novoItemForm">
-                    <div class="mb-3">
-                        <label for="compradorId" class="form-label">Comprador</label>
-                        <select class="form-select" id="compradorId" name="compradorId" required>
-                            <option value="">Selecione um comprador</option>
-                            {{#each compradores}}
-                                <option value="{{this.id}}">{{this.nome}}</option>
-                            {{/each}}
-                        </select>
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#novoCompradorModal">Adicionar Novo Comprador</button>
+
+
+            <!-- Modal para adicionar informações da venda -->
+            <div class="modal fade" id="novoItemModal" tabindex="-1" aria-labelledby="novoItemModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="novoItemModalLabel">Adicionar Nova Venda</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/add-vendas" method="POST" id="novoItemForm">
+                                <div class="mb-3">
+                                    <label for="compradorId" class="form-label">Comprador</label>
+                                    <select class="form-select" id="compradorId" name="compradorId" required>
+                                        <option value="">Selecione um comprador</option>
+                                        {{#each compradores}}
+                                        <option value="{{this.id}}">{{this.nome}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <div class="mt-2">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#novoCompradorModal">Adicionar Novo Comprador</button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nome_colheita" class="form-label">Produto</label>
+                                    <select class="form-select" id="nome_colheita" name="nome_colheita" required
+                                        onchange="fetchQuantidade(this.value)">
+                                        <option value="">Selecione uma Colheita</option>
+                                        {{#each colheitas}}
+                                        <option value="{{this.nome_colheita}}">{{this.nome_colheita}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="quantidadeEstoque" class="form-label">Quantidade em Estoque</label>
+                                    <input type="text" class="form-control" id="quantidadeEstoque"
+                                        name="quantidadeEstoque" disabled>
+                                </div>
+                                <input type="hidden" id="ultimaQuantidade" name="ultima_quantidade">
+                                <div class="mb-3">
+                                    <label for="itemQuantidade" class="form-label">Quantidade</label>
+                                    <input type="number" class="form-control" id="itemQuantidade" name="quantidade"
+                                        placeholder="Digite a quantidade" required oninput="checkQuantidade()">
+                                    <div id="quantidadeWarning" class="text-danger mt-2" style="display: none;">A
+                                        quantidade excede o estoque disponível.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="itemValorTotal" class="form-label">Valor da Venda</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">R$</span>
+                                        <input type="text" class="form-control" id="itemValorTotal" name="valor_total"
+                                            placeholder="Digite o valor da venda (ex: 28.50)" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="itemDataVenda" class="form-label">Data da Venda</label>
+                                    <input type="date" class="form-control" id="itemDataVenda" name="data_venda"
+                                        required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="itemObservacao" class="form-label">Observação</label>
+                                    <textarea class="form-control" id="itemObservacao" name="observacao"
+                                        rows="3"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Fechar</button>
+                                    <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="nome_colheita" class="form-label">Produto</label>
-                        <select class="form-select" id="nome_colheita" name="nome_colheita" required>
-                            <option value="">Selecione uma Colheita</option>
-                            {{#each colheitas}}
-                                <option value="{{this.nome_colheita}}">{{this.nome_colheita}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemQuantidade" class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" id="itemQuantidade" name="quantidade" placeholder="Digite a quantidade" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemValorTotal" class="form-label">Valor da Venda</label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <input type="text" class="form-control" id="itemValorTotal" name="valor_total" placeholder="Digite o valor da venda (ex: 28.50)" required>
+                </div>
+            </div>
+
+
+            <!-- Modal para adicionar informações do comprador -->
+            <div class="modal fade" id="novoCompradorModal" tabindex="-1" aria-labelledby="novoCompradorModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="novoCompradorModalLabel">Adicionar Novo Comprador</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/add-comprador" method="POST" id="novoCompradorForm">
+                                <div class="mb-3">
+                                    <label for="novoCompradorNome" class="form-label">Nome do Comprador</label>
+                                    <input type="text" class="form-control" id="novoCompradorNome" name="nome"
+                                        placeholder="Digite o nome do comprador" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="novoCompradorTelefone" class="form-label">Telefone</label>
+                                    <input type="tel" class="form-control" id="novoCompradorTelefone" name="telefone"
+                                        placeholder="Digite o telefone do comprador" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="novoCompradorEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="novoCompradorEmail" name="email"
+                                        placeholder="Digite o email do comprador" required>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Fechar</button>
+                                    <button type="submit" class="btn btn-success"
+                                        id="btnSalvarNovoComprador">Salvar</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="itemDataVenda" class="form-label">Data da Venda</label>
-                        <input type="date" class="form-control" id="itemDataVenda" name="data_venda" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemObservacao" class="form-label">Observação</label>
-                        <textarea class="form-control" id="itemObservacao" name="observacao" rows="3"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-success" id="salvarNovoItem">Salvar</button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Modal para adicionar informações do comprador -->
-<div class="modal fade" id="novoCompradorModal" tabindex="-1" aria-labelledby="novoCompradorModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="novoCompradorModalLabel">Adicionar Novo Comprador</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="sair-btn">
+                <button type="button" class="btn btn-success" style="margin-top: 1rem;">
+                    <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
+                </button>
             </div>
-            <div class="modal-body">
-                <form action="/add-comprador" method="POST" id="novoCompradorForm">
-                    <div class="mb-3">
-                        <label for="novoCompradorNome" class="form-label">Nome do Comprador</label>
-                        <input type="text" class="form-control" id="novoCompradorNome" name="nome" placeholder="Digite o nome do comprador" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="novoCompradorTelefone" class="form-label">Telefone</label>
-                        <input type="tel" class="form-control" id="novoCompradorTelefone" name="telefone" placeholder="Digite o telefone do comprador" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="novoCompradorEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="novoCompradorEmail" name="email" placeholder="Digite o email do comprador" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-success" id="btnSalvarNovoComprador">Salvar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <div class="sair-btn">
-            <button type="button" class="btn btn-success" style="margin-top: 1rem;">
-                <a class="text-end" href="/" style="color: rgb(218, 218, 218)"> Sair </a>
-            </button>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                function openVendaModal() {
+                    // Obtenha a venda selecionada
+                    const selectedRadio = document.querySelector('input[name="vendaSelecionada"]:checked');
 
-<script>
-    function openVendaModal() {
-        // Obtenha a venda selecionada
-        const selectedRadio = document.querySelector('input[name="vendaSelecionada"]:checked');
-        
-        if (selectedRadio) {
-            const selectedId = selectedRadio.value;
+                    if (selectedRadio) {
+                        const selectedId = selectedRadio.value;
 
-            // Obtenha os dados diretamente da tabela para a venda selecionada
-            const compradorNome = document.querySelector(`#venda-row-${selectedId} td:nth-child(2)`).textContent.trim();
-            const colheitaNome = document.querySelector(`#venda-row-${selectedId} td:nth-child(3)`).textContent.trim();
-            const quantidade = document.querySelector(`#venda-row-${selectedId} td:nth-child(4)`).textContent.trim();
-            const valorTotal = document.querySelector(`#venda-row-${selectedId} td:nth-child(5)`).textContent.trim().replace('R$ ', '').replace('.', '').replace(',', '.');
-            const dataVenda = document.querySelector(`#venda-row-${selectedId} td:nth-child(6)`).textContent.trim();
-            
-            // Exibir no console a data extraída para verificar seu valor
-            console.log("Data extraída da tabela:", dataVenda);
+                        // Obtenha os dados diretamente da tabela para a venda selecionada
+                        const compradorNome = document.querySelector(`#venda-row-${selectedId} td:nth-child(2)`).textContent.trim();
+                        const colheitaNome = document.querySelector(`#venda-row-${selectedId} td:nth-child(3)`).textContent.trim();
+                        const quantidade = document.querySelector(`#venda-row-${selectedId} td:nth-child(4)`).textContent.trim(); // Quantidade da tabela
+                        const valorTotal = document.querySelector(`#venda-row-${selectedId} td:nth-child(5)`).textContent.trim().replace('R$ ', '').replace('.', '').replace(',', '.');
+                        const dataVenda = document.querySelector(`#venda-row-${selectedId} td:nth-child(6)`).textContent.trim();
 
-            // Preencha os campos do modal
-            document.getElementById('vendaId').value = selectedId;
+                        // Exibir no console os dados extraídos para verificar seu valor
+                        console.log("ID da venda selecionada:", selectedId);
+                        console.log("Comprador:", compradorNome);
+                        console.log("Produto:", colheitaNome);
+                        console.log("Quantidade Atual:", quantidade);
+                        console.log("Valor Total:", valorTotal);
+                        console.log("Data da Venda:", dataVenda);
 
-            // Selecionar o comprador no select de acordo com o ID
-            document.getElementById('editarSelectComprador').value = selectedRadio.getAttribute('data-comprador');
-            
-            // Selecionar a colheita no select de acordo com o ID
-            document.getElementById('editarSelectTipoProduto').value = selectedRadio.getAttribute('data-produto');
-            
-            // Preencher os outros campos
-            document.getElementById('quantidade').value = quantidade;
-            document.getElementById('itemValorTotal').value = valorTotal;
+                        // Preencher os campos do modal
+                        document.getElementById('vendaId').value = selectedId;
+                        document.getElementById('editarSelectComprador').value = selectedRadio.getAttribute('data-comprador');
+                        document.getElementById('editarSelectTipoProduto').value = selectedRadio.getAttribute('data-produto');
 
-            // Verificar se a dataVenda tem um valor válido e converter para o formato 'YYYY-MM-DD'
-            let dataFormatada = '';
-            if (dataVenda) {
-                // Converter data por extenso para formato válido
-                const meses = [
-                    'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 
-                    'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-                ];
+                        // Preenchendo os campos de quantidade e quantidade anterior
+                        document.getElementById('quantidade').value = quantidade; // Novo valor a ser editado
+                        document.getElementById('quantidadeAnterior').value = quantidade; // Valor anterior para referência
 
-                // Expressão regular para encontrar o dia, mês e ano na data
-                const regex = /(\d{1,2}) de (\w+) de (\d{4})/;
-                const match = dataVenda.match(regex);
+                        // Obter e exibir a última quantidade máxima disponível
+                        const ultimaQuantidade = selectedRadio.getAttribute('data-ultima-quantidade');
+                        console.log('Última Quantidade:', ultimaQuantidade); // Debugging
+                        document.getElementById('ultimaQuantidadeDisplay').value = ultimaQuantidade;
 
-                if (match) {
-                    const dia = match[1];
-                    const mes = meses.indexOf(match[2].toLowerCase()) + 1; // Meses começam de 1
-                    const ano = match[3];
+                        // Se houver data de venda, formatar para o formato esperado
+                        let dataFormatada = '';
+                        if (dataVenda) {
+                            const meses = [
+                                'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                                'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+                            ];
 
-                    // Formatar para o formato 'YYYY-MM-DD'
-                    dataFormatada = `${ano}-${mes < 10 ? '0' + mes : mes}-${dia < 10 ? '0' + dia : dia}`;
+                            const regex = /(\d{1,2}) de (\w+) de (\d{4})/;
+                            const match = dataVenda.match(regex);
+
+                            if (match) {
+                                const dia = match[1];
+                                const mes = meses.indexOf(match[2].toLowerCase()) + 1;
+                                const ano = match[3];
+                                dataFormatada = `${ano}-${mes < 10 ? '0' + mes : mes}-${dia < 10 ? '0' + dia : dia}`;
+                            }
+                        }
+
+                        if (dataFormatada) {
+                            document.getElementById('data_venda').value = dataFormatada;
+                        }
+
+                        // Abrir o modal
+                        const modal = new bootstrap.Modal(document.getElementById('vendaModal'));
+                        modal.show();
+                    } else {
+                        alert("Por favor, selecione uma venda para editar.");
+                    }
                 }
-            }
+            </script>
 
-            // Exibir no console a data formatada para verificação
-            console.log("Data formatada:", dataFormatada);
-
-            // Se a data for válida, aplique no campo
-            if (dataFormatada) {
-                document.getElementById('data_venda').value = dataFormatada;
-            }
-
-            // Abrir o modal
-            const modal = new bootstrap.Modal(document.getElementById('vendaModal'));
-            modal.show();
-        } else {
-            alert("Por favor, selecione uma venda para editar.");
-        }
-    };
-
-document.querySelector('.btn.btn-custom2').addEventListener('click', function() {
-    const tableRows = document.querySelectorAll('table tbody tr');
-    const vendas = [];
-
-    tableRows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const venda = {
-            cliente: cells[1].innerText,
-            produto: cells[2].innerText,
-            quantidade: cells[3].innerText,
-            valor_venda: cells[4].innerText,
-            data_venda: cells[5].innerText
-        };
-        vendas.push(venda);
-    });
-
-    // Enviar os dados para o servidor
-    fetch('/gerar-relatorio-vendas', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ vendas: vendas })
-    })
-    .then(response => response.blob())
-    .then(blob => {
-        // Criar um link para baixar o PDF gerado
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'relatorio_vendas.pdf';
-        link.click();
-    })
-    .catch(error => console.error('Erro ao gerar o PDF:', error));
-});
-
-
-</script>
- 
-<script>
-    function deleteVenda(id) {
-        if (confirm('Você tem certeza que deseja excluir esta venda?')) {
-            // Enviar requisição DELETE ao backend
-            fetch(`/vendas/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
+            <script>
+                function deleteVenda(id) {
+                    if (confirm('Você tem certeza que deseja excluir esta venda?')) {
+                        // Enviar requisição DELETE ao backend
+                        fetch(`/vendas/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => {
+                                console.log('Resposta do servidor:', response); // Adicionado para depuração
+                                if (!response.ok) {
+                                    // Se a resposta não for ok, mostrar o erro retornado pelo servidor
+                                    return response.text().then(text => {
+                                        throw new Error(text || 'Erro ao excluir a venda');
+                                    });
+                                }
+                                return response.json(); // Se a resposta for ok, retornar os dados como JSON
+                            })
+                            .then(data => {
+                                // Remover a linha da venda na tabela, se ela existir
+                                const row = document.getElementById(`venda-row-${id}`);
+                                if (row) {
+                                    row.remove(); // Remove a linha do DOM
+                                    alert(data.message); // Exibe mensagem de sucesso
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erro:', error.message); // Log de erro no console
+                                alert(`Ocorreu um erro: ${error.message}`); // Alerta o usuário sobre o erro
+                            });
+                    }
                 }
-            })
-            .then(response => {
-                console.log('Resposta do servidor:', response); // Adicionado para depuração
-                if (!response.ok) {
-                    // Se a resposta não for ok, mostrar o erro retornado pelo servidor
-                    return response.text().then(text => {
-                        throw new Error(text || 'Erro ao excluir a venda');
+
+            </script>
+
+            <script>
+                // Reabre o modal de Insumos ao fechar o modal de Comprador
+                document.getElementById("novoCompradorModal").addEventListener("hidden.bs.modal", function () {
+                    var novoItemModal = new bootstrap.Modal(document.getElementById("novoItemModal"));
+                    novoItemModal.show();
+                });
+            </script>
+
+            <script>
+                document.getElementById('searchForm').addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const termo = document.getElementById('searchTerm').value;
+                    const campo = document.getElementById('searchField').value;
+
+                    const response = await fetch(`/pesquisarVenda?termo=${termo}&campo=${campo}`, {
+                        method: 'GET',
                     });
-                }
-                return response.json(); // Se a resposta for ok, retornar os dados como JSON
-            })
-            .then(data => {
-                // Remover a linha da venda na tabela, se ela existir
-                const row = document.getElementById(`venda-row-${id}`);
-                if (row) {
-                    row.remove(); // Remove a linha do DOM
-                    alert(data.message); // Exibe mensagem de sucesso
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error.message); // Log de erro no console
-                alert(`Ocorreu um erro: ${error.message}`); // Alerta o usuário sobre o erro
-            });
-        }
-    }
 
-</script>
-
-<script>
-    // Reabre o modal de Insumos ao fechar o modal de Comprador
-    document.getElementById("novoCompradorModal").addEventListener("hidden.bs.modal", function() {
-        var novoItemModal = new bootstrap.Modal(document.getElementById("novoItemModal"));
-        novoItemModal.show();
-    });
-</script>
-
-<script>
-    document.getElementById('searchForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const termo = document.getElementById('searchTerm').value;
-        const campo = document.getElementById('searchField').value;
-
-        const response = await fetch(`/pesquisarVenda?termo=${termo}&campo=${campo}`, {
-            method: 'GET',
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            let resultadosHTML = '';
-            if (data.vendas && data.vendas.length > 0) {
-                data.vendas.forEach(venda => {
-                    resultadosHTML += `
+                    if (response.ok) {
+                        const data = await response.json();
+                        let resultadosHTML = '';
+                        if (data.vendas && data.vendas.length > 0) {
+                            data.vendas.forEach(venda => {
+                                resultadosHTML += `
             <div class="venda-item">
                 <p><strong>Cliente:</strong> ${venda.comprador.nome}</p>
                 <p><strong>Item:</strong> ${venda.colheita.nome_colheita}</p>
@@ -672,17 +681,240 @@ document.querySelector('.btn.btn-custom2').addEventListener('click', function() 
                 <p><strong>Data da Venda:</strong> ${new Date(venda.data_venda).toLocaleDateString('pt-BR')}</p>
             </div>
             <hr>`;
+                            });
+                        } else {
+                            resultadosHTML = `<p>Nenhuma venda encontrada.</p>`;
+                        }
+                        document.getElementById('resultados').innerHTML = resultadosHTML;
+                    } else {
+                        console.error('Erro ao buscar vendas');
+                        document.getElementById('resultados').innerHTML = '<p>Erro ao buscar vendas.</p>';
+                    }
                 });
-            } else {
-                resultadosHTML = `<p>Nenhuma venda encontrada.</p>`;
-            }
-            document.getElementById('resultados').innerHTML = resultadosHTML;
-        } else {
-            console.error('Erro ao buscar vendas');
-            document.getElementById('resultados').innerHTML = '<p>Erro ao buscar vendas.</p>';
-        }
-    });
-</script>
+            </script>
+
+            <script>
+                // Função para verificar a quantidade inserida no modal de edição
+                function checkQuantidadeModal() {
+                    const quantidadeInput = document.getElementById('quantidade');
+                    const quantidadeMaximaDisplay = document.getElementById('ultimaQuantidadeDisplay');
+                    const quantidadeWarning = document.getElementById('quantidadeWarning');
+                    const salvarButton = document.querySelector('#editarVendaForm button[type="submit"]');
+
+                    // Obtenha o valor máximo de quantidade disponível
+                    const quantidadeMaxima = parseInt(quantidadeMaximaDisplay.value);
+
+                    // Obtenha o valor digitado
+                    const quantidadeDigitada = parseInt(quantidadeInput.value);
+
+                    // Validação
+                    if (isNaN(quantidadeDigitada) || quantidadeDigitada <= 0) {
+                        quantidadeWarning.textContent = 'A quantidade deve ser maior que zero.';
+                        quantidadeWarning.style.display = 'block';
+                        salvarButton.disabled = true;
+                    } else if (quantidadeDigitada > quantidadeMaxima) {
+                        quantidadeWarning.textContent = 'A quantidade excede a máxima disponível.';
+                        quantidadeWarning.style.display = 'block';
+                        salvarButton.disabled = true;
+                    } else {
+                        quantidadeWarning.style.display = 'none';
+                        salvarButton.disabled = false;
+                    }
+                }
+
+                // Adicione o evento no campo quantidade
+                document.getElementById('quantidade').addEventListener('input', checkQuantidadeModal);
+
+                // Validação final no envio do formulário
+                document.getElementById('editarVendaForm').addEventListener('submit', function (event) {
+                    const quantidadeInput = document.getElementById('quantidade');
+                    const quantidadeAnteriorInput = document.getElementById('quantidadeAnterior');
+                    const quantidadeMaximaDisplay = document.getElementById('ultimaQuantidadeDisplay');
+
+                    const quantidadeMaxima = parseInt(quantidadeMaximaDisplay.value);
+                    const quantidadeDigitada = parseInt(quantidadeInput.value);
+                    const quantidadeAnterior = parseInt(quantidadeAnteriorInput.value);
+
+                    console.log("Validação de Envio:");
+                    console.log("Quantidade Máxima:", quantidadeMaxima);
+                    console.log("Quantidade Digitada:", quantidadeDigitada);
+                    console.log("Quantidade Anterior:", quantidadeAnterior);
+
+                    if (quantidadeDigitada > quantidadeMaxima || quantidadeDigitada <= 0) {
+                        event.preventDefault(); // Impede o envio do formulário
+                        alert('A quantidade informada é inválida ou excede o limite permitido.');
+                        console.error("Formulário bloqueado devido a quantidade inválida.");
+                        return;
+                    }
+
+                    console.log("Formulário enviado com sucesso!");
+                });
+
+
+            </script>
+            <script>
+                async function fetchQuantidade(nome_colheita) {
+                    if (!nome_colheita) {
+                        document.getElementById('quantidadeEstoque').value = '';
+                        document.getElementById('ultimaQuantidade').value = '';
+                        return;
+                    }
+
+                    try {
+                        // Busca informações da colheita
+                        const response = await fetch(`/consultarColheita?nome_colheita=${nome_colheita}`);
+                        const data = await response.json();
+
+                        console.log(`Recebido do servidor: quantidade = ${data.quantidade}, ultima_quantidade = ${data.ultima_quantidade}`); // Debug
+
+                        const quantidadeEstoqueElement = document.getElementById('quantidadeEstoque');
+                        const ultimaQuantidadeElement = document.getElementById('ultimaQuantidade');
+
+                        if (quantidadeEstoqueElement && ultimaQuantidadeElement) {
+                            quantidadeEstoqueElement.value = data.quantidade || 0;
+                            ultimaQuantidadeElement.value = data.ultima_quantidade || 0;
+
+                            console.log(`Quantidade estoque: ${quantidadeEstoqueElement.value}`);
+                            console.log(`Última quantidade: ${ultimaQuantidadeElement.value}`);
+                        } else {
+                            console.error('Elemento quantidadeEstoque ou ultimaQuantidade não encontrado.');
+                        }
+
+                        checkQuantidade();
+                    } catch (error) {
+                        console.error('Erro ao buscar a quantidade:', error);
+                    }
+                }
+
+                function checkQuantidade() {
+                    const quantidadeElement = document.getElementById('itemQuantidade');
+                    const quantidadeEstoqueElement = document.getElementById('quantidadeEstoque');
+                    const warningElement = document.getElementById('quantidadeWarning');
+
+                    // Verifica se os elementos estão presentes
+                    console.log('Verificando elementos:', quantidadeElement, quantidadeEstoqueElement);
+
+                    if (quantidadeElement && quantidadeEstoqueElement) {
+                        const quantidade = parseInt(quantidadeElement.value);
+                        const currentQuantidade = parseInt(quantidadeEstoqueElement.value);
+
+                        console.log('Quantidade informada:', quantidade);
+                        console.log('Estoque atual:', currentQuantidade);
+
+                        // Verifica se a quantidade é válida e não negativa
+                        if (isNaN(quantidade) || quantidade <= 0 || isNaN(currentQuantidade)) {
+                            warningElement.style.display = 'block';
+                            warningElement.textContent = 'A quantidade deve ser maior que zero.';
+                            document.getElementById('salvarNovoItem').disabled = true;
+                            console.log('Erro: Quantidade inválida.');
+                            return;
+                        }
+
+                        // Verifica se a quantidade excede o estoque
+                        if (quantidade > currentQuantidade) {
+                            warningElement.style.display = 'block';
+                            warningElement.textContent = 'A quantidade excede o estoque disponível.';
+                            document.getElementById('salvarNovoItem').disabled = true;
+                            console.log('Erro: Quantidade excede o estoque.');
+                        } else {
+                            warningElement.style.display = 'none';
+                            document.getElementById('salvarNovoItem').disabled = false;
+                            console.log('Quantidade válida e dentro do estoque.');
+                        }
+                    } else {
+                        console.error('Elementos quantidade ou quantidadeEstoque não encontrados.');
+                    }
+                }
+
+                document.getElementById('novoItemForm').addEventListener('submit', async function (event) {
+                    event.preventDefault();
+
+                    console.log('Formulário submetido.');
+
+                    // Verifica se a quantidade é válida antes de enviar
+                    const quantidadeElement = document.getElementById('itemQuantidade');
+                    const quantidadeEstoqueElement = document.getElementById('quantidadeEstoque');
+
+                    const quantidade = parseInt(quantidadeElement.value);
+                    const currentQuantidade = parseInt(quantidadeEstoqueElement.value);
+
+                    console.log('Quantidade da venda:', quantidade);
+                    console.log('Quantidade do estoque:', currentQuantidade);
+
+                    if (quantidade <= 0 || quantidade > currentQuantidade) {
+                        alert('A quantidade da venda não pode exceder o estoque disponível.');
+                        console.log('Erro: Quantidade inválida ou excede o estoque.');
+                        return;
+                    }
+
+                    // Aqui você envia a venda para o servidor
+                    const formData = new FormData(document.getElementById('novoItemForm'));
+
+                    console.log('Enviando dados para o servidor...', formData);
+
+                    const response = await fetch('/add-vendas', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    console.log('Resposta do servidor:', response);
+
+                    if (response.ok) {
+                        // Atualiza o estoque na interface
+                        const novaQuantidadeEstoque = currentQuantidade - quantidade;
+                        document.getElementById('quantidadeEstoque').value = novaQuantidadeEstoque;
+                        console.log('Estoque atualizado:', novaQuantidadeEstoque);
+
+                        // Fechar o modal e limpar o formulário
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('novoItemModal'));
+                        modal.hide();
+
+                        // Remove o backdrop manualmente
+                        document.body.classList.remove('modal-open'); // Remove a classe de modal aberto
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.remove(); // Remove o backdrop
+                        }
+
+                        // Limpar o formulário
+                        document.getElementById('novoItemForm').reset();
+                        console.log('Formulário resetado e modal fechado.');
+                    } else {
+                        alert('Erro ao adicionar a venda.');
+                        console.log('Erro ao adicionar a venda. Código de resposta:', response.status);
+                    }
+                });
+
+
+
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Associa o evento de mudança ao select
+                    const colheitaSelect = document.getElementById('nome_colheita');
+                    if (colheitaSelect) {
+                        colheitaSelect.addEventListener('change', function () {
+                            fetchQuantidade(this.value);
+                        });
+                    }
+
+                    // Adiciona validação antes de submeter o formulário
+                    const novoItemForm = document.getElementById('novoItemForm');
+                    if (novoItemForm) {
+                        novoItemForm.addEventListener('submit', function (event) {
+                            const quantidadeElement = document.getElementById('itemQuantidade');
+                            const quantidadeEstoqueElement = document.getElementById('quantidadeEstoque');
+
+                            const quantidade = parseInt(quantidadeElement.value);
+                            const currentQuantidade = parseInt(quantidadeEstoqueElement.value);
+
+                            if (isNaN(quantidade) || isNaN(currentQuantidade) || quantidade > currentQuantidade) {
+                                event.preventDefault();
+                                alert('A quantidade da venda não pode exceder o estoque disponível.');
+                            }
+                        });
+                    }
+                });
+            </script>
+
 
 
 </body>

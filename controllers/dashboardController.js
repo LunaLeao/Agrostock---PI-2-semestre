@@ -48,7 +48,6 @@ exports.renderizarDashboard = async function (req, res) {
     res.status(500).send('Erro ao obter dados de colheitas');
   }
 };
-
 exports.carregarGraficoColheita = async function (req, res) {
   try {
     if (!req.session.userId) {
@@ -80,12 +79,28 @@ exports.carregarGraficoColheita = async function (req, res) {
     const nomesMeses = rows.map(row => meses[row.mes - 1]); // O mês é retornado como número (1-12)
     const quantidades = rows.map(row => row.total_quantidade);
 
-    // Envia os dados para o frontend
-    res.json({ nomesMeses, quantidades });
+    // Verificar se algum estoque está abaixo de 25
+    const colheitasBaixoEstoque = await Colheita.findAll({
+      where: {
+        usuarioId: req.session.userId,
+        quantidade: { [Op.lte]: 25 } // Estoque menor ou igual a 25
+      }
+    });
+
+    let alerta = null;
+    if (colheitasBaixoEstoque.length > 0) {
+      const nomesBaixoEstoque = colheitasBaixoEstoque.map(c => c.nome_colheita).join(', ');
+      alerta = `Alerta de baixo estoque para os seguintes produtos: ${nomesBaixoEstoque}`;
+    }
+
+    // Enviar os dados para o frontend, incluindo o alerta de baixo estoque
+    res.json({
+      nomesMeses,
+      quantidades,
+      alerta
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('Erro ao buscar dados para o gráfico.');
   }
 };
-
-

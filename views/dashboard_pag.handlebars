@@ -264,31 +264,6 @@
                 }
             });
 
-            /*const ctd = document.getElementById('DashboardVendas');
-
-            const Produtos = {{{nomesColheitas}}}; 
-            const quantidadesVendas = {{{quantidadesVendas}}}; 
-
-            new Chart(ctd, {
-                type: 'bar',
-                data: {
-                labels: Produtos,
-                datasets: [{
-                    label: 'Quantidade Vendida',
-                    data: quantidadesVendas,
-                    backgroundColor: 'rgba(0, 123, 255, 0.7)',  
-                    borderColor: 'rgba(0, 123, 255, 1)', 
-                    borderWidth: 1
-                }]
-                },
-                options: {
-                scales: {
-                    y: {
-                    beginAtZero: true
-                    }
-                }
-                }
-            });*/
 
             const ctd = document.getElementById('DashboardVendas');
 
@@ -319,8 +294,13 @@
                     }
                 }
             });
-
+        
+              // Se houver alerta de baixo estoque, exibir o alert
+      if (alerta) {
+        alert(alerta); // Exibe o alerta no front-end
+      }
         </script>
+    <!-- No arquivo dashboard_pag.ejs ou o template correspondente -->
 
 </body>
 

@@ -74,6 +74,12 @@ app.use('/', rotaFornecedor);
 const rotaDashboard = require("./routes/dashboardRouter");
 app.use("/", rotaDashboard);
 
+const rotaAuthenticate = require("./routes/authRouter");
+app.use("/", rotaAuthenticate);
+
+const rotaRedefinirSenha = require("./routes/redefinirsenhaRouter");
+app.use("/", rotaRedefinirSenha);
+
 // Página inicial
 app.get("/", function (req, res) {
   res.render("login_pag", {

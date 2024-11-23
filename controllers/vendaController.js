@@ -196,23 +196,20 @@ exports.renderizarVenda = async function (req, res) {
 
 // Função para cadastrar uma nova venda
 exports.cadastrarVenda = async function (req, res) {
+  console.log("Dados recebidos no servidor:", req.body);  // Log os dados recebidos
+
   try {
     // Extrai os dados do corpo da requisição
-    const { compradorId, nome_colheita, valor_total, quantidade, data_venda, observacao } = req.body;
+    const { compradorId, nome_colheita, valor_total, quantidade, ultima_quantidade, data_venda, observacao } = req.body;
 
     // Verifica se o usuário está logado
     if (!req.session.userId) {
       return res.status(403).json({ message: 'Usuário não autorizado' });
     }
 
-    // Verifica se o compradorId foi fornecido
-    if (!compradorId) {
-      return res.status(400).json({ message: 'ID do comprador é obrigatório.' });
-    }
-
-    // Verifica se o nome da colheita foi fornecido
-    if (!nome_colheita) {
-      return res.status(400).json({ message: 'Nome da colheita é obrigatório.' });
+    // Verifica se todos os campos obrigatórios foram fornecidos
+    if (!compradorId || !nome_colheita || !quantidade || !valor_total || !data_venda) {
+      return res.status(400).json({ message: 'Todos os campos obrigatórios devem ser preenchidos.' });
     }
 
     // Busca o ID da colheita com base no nome
@@ -224,15 +221,32 @@ exports.cadastrarVenda = async function (req, res) {
       return res.status(400).json({ message: 'Colheita não encontrada.' });
     }
 
+    // Verifica o estoque disponível da colheita
+    const estoqueAtual = colheita.quantidade;
+
+    // Se a quantidade vendida for maior que o estoque, retorna um erro
+    if (quantidade > estoqueAtual) {
+      return res.status(400).json({ message: 'Quantidade excede o estoque disponível.' });
+    }
+
+    // Se a última quantidade não for passada na requisição, use a quantidade atual
+    const ultimaQuantidade = colheita.quantidade;
+
     // Cria a nova venda usando o colheitaId
     const novaVenda = await Venda.create({
       compradorId: compradorId,
       colheitaId: colheita.id, // Usando o ID da colheita encontrada
       valor_total,
       quantidade,
+      ultima_quantidade: ultimaQuantidade, // Usando o valor de ultima_quantidade
       data_venda,
       observacao,
       usuarioId: req.session.userId // ID do usuário que está logado
+    });
+
+    // Atualiza o estoque da colheita, descontando a quantidade vendida
+    await colheita.update({
+      quantidade: colheita.quantidade - quantidade // Subtraindo a quantidade vendida do estoque da colheita
     });
 
     // Redireciona após o sucesso
@@ -241,6 +255,32 @@ exports.cadastrarVenda = async function (req, res) {
   } catch (error) {
     console.error('Erro ao cadastrar a venda:', error);
     res.status(500).json({ message: 'Erro ao cadastrar a venda', error: error.message });
+  }
+};
+
+
+
+
+//Função para consultar a quantidade na colheita
+exports.consultarColheita = async function (req, res) {
+  try {
+    const { nome_colheita } = req.query;
+    console.log(`Recebido nome_colheita: ${nome_colheita}`); // Log da query recebida
+    
+    const colheita = await Colheita.findOne({
+      where: { nome_colheita, usuarioId: req.session.userId }
+    });
+
+    if (!colheita) {
+      console.log('Colheita não encontrada.');
+      return res.status(404).json({ message: 'Colheita não encontrada' });
+    }
+
+    console.log(`Quantidade encontrada: ${colheita.quantidade}`); // Log da quantidade encontrada
+    res.json({ quantidade: colheita.quantidade });
+  } catch (error) {
+    console.error('Erro ao buscar quantidade da colheita:', error);
+    res.status(500).json({ message: 'Erro ao buscar quantidade da colheita' });
   }
 };
 
@@ -270,29 +310,53 @@ exports.adicionarComprador = async function (req, res) {
     }
   };
 
-exports.atualizarVenda = async function async (req, res){
-    const { vendaId, compradorId, quantidade, valor_total, colheitaId, data_venda } = req.body;
-  
+  exports.atualizarVenda = async function (req, res) {
+    const { vendaId, compradorId, quantidade, valor_total, colheitaId, data_venda, quantidadeAnterior } = req.body;
+
+        // Adicionando console.log para verificar a quantidade anterior
+        console.log("Quantidade Anterior Recebida:", quantidadeAnterior);
     try {
-      await Venda.update(
-        {
-          compradorId: compradorId,
-          quantidade: quantidade,
-          valor_total,
-          colheitaId: colheitaId,
-          data_venda: new Date(data_venda),
-        },
-        {
-          where: { id: vendaId },
+        // Converta os valores para números inteiros
+        const quantidadeAtual = parseInt(quantidade);
+        const quantidadeAnteriorInt = parseInt(quantidadeAnterior);
+
+        // Calcule a diferença
+        const diferenca = quantidadeAtual - quantidadeAnteriorInt;
+
+        // Atualize a quantidade disponível na colheita
+        const colheita = await Colheita.findByPk(colheitaId);
+        if (!colheita) {
+            throw new Error('Colheita não encontrada');
         }
-      );
-  0
-      res.redirect('/venda-fornecedor'); // Redirecione para a página de vendas
+
+        // Atualize o estoque da colheita
+        colheita.quantidade_disponivel -= diferenca;
+        if (colheita.quantidade_disponivel < 0) {
+            return res.status(400).send('Estoque insuficiente após a atualização.');
+        }
+        await colheita.save();
+
+        // Atualize a venda
+        await Venda.update(
+            {
+                compradorId,
+                quantidade: quantidadeAtual,
+                valor_total,
+                colheitaId,
+                data_venda: new Date(data_venda),
+            },
+            {
+                where: { id: vendaId },
+            }
+        );
+
+        res.redirect('/venda-fornecedor'); // Redirecione para a página de vendas
     } catch (error) {
-      console.error('Erro ao atualizar a venda:', error);
-      res.status(500).send('Erro ao atualizar a venda');
+        console.error('Erro ao atualizar a venda:', error);
+        res.status(500).send('Erro ao atualizar a venda');
     }
 };
+
 
   
 // Deletar venda

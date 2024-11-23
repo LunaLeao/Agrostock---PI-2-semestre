@@ -50,6 +50,16 @@ const Usuario = db.sequelize.define("usuario", {
     senha: {
         type: db.Sequelize.STRING
     },
+    passwordResetToken: {
+        type: db.Sequelize.STRING,
+        // Remover ou alterar a propriedade 'select: false' para permitir consultas
+        allowNull: true, // Permite que o valor seja nulo
+    },
+    passwordResetExpires: { // Corrigido para DATE
+        type: db.Sequelize.DATE,
+        // Remover ou alterar a propriedade 'select: false' para permitir consultas
+        allowNull: true, // Permite que o valor seja nulo
+    },
     telefone_celular: {
         type: db.Sequelize.STRING,
         allowNull: false
@@ -113,6 +123,10 @@ const Colheita = db.sequelize.define("colheita", {
     quantidade: {
         type: db.Sequelize.INTEGER,
         allowNull: false
+    },
+    maior_quantidade: {
+        type: db.Sequelize.INTEGER,
+        defaultValue: 0
     },
     tipo_insumoId: {
         type: db.Sequelize.INTEGER,
@@ -296,7 +310,6 @@ const Venda = db.sequelize.define("venda",{
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
-
     usuarioId: {
         type: db.Sequelize.INTEGER,
         references: {
@@ -307,6 +320,10 @@ const Venda = db.sequelize.define("venda",{
         onDelete: 'CASCADE'
     },
     quantidade: {
+        type: db.Sequelize.INTEGER,
+        allowNull: false
+    },
+    ultima_quantidade: {
         type: db.Sequelize.INTEGER,
         allowNull: false
     },
@@ -497,4 +514,4 @@ Colheita.hasMany(Venda, { foreignKey: 'colheitaId' });
 module.exports = {Usuario,TipoProduto,Colheita,Endereco,TipoInsumo,TipoRelatorio,Relatorios,CalculoLucro,Comprador,Cotacao,EstoqueColheita,EstoqueInsumo,Venda,Fornecedor,Insumo,Compra};
 
 //b.sequelize.sync ({force: true}) //mudar pra alter no lugar de force caso queira atualizar apenas
-//db.sequelize.sync({ alter: true })
+db.sequelize.sync({ alter: true })
