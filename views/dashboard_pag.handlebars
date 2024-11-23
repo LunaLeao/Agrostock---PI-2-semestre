@@ -237,69 +237,85 @@
             </button>
         </div>
 
-        <script>
-            const ctx = document.getElementById('DashboardColheita');
+<script>
+    const ctx = document.getElementById('DashboardColheita');
 
-                const colheita = {{{nomesColheitas}}};
-                const quantidade = {{{quantidadesColheitas}}};
+    // Dados do gráfico de colheitas
+    const colheita = {{{nomesColheitas}}};
+    const quantidade = {{{quantidadesColheitas}}};
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                labels: colheita,
-                datasets: [{
-                    label: 'Quantidade da colheita',
-                    data: quantidade,
-                    backgroundColor: 'rgba(0, 128, 0, 0.7)',
-                    borderColor: 'rgba(0, 128, 0, 1)',  
-                    borderWidth: 1
-                }]
-                },
-                options: {
-                scales: {
-                    y: {
+    // Verificar níveis de estoque
+    let alerta = '';
+    quantidade.forEach((qtd, index) => {
+        if (qtd <= 25) {
+            alerta += `A colheita "${colheita[index]}" está com baixo nível de estoque (${qtd}).\n`;
+        }
+    });
+
+    // Configurar o gráfico de colheitas
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: colheita,
+            datasets: [{
+                label: 'Quantidade da colheita',
+                data: quantidade,
+                backgroundColor: 'rgba(0, 128, 0, 0.7)',
+                borderColor: 'rgba(0, 128, 0, 1)',  
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
                     beginAtZero: true
-                    }
                 }
+            }
+        }
+    });
+
+    const ctd = document.getElementById('DashboardVendas');
+
+    // Dados do gráfico de vendas
+    const Colheitas = {{{nomesColheitasVendas}}};  // Dados das colheitas para o gráfico
+    const quantidadesVendas = {{{quantidadesVendas}}};  // Quantidades das vendas
+
+    // Log para depuração
+    console.log("Colheitas no gráfico:", Colheitas);
+    console.log("Quantidades no gráfico:", quantidadesVendas);
+
+    // Configurar o gráfico de vendas
+    new Chart(ctd, {
+        type: 'bar',
+        data: {
+            labels: Colheitas,  // Labels (nomes das colheitas)
+            datasets: [{
+                label: 'Quantidade Vendida',
+                data: quantidadesVendas,
+                backgroundColor: 'rgba(0, 123, 255, 0.7)',  
+                borderColor: 'rgba(0, 123, 255, 1)', 
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
-            });
+            }
+        }
+    });
+
+    // Exibir o alerta após o carregamento completo da página
+    window.onload = function() {
+        if (alerta) {
+            alert(alerta); // Exibe um alerta acumulado no front-end
+        }
+    };
+</script>
 
 
-            const ctd = document.getElementById('DashboardVendas');
 
-            const Colheitas = {{{nomesColheitasVendas}}};  // Dados das colheitas para o gráfico
-            const quantidadesVendas = {{{quantidadesVendas}}};  // Quantidades das vendas
-
-            // Log para depuração
-            console.log("Colheitas no gráfico:", Colheitas);
-            console.log("Quantidades no gráfico:", quantidadesVendas);
-
-            new Chart(ctd, {
-                type: 'bar',
-                data: {
-                    labels: Colheitas,  // Labels (nomes das colheitas)
-                    datasets: [{
-                        label: 'Quantidade Vendida',
-                        data: quantidadesVendas,
-                        backgroundColor: 'rgba(0, 123, 255, 0.7)',  
-                        borderColor: 'rgba(0, 123, 255, 1)', 
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        
-              // Se houver alerta de baixo estoque, exibir o alert
-      if (alerta) {
-        alert(alerta); // Exibe o alerta no front-end
-      }
-        </script>
     <!-- No arquivo dashboard_pag.ejs ou o template correspondente -->
 
 </body>
